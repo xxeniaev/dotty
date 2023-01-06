@@ -9,6 +9,7 @@ tags
 # sbt specific
 dist/*
 target/
+target-js/
 lib_managed/
 src_managed/
 project/boot/

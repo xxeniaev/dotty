@@ -811,6 +811,12 @@ object Build {
     if (mode == NonBootstrapped) nonBootstrapedDottyCompilerSettings else bootstrapedDottyCompilerSettings
 
   lazy val `scala3-compiler` = project.in(file("compiler")).asDottyCompiler(NonBootstrapped)
+  lazy val `scala3-compiler-js` = project.in(file("compiler"))
+    .enablePlugins(ScalaJSPlugin)
+    //.asDottyCompiler(NonBootstrapped)
+    .settings(
+      target := baseDirectory.value / "target-js"
+    ).settings(commonNonBootstrappedSettings)
 
   lazy val Scala3CompilerCoursierTest = config("scala3CompilerCoursierTest") extend Test
   lazy val `scala3-compiler-bootstrapped` = project.in(file("compiler")).asDottyCompiler(Bootstrapped)

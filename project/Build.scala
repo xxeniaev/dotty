@@ -492,6 +492,16 @@ object Build {
       versionScheme := Some("semver-spec")
     )
 
+  // todo: переписать interfaces java to scala
+  lazy val `scala3-interfaces-js` = project.in(file("interfaces-js")).
+    enablePlugins(ScalaJSPlugin).
+    settings(commonJavaSettings).
+    settings(commonMiMaSettings).
+    settings(
+      versionScheme := Some("semver-spec"),
+      target := baseDirectory.value / "target-js"
+    )
+
   /** Find an artifact with the given `name` in `classpath` */
   def findArtifact(classpath: Def.Classpath, name: String): File = classpath
     .find(_.get(artifact.key).exists(_.name == name))
@@ -761,9 +771,9 @@ object Build {
     packageAll := Def.taskDyn { // Use a dynamic task to avoid loops when loading the settings
       Def.task {
         Map(
-          "scala3-interfaces"    -> (`scala3-interfaces` / Compile / packageBin).value,
+          "scala3-interfaces-js"    -> (`scala3-interfaces-js` / Compile / packageBin).value,
           "scala3-compiler"      -> (Compile / packageBin).value,
-          "tasty-core"          -> (`tasty-core` / Compile / packageBin).value,
+          "tasty-core-js"          -> (`tasty-core-js` / Compile / packageBin).value,
 
           // NOTE: Using scala3-library-bootstrapped here is intentional: when
           // running the compiler, we should always have the bootstrapped
@@ -851,10 +861,15 @@ object Build {
   )
 
   lazy val `scala3-library` = project.in(file("library")).asDottyLibrary(NonBootstrapped)
+  lazy val `scala3-library-js` = project.in(file("library")).enablePlugins(ScalaJSPlugin)
+    .settings(commonNonBootstrappedSettings)
+    .settings(
+      target := baseDirectory.value / "target-js"
+  )
   lazy val `scala3-library-bootstrapped`: Project = project.in(file("library")).asDottyLibrary(Bootstrapped)
 
   def dottyLibrary(implicit mode: Mode): Project = mode match {
-    case NonBootstrapped => `scala3-library`
+    case NonBootstrapped => `scala3-library-js`
     case Bootstrapped => `scala3-library-bootstrapped`
   }
 
@@ -897,11 +912,15 @@ object Build {
   )
 
   lazy val `tasty-core` = project.in(file("tasty")).asTastyCore(NonBootstrapped)
+  lazy val `tasty-core-js` = project.in(file("tasty")).enablePlugins(ScalaJSPlugin).asTastyCore(NonBootstrapped)
+    .settings(
+      target := baseDirectory.value / "target-js"
+    )
   lazy val `tasty-core-bootstrapped`: Project = project.in(file("tasty")).asTastyCore(Bootstrapped)
   lazy val `tasty-core-scala2`: Project = project.in(file("tasty")).asTastyCoreScala2
 
   def tastyCore(implicit mode: Mode): Project = mode match {
-    case NonBootstrapped => `tasty-core`
+    case NonBootstrapped => `tasty-core-js`
     case Bootstrapped => `tasty-core-bootstrapped`
   }
 
@@ -1803,7 +1822,7 @@ object Build {
       )
 
     def asDottyCompiler(implicit mode: Mode): Project = project.withCommonSettings.
-      dependsOn(`scala3-interfaces`).
+      dependsOn(`scala3-interfaces-js`).
       dependsOn(dottyLibrary).
       dependsOn(tastyCore).
       settings(dottyCompilerSettings)

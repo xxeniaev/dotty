@@ -9,7 +9,6 @@ import parsing.Parser
 import Phases.Phase
 import transform._
 import dotty.tools.backend
-import backend.jvm.{CollectSuperCalls, GenBCode}
 import localopt.StringInterpolatorOpt
 
 /** The central class of the dotc compiler. The job of a compiler is to create
@@ -36,11 +35,11 @@ class Compiler {
     List(new Parser) ::             // Compiler frontend: scanner, parser
     List(new TyperPhase) ::         // Compiler frontend: namer, typer
     List(new YCheckPositions) ::    // YCheck positions
-    List(new sbt.ExtractDependencies) :: // Sends information on classes' dependencies to sbt via callbacks
+//    List(new sbt.ExtractDependencies) :: // Sends information on classes' dependencies to sbt via callbacks
     List(new semanticdb.ExtractSemanticDB) :: // Extract info into .semanticdb files
     List(new PostTyper) ::          // Additional checks and cleanups after type checking
     List(new sjs.PrepJSInterop) ::  // Additional checks and transformations for Scala.js (Scala.js only)
-    List(new sbt.ExtractAPI) ::     // Sends a representation of the API of classes to sbt via callbacks
+//    List(new sbt.ExtractAPI) ::     // Sends a representation of the API of classes to sbt via callbacks
     List(new SetRootTree) ::        // Set the `rootTreeOrProvider` on class symbols
     Nil
 
@@ -138,14 +137,12 @@ class Compiler {
          new SelectStatic,           // get rid of selects that would be compiled into GetStatic
          new sjs.JUnitBootstrappers, // Generate JUnit-specific bootstrapper classes for Scala.js (not enabled by default)
          new CollectEntryPoints,     // Collect all entry points and save them in the context
-         new CollectSuperCalls,      // Find classes that are called with super
          new RepeatableAnnotations) :: // Aggregate repeatable annotations
     Nil
 
   /** Generate the output of the compilation */
   protected def backendPhases: List[List[Phase]] =
     List(new backend.sjs.GenSJSIR) :: // Generate .sjsir files for Scala.js (not enabled by default)
-    List(new GenBCode) ::             // Generate JVM bytecode
     Nil
 
   var runId: Int = 1

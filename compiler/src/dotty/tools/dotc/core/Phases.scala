@@ -4,7 +4,6 @@ package core
 
 import Periods._
 import Contexts._
-import dotty.tools.backend.jvm.GenBCode
 import DenotTransformers._
 import Denotations._
 import Decorators._
@@ -259,7 +258,7 @@ object Phases {
       myParserPhase = phaseOfClass(classOf[Parser])
       myTyperPhase = phaseOfClass(classOf[TyperPhase])
       myPostTyperPhase = phaseOfClass(classOf[PostTyper])
-      mySbtExtractDependenciesPhase = phaseOfClass(classOf[sbt.ExtractDependencies])
+//      mySbtExtractDependenciesPhase = phaseOfClass(classOf[sbt.ExtractDependencies])
       myPicklerPhase = phaseOfClass(classOf[Pickler])
       myInliningPhase = phaseOfClass(classOf[Inlining])
       mySplicingPhase = phaseOfClass(classOf[Splicing])
@@ -277,7 +276,6 @@ object Phases {
       myFlattenPhase = phaseOfClass(classOf[Flatten])
       myExplicitOuterPhase = phaseOfClass(classOf[ExplicitOuter])
       myGettersPhase = phaseOfClass(classOf[Getters])
-      myGenBCodePhase = phaseOfClass(classOf[GenBCode])
       myCheckCapturesPhase = phaseOfClass(classOf[CheckCaptures])
     }
 

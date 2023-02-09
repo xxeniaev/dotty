@@ -823,9 +823,44 @@ object Build {
   lazy val `scala3-compiler` = project.in(file("compiler")).asDottyCompiler(NonBootstrapped)
   lazy val `scala3-compiler-js` = project.in(file("compiler"))
     .enablePlugins(ScalaJSPlugin)
-    //.asDottyCompiler(NonBootstrapped)
+    .dependsOn(`scala3-interfaces-js`)
+    .dependsOn(`scala3-library-js`)
+    .dependsOn(`tasty-core-js`)
     .settings(
-      target := baseDirectory.value / "target-js"
+      target := baseDirectory.value / "target-js",
+      libraryDependencies +=
+        ("org.scala-js" %% "scalajs-ir" % scalaJSVersion % "sourcedeps").cross(CrossVersion.for3Use2_13),
+      ivyConfigurations += SourceDeps.hide,
+      transitiveClassifiers := Seq("sources"),
+      (Compile / sourceGenerators) += Def.task {
+        val s = streams.value
+        val cacheDir = s.cacheDirectory
+        val trgDir = (Compile / sourceManaged).value / "scalajs-ir-src"
+
+        val report = updateClassifiers.value
+        val scalaJSIRSourcesJar = report.select(
+          configuration = configurationFilter("sourcedeps"),
+          module = (_: ModuleID).name.startsWith("scalajs-ir_"),
+          artifact = artifactFilter(`type` = "src")).headOption.getOrElse {
+          sys.error(s"Could not fetch scalajs-ir sources")
+        }
+
+        FileFunction.cached(cacheDir / s"fetchScalaJSIRSource",
+          FilesInfo.lastModified, FilesInfo.exists) { dependencies =>
+          s.log.info(s"Unpacking scalajs-ir sources to $trgDir...")
+          if (trgDir.exists)
+            IO.delete(trgDir)
+          IO.createDirectory(trgDir)
+          IO.unzip(scalaJSIRSourcesJar, trgDir)
+
+          val sjsSources = (trgDir ** "*.scala").get.toSet
+          sjsSources.foreach(f => {
+            val lines = IO.readLines(f)
+            IO.writeLines(f, insertUnsafeNullsImport(lines))
+          })
+          sjsSources
+        } (Set(scalaJSIRSourcesJar)).toSeq
+      }
     ).settings(commonNonBootstrappedSettings)
 
   lazy val Scala3CompilerCoursierTest = config("scala3CompilerCoursierTest") extend Test

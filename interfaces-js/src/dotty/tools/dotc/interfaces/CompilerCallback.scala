@@ -14,12 +14,12 @@ package dotty.tools.dotc.interfaces
  *                        Example: ./scala/collection/Seq$.class
  *  @param className      The name of this class.
  *                        Example: scala.collection.Seq$
- */def onClassGenerated(source: Nothing, generatedClass: Nothing, className: Nothing): Unit =  {
+ */def onClassGenerated(source: SourceFile, generatedClass: AbstractFile, className: String): Unit =  {
 }
   /** Called when every class for this file has been generated.
    *
    *  @param source         The source file.
    *                        Example: ./src/library/scala/collection/Seq.scala
-   */def onSourceCompiled(source: Nothing): Unit =  {
+   */def onSourceCompiled(source: SourceFile): Unit =  {
   }
 }

@@ -500,7 +500,7 @@ object ExtractSemanticDB:
       language = Language.SCALA,
       uri = Tools.mkURIstring(Paths.get(relPath)),
       text = "",
-      md5 = internal.MD5.compute(String(source.content)),
+      md5 = internal.MD5.compute(String(source.content())),
       symbols = symbolInfos,
       occurrences = occurrences,
       synthetics = synthetics,

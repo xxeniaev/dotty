@@ -13,8 +13,8 @@ import java.util.Optional
   val WARNING = 1
   val INFO = 0
 }
-trait Diagnostic { /** @return The message to report */def message: Nothing
+trait Diagnostic { /** @return The message to report */def message: String
   /** @return Level of the diagnostic, can be either ERROR, WARNING or INFO */def level: Int
   /** @return The position in a source file of the code that caused this diagnostic
-   *  to be emitted. */def position: Nothing
+   *  to be emitted. */def position: Optional[SourcePosition]
 }

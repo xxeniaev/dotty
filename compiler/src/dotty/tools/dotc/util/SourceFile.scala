@@ -54,7 +54,7 @@ object ScriptSourceFile {
         }
 
     new SourceFile(file, content) {
-      override val underlying = new SourceFile(this.file, this.content)
+      override val underlying = new SourceFile(this.file, this.content())
     }
   }
 }
@@ -66,7 +66,7 @@ class SourceFile(val file: AbstractFile, computeContent: => Array[Char]) extends
 
   /** The contents of the original source file. Note that this can be empty, for example when
    * the source is read from Tasty. */
-  def content(): Array[Char] = {
+  def content: Array[Char] = {
     if (myContent == null) myContent = computeContent
     myContent
   }
@@ -189,7 +189,7 @@ class SourceFile(val file: AbstractFile, computeContent: => Array[Char]) extends
 
   /** The content of the line containing position `offset` */
   def lineContent(offset: Int): String =
-    content.slice(startOfLine(offset), nextLine(offset)).mkString
+    content().slice(startOfLine(offset), nextLine(offset)).mkString
 
   /** The column corresponding to `offset`, starting at 0 */
   def column(offset: Int): Int = {

@@ -8,5 +8,5 @@ package dotty.tools.dotc.interfaces
  *  See the method `process` of `dotty.tools.dotc.Driver` for more information.
  */trait SimpleReporter { /** Report a diagnostic.
  *  @param diag the diagnostic message to report
- */def report(diag: Nothing): Unit
+ */def report(diag: Diagnostic): Unit
 }

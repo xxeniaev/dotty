@@ -36,7 +36,7 @@ import DenotTransformers.DenotTransformer
 import dotty.tools.dotc.profile.Profiler
 import util.Property.Key
 import util.Store
-import xsbti.AnalysisCallback
+//import xsbti.AnalysisCallback
 import plugins._
 import java.util.concurrent.atomic.AtomicInteger
 import java.nio.file.InvalidPathException
@@ -44,8 +44,8 @@ import java.nio.file.InvalidPathException
 object Contexts {
 
   private val (compilerCallbackLoc, store1) = Store.empty.newLocation[CompilerCallback]()
-  private val (sbtCallbackLoc,      store2) = store1.newLocation[AnalysisCallback]()
-  private val (printerFnLoc,        store3) = store2.newLocation[Context => Printer](new RefinedPrinter(_))
+//  private val (sbtCallbackLoc,      store2) = store1.newLocation[AnalysisCallback]()
+  private val (printerFnLoc,        store3) = store1.newLocation[Context => Printer](new RefinedPrinter(_))
   private val (settingsStateLoc,    store4) = store3.newLocation[SettingsState]()
   private val (compilationUnitLoc,  store5) = store4.newLocation[CompilationUnit]()
   private val (runLoc,              store6) = store5.newLocation[Run | Null]()
@@ -164,7 +164,7 @@ object Contexts {
     def compilerCallback: CompilerCallback = store(compilerCallbackLoc)
 
     /** The sbt callback implementation if we are run from sbt, null otherwise */
-    def sbtCallback: AnalysisCallback = store(sbtCallbackLoc)
+//    def sbtCallback: AnalysisCallback = store(sbtCallbackLoc)
 
     /** The current plain printer */
     def printerFn: Context => Printer = store(printerFnLoc)
@@ -655,7 +655,7 @@ object Contexts {
     }
 
     def setCompilerCallback(callback: CompilerCallback): this.type = updateStore(compilerCallbackLoc, callback)
-    def setSbtCallback(callback: AnalysisCallback): this.type = updateStore(sbtCallbackLoc, callback)
+//    def setSbtCallback(callback: AnalysisCallback): this.type = updateStore(sbtCallbackLoc, callback)
     def setPrinterFn(printer: Context => Printer): this.type = updateStore(printerFnLoc, printer)
     def setSettings(settingsState: SettingsState): this.type = updateStore(settingsStateLoc, settingsState)
     def setRun(run: Run | Null): this.type = updateStore(runLoc, run)

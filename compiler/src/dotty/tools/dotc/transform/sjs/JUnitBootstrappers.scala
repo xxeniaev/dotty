@@ -173,7 +173,7 @@ class JUnitBootstrappers extends MiniPhase {
       genNewInstance(classSym, testClass)
     )
 
-    sbt.APIUtils.registerDummyClass(classSym)
+//    sbt.APIUtils.registerDummyClass(classSym)
 
     ClassDef(classSym, constr, defs)
   }

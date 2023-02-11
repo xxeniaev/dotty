@@ -10,7 +10,7 @@ package dotty.tools.dotc.interfaces
  *
  *  User code should not implement this interface, but it may have to
  *  manipulate objects of this type.
- */trait SourcePosition { /** @return Content of the line which contains the point */def lineContent: Nothing
+ */trait SourcePosition { /** @return Content of the line which contains the point */def lineContent: String
   /** @return Offset to the point */def point: Int
   /** @return Line number of the point, starting at 0. -1 if the line cannot be computed */def line: Int
   /** @return Column number of the point, starting at 0. -1 if the column cannot be computed */def column: Int
@@ -24,5 +24,5 @@ package dotty.tools.dotc.interfaces
    *  The values returned by `point()`, `start()` and `end()`
    *  are indices in the array returned by `source().content()`.
    *  @return source file for this position
-   */def source: Nothing
+   */def source: SourceFile
 }

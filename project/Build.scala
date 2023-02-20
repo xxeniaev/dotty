@@ -828,6 +828,8 @@ object Build {
     .dependsOn(`tasty-core-js`)
     .settings(
       target := baseDirectory.value / "target-js",
+      (Compile / mainClass) := Some("dotty.tools.dotc.Main"),
+      scalaJSUseMainModuleInitializer := true,
       libraryDependencies +=
         ("org.scala-js" %% "scalajs-ir" % scalaJSVersion % "sourcedeps").cross(CrossVersion.for3Use2_13),
       ivyConfigurations += SourceDeps.hide,

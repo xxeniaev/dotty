@@ -66,7 +66,7 @@ class SourceFile(val file: AbstractFile, computeContent: => Array[Char]) extends
 
   /** The contents of the original source file. Note that this can be empty, for example when
    * the source is read from Tasty. */
-  def content: Array[Char] = {
+  def content(): Array[Char] = {
     if (myContent == null) myContent = computeContent
     myContent
   }

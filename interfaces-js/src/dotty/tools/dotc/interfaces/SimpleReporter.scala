@@ -6,7 +6,10 @@ package dotty.tools.dotc.interfaces
  *  returned by the compiler yourself.
  *
  *  See the method `process` of `dotty.tools.dotc.Driver` for more information.
- */trait SimpleReporter { /** Report a diagnostic.
- *  @param diag the diagnostic message to report
- */def report(diag: Diagnostic): Unit
+ */
+trait SimpleReporter {
+  /** Report a diagnostic.
+   * @param diag the diagnostic message to report
+   */
+  def report(diag: Diagnostic): Unit
 }

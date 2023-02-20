@@ -10,9 +10,14 @@ import java.util.Optional
  *
  *  User code should not implement this interface, but it may have to
  *  manipulate objects of this type.
- */trait AbstractFile { /** @return The name of this file, note that two files may have the same name. */def name: String
-  /** @return The path of this file, this might be a virtual path of an unspecified format. */def path: String
+ */
+trait AbstractFile {
+  /** @return The name of this file, note that two files may have the same name. */
+  def name: String
+  /** @return The path of this file, this might be a virtual path of an unspecified format. */
+  def path: String
   /** @return If this is a real file on disk, a `java.io.File` that corresponds to this file.
    *  Otherwise, an empty `Optional`.
-   */def jfile: Optional[File]
+   */
+  def jfile: Optional[File]
 }

@@ -6,7 +6,9 @@ package dotty.tools.dotc.interfaces
  *  these events.
  *
  *  See the method `process` of `dotty.tools.dotc.Driver` for more information.
- */trait CompilerCallback { /** Called when a class has been generated.
+ */
+trait CompilerCallback {
+  /** Called when a class has been generated.
  *
  *  @param source         The source file corresponding to this class.
  *                        Example: ./src/library/scala/collection/Seq.scala
@@ -14,12 +16,14 @@ package dotty.tools.dotc.interfaces
  *                        Example: ./scala/collection/Seq$.class
  *  @param className      The name of this class.
  *                        Example: scala.collection.Seq$
- */def onClassGenerated(source: SourceFile, generatedClass: AbstractFile, className: String): Unit =  {
+ */
+  def onClassGenerated(source: SourceFile, generatedClass: AbstractFile, className: String): Unit =  {
 }
   /** Called when every class for this file has been generated.
    *
    *  @param source         The source file.
    *                        Example: ./src/library/scala/collection/Seq.scala
-   */def onSourceCompiled(source: SourceFile): Unit =  {
+   */
+  def onSourceCompiled(source: SourceFile): Unit =  {
   }
 }

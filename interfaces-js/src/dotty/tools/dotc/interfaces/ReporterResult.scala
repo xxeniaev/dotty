@@ -4,8 +4,14 @@ package dotty.tools.dotc.interfaces
  *
  *  User code should not implement this interface, but it may have to
  *  manipulate objects of this type.
- */trait ReporterResult { /** @return Have we emitted any error? */def hasErrors: Boolean
-  /** @return Number of errors that have been emitted */def errorCount: Int
-  /** @return Have we emitted any warning ? */def hasWarnings: Boolean
-  /** @return Number of warnings that have been emitted */def warningCount: Int
+ */
+trait ReporterResult {
+  /** @return Have we emitted any error? */
+  def hasErrors: Boolean
+  /** @return Number of errors that have been emitted */
+  def errorCount: Int
+  /** @return Have we emitted any warning ? */
+  def hasWarnings: Boolean
+  /** @return Number of warnings that have been emitted */
+  def warningCount: Int
 }

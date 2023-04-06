@@ -827,6 +827,7 @@ object Build {
     .dependsOn(`scala3-library-js`)
     .dependsOn(`tasty-core-js`)
     .settings(
+      (Compile / unmanagedSourceDirectories) += baseDirectory.value / "js",
       target := baseDirectory.value / "target-js",
       (Compile / mainClass) := Some("dotty.tools.dotc.Main"),
       scalaJSUseMainModuleInitializer := true,

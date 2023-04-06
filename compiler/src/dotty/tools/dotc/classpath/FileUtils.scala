@@ -78,7 +78,4 @@ object FileUtils {
   def mayBeValidPackage(dirName: String): Boolean =
     (dirName != "META-INF") && (dirName != "") && (dirName.charAt(0) != '.')
 
-  def mkFileFilter(f: JFile => Boolean): FileFilter = new FileFilter {
-    def accept(pathname: JFile): Boolean = f(pathname)
-  }
 }

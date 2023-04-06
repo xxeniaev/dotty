@@ -5,12 +5,11 @@ package dotty.tools.dotc.classpath
 
 import scala.language.unsafeNulls
 
-import java.io.{File => JFile}
 import java.net.URL
 import java.nio.file.{FileSystems, Files}
 
 import dotty.tools.dotc.classpath.PackageNameUtils.{packageContains, separatePkgAndClassNames}
-import dotty.tools.io.{AbstractFile, PlainFile, ClassPath, ClassRepresentation, EfficientClassPath, JDK9Reflectors}
+import dotty.tools.io.{AbstractFile, PlainFile, PlatformFile, ClassPath, ClassRepresentation, EfficientClassPath, JDK9Reflectors}
 import FileUtils._
 import PlainFile.toPlainFile
 
@@ -81,18 +80,18 @@ trait DirectoryLookup[FileEntryType <: ClassRepresentation] extends EfficientCla
   }
 }
 
-trait JFileDirectoryLookup[FileEntryType <: ClassRepresentation] extends DirectoryLookup[FileEntryType] {
-  type F = JFile
+trait PlatformFileDirectoryLookup[FileEntryType <: ClassRepresentation] extends DirectoryLookup[FileEntryType] {
+  type F = PlatformFile
 
-  protected def emptyFiles: Array[JFile] = Array.empty
-  protected def getSubDir(packageDirName: String): Option[JFile] = {
-    val packageDir = new JFile(dir, packageDirName)
+  protected def emptyFiles: Array[PlatformFile] = Array.empty
+  protected def getSubDir(packageDirName: String): Option[PlatformFile] = {
+    val packageDir = PlatformFile(dir, packageDirName)
     if (packageDir.exists && packageDir.isDirectory) Some(packageDir)
     else None
   }
-  protected def listChildren(dir: JFile, filter: Option[JFile => Boolean]): Array[JFile] = {
+  protected def listChildren(dir: PlatformFile, filter: Option[PlatformFile => Boolean]): Array[PlatformFile] = {
     val listing = filter match {
-      case Some(f) => dir.listFiles(mkFileFilter(f))
+      case Some(f) => dir.listFiles(f)
       case None => dir.listFiles()
     }
 
@@ -108,16 +107,16 @@ trait JFileDirectoryLookup[FileEntryType <: ClassRepresentation] extends Directo
       // Note this behaviour can be enabled in javac with `javac -XDsortfiles`, but that's only
       // intended to improve determinism of the compiler for compiler hackers.
       java.util.Arrays.sort(listing,
-        new java.util.Comparator[JFile] {
-          def compare(o1: JFile, o2: JFile) = o1.getName.compareTo(o2.getName)
+        new java.util.Comparator[PlatformFile] {
+          def compare(o1: PlatformFile, o2: PlatformFile) = o1.getName.compareTo(o2.getName)
         })
       listing
     }
     else Array()
   }
-  protected def getName(f: JFile): String = f.getName
-  protected def toAbstractFile(f: JFile): AbstractFile = f.toPath.toPlainFile
-  protected def isPackage(f: JFile): Boolean = f.isPackage
+  protected def getName(f: PlatformFile): String = f.getName
+  protected def toAbstractFile(f: PlatformFile): AbstractFile = f.toPath.toPlainFile
+  protected def isPackage(f: PlatformFile): Boolean = f.isPackage
 
   assert(dir != null, "Directory file in DirectoryFileLookup cannot be null")
 
@@ -273,12 +272,12 @@ final class CtSymClassPath(ctSym: java.nio.file.Path, release: Int) extends Clas
   }
 }
 
-case class DirectoryClassPath(dir: JFile) extends JFileDirectoryLookup[ClassFileEntryImpl] with NoSourcePaths {
+case class DirectoryClassPath(dir: PlatformFile) extends PlatformFileDirectoryLookup[ClassFileEntryImpl] with NoSourcePaths {
   override def findClass(className: String): Option[ClassRepresentation] = findClassFile(className) map ClassFileEntryImpl.apply
 
   def findClassFile(className: String): Option[AbstractFile] = {
     val relativePath = FileUtils.dirPath(className)
-    val classFile = new JFile(dir, relativePath + ".class")
+    val classFile = new PlatformFile(dir, relativePath + ".class")
     if (classFile.exists) {
       Some(classFile.toPath.toPlainFile)
     }
@@ -286,23 +285,23 @@ case class DirectoryClassPath(dir: JFile) extends JFileDirectoryLookup[ClassFile
   }
 
   protected def createFileEntry(file: AbstractFile): ClassFileEntryImpl = ClassFileEntryImpl(file)
-  protected def isMatchingFile(f: JFile): Boolean = f.isClass
+  protected def isMatchingFile(f: PlatformFile): Boolean = f.isClass
 
   private[dotty] def classes(inPackage: PackageName): Seq[ClassFileEntry] = files(inPackage)
 }
 
-case class DirectorySourcePath(dir: JFile) extends JFileDirectoryLookup[SourceFileEntryImpl] with NoClassPaths {
+case class DirectorySourcePath(dir: PlatformFile) extends PlatformFileDirectoryLookup[SourceFileEntryImpl] with NoClassPaths {
   def asSourcePathString: String = asClassPathString
 
   protected def createFileEntry(file: AbstractFile): SourceFileEntryImpl = SourceFileEntryImpl(file)
-  protected def isMatchingFile(f: JFile): Boolean = endsScalaOrJava(f.getName)
+  protected def isMatchingFile(f: PlatformFile): Boolean = endsScalaOrJava(f.getName)
 
   override def findClass(className: String): Option[ClassRepresentation] = findSourceFile(className) map SourceFileEntryImpl.apply
 
   private def findSourceFile(className: String): Option[AbstractFile] = {
     val relativePath = FileUtils.dirPath(className)
     val sourceFile = LazyList("scala", "java")
-      .map(ext => new JFile(dir, relativePath + "." + ext))
+      .map(ext => new PlatformFile(dir, relativePath + "." + ext))
       .collectFirst { case file if file.exists() => file }
 
     sourceFile.map(_.toPath.toPlainFile)

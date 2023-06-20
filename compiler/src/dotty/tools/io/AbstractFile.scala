@@ -11,6 +11,7 @@ import java.io.{
   IOException, InputStream, OutputStream, BufferedOutputStream,
   ByteArrayOutputStream
 }
+import dotty.tools.io.{AbstractFile, PlainFile, PlatformFile, ClassPath, ClassRepresentation, EfficientClassPath, JDK9Reflectors}
 import java.net.URL
 import java.nio.file.{FileAlreadyExistsException, Files, Paths}
 
@@ -108,7 +109,7 @@ abstract class AbstractFile extends Iterable[AbstractFile] {
   def container : AbstractFile
 
   /** Returns the underlying File if any and null otherwise. */
-  def file: JFile = try {
+  def file: PlatformFile = try {
     if (jpath == null) null
     else jpath.toFile
   } catch {

@@ -9,6 +9,7 @@ import Contexts._
 import Decorators.em
 
 import dotty.tools.dotc.report
+import dotty.tools.io.PlatformURI
 
 import dotty.tools.dotc.util.{SourceFile, SourcePosition}
 import dotty.tools.dotc.util.Spans.Span
@@ -27,8 +28,8 @@ class JSPositions()(using Context) {
         Nil
       } else {
         try {
-          val from = new URI(uris.head)
-          val to = uris.lift(1).map(str => new URI(str))
+          val from = PlatformURI(uris.head)
+          val to = uris.lift(1).map(str => PlatformURI(str))
           URIMap(from, to) :: Nil
         } catch {
           case e: URISyntaxException =>
@@ -80,7 +81,7 @@ class JSPositions()(using Context) {
     private def convert(dotcSource: SourceFile): ir.Position.SourceFile = {
       dotcSource.file.file match {
         case null =>
-          new java.net.URI(
+          PlatformURI(
               "virtualfile",        // Pseudo-Scheme
               dotcSource.file.path, // Scheme specific part
               null                  // Fragment
@@ -98,5 +99,5 @@ class JSPositions()(using Context) {
 }
 
 object JSPositions {
-  final case class URIMap(from: URI, to: Option[URI])
+  final case class URIMap(from: PlatformURI, to: Option[PlatformURI])
 }

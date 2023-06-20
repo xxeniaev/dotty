@@ -14,6 +14,7 @@ import java.nio.file.attribute.{BasicFileAttributes, FileTime}
 import java.io.IOException
 import scala.jdk.CollectionConverters._
 import scala.util.Random.alphanumeric
+import dotty.tools.io.PlatformPath
 
 /** An abstraction for filesystem paths.  The differences between
  *  Path, File, and Directory are primarily to communicate intent.
@@ -53,7 +54,7 @@ object Path {
   def roots: List[Path] = FileSystems.getDefault.getRootDirectories.iterator().asScala.map(Path.apply).toList
 
   def apply(path: String): Path = apply(new java.io.File(path).toPath)
-  def apply(jpath: JPath): Path = try {
+  def apply(jpath: PlatformPath): Path = try {
     if (Files.isRegularFile(jpath)) new File(jpath)
     else if (Files.isDirectory(jpath)) new Directory(jpath)
     else new Path(jpath)
@@ -70,7 +71,7 @@ import Path._
  *
  *  ''Note:  This library is considered experimental and should not be used unless you know what you are doing.''
  */
-class Path private[io] (val jpath: JPath) {
+class Path private[io] (val jpath: PlatformPath) {
   val separator: Char = java.io.File.separatorChar
   val separatorStr: String = java.io.File.separator
 

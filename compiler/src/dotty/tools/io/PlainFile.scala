@@ -7,6 +7,7 @@ package dotty.tools
 package io
 
 import scala.language.unsafeNulls
+import dotty.tools.io.PlatformPath
 
 import java.io.{InputStream, OutputStream}
 import java.nio.file.{InvalidPathException, Paths}
@@ -122,6 +123,6 @@ class PlainFile(val givenPath: Path) extends AbstractFile {
 }
 
 object PlainFile {
-  extension (jPath: JPath)
+  extension (jPath: PlatformPath)
     def toPlainFile = new PlainFile(new Path(jPath))
 }

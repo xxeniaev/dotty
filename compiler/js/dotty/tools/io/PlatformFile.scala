@@ -6,7 +6,11 @@ class PlatformFile {
   def isDirectory: Boolean = ???
   def listFiles(): Array[PlatformFile] = ???
   def listFiles(filter: PlatformFile => Boolean): Array[PlatformFile] = ???
-  def getName(): String = ???
+  def getName: String = ???
+  def getPath: String = ???
+  def toPath: PlatformPath = ???
+  def isPackage: Boolean = ???
+  def toURI: PlatformURI = ???
 }
 
 object PlatformFile {

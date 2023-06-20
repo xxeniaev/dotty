@@ -15,6 +15,7 @@ import scala.annotation.tailrec
 import dotty.tools.io.{AbstractFile, ClassPath, ClassRepresentation, FileZipArchive, ManifestResources}
 import dotty.tools.dotc.core.Contexts._
 import FileUtils._
+import dotty.tools.io.{PlatformPath, PlatformFile}
 
 /**
  * A trait providing an optional cache for classpath entries obtained from zip and jar files.
@@ -40,7 +41,7 @@ sealed trait ZipAndJarFileLookupFactory {
  * It should be the only way of creating them as it provides caching.
  */
 object ZipAndJarClassPathFactory extends ZipAndJarFileLookupFactory {
-  private case class ZipArchiveClassPath(zipFile: File, override val release: Option[String])
+  private case class ZipArchiveClassPath(zipFile: PlatformFile, override val release: Option[String])
     extends ZipArchiveFileLookup[ClassFileEntryImpl]
     with NoSourcePaths {
 
@@ -182,7 +183,7 @@ final class FileBasedCache[T] {
   private case class Stamp(lastModified: FileTime, fileKey: Object)
   private val cache = collection.mutable.Map.empty[java.nio.file.Path, (Stamp, T)]
 
-  def getOrCreate(path: java.nio.file.Path, create: () => T): T = cache.synchronized {
+  def getOrCreate(path: PlatformPath, create: () => T): T = cache.synchronized {
     val attrs = Files.readAttributes(path, classOf[BasicFileAttributes])
     val lastModified = attrs.lastModifiedTime()
     // only null on some platforms, but that's okay, we just use the last modified timestamp as our stamp

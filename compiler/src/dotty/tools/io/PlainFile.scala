@@ -15,14 +15,15 @@ import java.nio.file.{InvalidPathException, Paths}
 /** ''Note:  This library is considered experimental and should not be used unless you know what you are doing.'' */
 class PlainDirectory(givenPath: Directory) extends PlainFile(givenPath) {
   override def isDirectory: Boolean = true
-  override def iterator(): Iterator[PlainFile] = givenPath.list.filter(_.exists).map(new PlainFile(_))
+  override def iterator(): Iterator[PlainFile] =
+    givenPath.list.filter(_.exists).map(new PlainFile(_))
   override def delete(): Unit = givenPath.deleteRecursively()
 }
 
 /** This class implements an abstract file backed by a File.
- *
- * ''Note:  This library is considered experimental and should not be used unless you know what you are doing.''
- */
+  *
+  * ''Note:  This library is considered experimental and should not be used unless you know what you are doing.''
+  */
 class PlainFile(val givenPath: Path) extends AbstractFile {
   assert(path ne null)
 
@@ -30,7 +31,7 @@ class PlainFile(val givenPath: Path) extends AbstractFile {
 
   def jpath: JPath = givenPath.jpath
 
-  override def underlyingSource  = {
+  override def underlyingSource = {
     val fileSystem = jpath.getFileSystem
     fileSystem.provider().getScheme match {
       case "jar" =>
@@ -38,7 +39,13 @@ class PlainFile(val givenPath: Path) extends AbstractFile {
         if (fileStores.hasNext) {
           val jarPath = fileStores.next().name
           try {
-            Some(new PlainFile(new Path(Paths.get(jarPath.stripSuffix(fileSystem.getSeparator)))))
+            Some(
+              new PlainFile(
+                new Path(
+                  Paths.get(jarPath.stripSuffix(fileSystem.getSeparator))
+                )
+              )
+            )
           } catch {
             case _: InvalidPathException =>
               None
@@ -48,12 +55,21 @@ class PlainFile(val givenPath: Path) extends AbstractFile {
         if (jpath.getNameCount > 2 && jpath.startsWith("/modules")) {
           // TODO limit this to OpenJDK based JVMs?
           val moduleName = jpath.getName(1)
-          Some(new PlainFile(new Path(Paths.get(System.getProperty("java.home"), "jmods", moduleName.toString + ".jmod"))))
+          Some(
+            new PlainFile(
+              new PlatformPath(
+                PlatformPaths.get(
+                  System.getProperty("java.home"),
+                  "jmods",
+                  moduleName.toString + ".jmod"
+                )
+              )
+            )
+          )
         } else None
       case _ => None
     }
   }
-
 
   /** Returns the name of this abstract file. */
   def name: String = givenPath.name
@@ -90,20 +106,20 @@ class PlainFile(val givenPath: Path) extends AbstractFile {
     // between the call to `list` and the iteration. This saves a call to `exists`.
     def existsFast(path: Path) = path match {
       case (_: Directory | _: File) => true
-      case _ => path.exists
+      case _                        => path.exists
     }
     givenPath.toDirectory.list.filter(existsFast).map(new PlainFile(_))
   }
 
-  /**
-   * Returns the abstract file in this abstract directory with the
-   * specified name. If there is no such file, returns null. The
-   * argument "directory" tells whether to look for a directory or
-   * or a regular file.
-   */
+  /** Returns the abstract file in this abstract directory with the
+    * specified name. If there is no such file, returns null. The
+    * argument "directory" tells whether to look for a directory or
+    * or a regular file.
+    */
   def lookupName(name: String, directory: Boolean): AbstractFile = {
     val child = givenPath / name
-    if ((child.isDirectory && directory) || (child.isFile && !directory)) new PlainFile(child)
+    if ((child.isDirectory && directory) || (child.isFile && !directory))
+      new PlainFile(child)
     else null
   }
 
@@ -116,13 +132,13 @@ class PlainFile(val givenPath: Path) extends AbstractFile {
     else if (givenPath.isDirectory) givenPath.toDirectory.deleteRecursively()
 
   /** Returns a plain file with the given name. It does not
-   *  check that it exists.
-   */
+    *  check that it exists.
+    */
   def lookupNameUnchecked(name: String, directory: Boolean): AbstractFile =
     new PlainFile(givenPath / name)
 }
 
 object PlainFile {
-  extension (jPath: PlatformPath)
-    def toPlainFile = new PlainFile(new Path(jPath))
+  extension(jPath: PlatformPath)
+  def toPlainFile = new PlainFile(new Path(jPath))
 }

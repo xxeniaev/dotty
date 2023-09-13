@@ -5,7 +5,7 @@ import scala.language.unsafeNulls
 import scala.annotation.tailrec
 import scala.io.Source
 import scala.util.Try
-import java.io.File
+import dotty.tools.io.PlatformFile
 import java.lang.Thread
 import scala.annotation.internal.sharable
 import dotty.tools.dotc.util.ClasspathFromClassloader
@@ -13,7 +13,7 @@ import dotty.tools.runner.ObjectRunner
 import dotty.tools.dotc.config.Properties.envOrNone
 import dotty.tools.io.Jar
 import dotty.tools.runner.ScalaClassLoader
-import java.nio.file.Paths
+import dotty.tools.io.PlatformPaths
 import dotty.tools.dotc.config.CommandLineParser
 import dotty.tools.scripting.{StringDriver, StringDriverException, ScriptingException}
 
@@ -98,7 +98,7 @@ case class Settings(
 
 object MainGenericRunner {
 
-  val classpathSeparator = File.pathSeparator
+  val classpathSeparator = PlatformFile.pathSeparator
 
   def processClasspath(cp: String, tail: List[String]): (List[String], List[String]) =
     val cpEntries = cp.split(classpathSeparator).toList
@@ -194,7 +194,7 @@ object MainGenericRunner {
         None
 
       case ExecuteMode.PossibleRun =>
-        val newClasspath = (settings.classPath :+ ".").flatMap(_.split(classpathSeparator).filter(_.nonEmpty)).map(File(_).toURI.toURL)
+        val newClasspath = (settings.classPath :+ ".").flatMap(_.split(classpathSeparator).filter(_.nonEmpty)).map(PlatformFile(_).toURI.toURL)
         import dotty.tools.runner.RichClassLoader._
         val newClassLoader = ScalaClassLoader.fromURLsParallelCapable(newClasspath)
         val targetToRun = settings.possibleEntryPaths.to(LazyList).find { entryPath =>
@@ -211,22 +211,22 @@ object MainGenericRunner {
 
       case ExecuteMode.Run =>
         val scalaClasspath = ClasspathFromClassloader(Thread.currentThread().getContextClassLoader).split(classpathSeparator)
-        val newClasspath = (settings.classPath.flatMap(_.split(classpathSeparator).filter(_.nonEmpty)) ++ removeCompiler(scalaClasspath) :+ ".").map(File(_).toURI.toURL)
+        val newClasspath = (settings.classPath.flatMap(_.split(classpathSeparator).filter(_.nonEmpty)) ++ removeCompiler(scalaClasspath) :+ ".").map(PlatformFile(_).toURI.toURL)
         ObjectRunner.runAndCatch(newClasspath, settings.targetToRun, settings.residualArgs).flatMap {
           case ex: ClassNotFoundException if ex.getMessage == settings.targetToRun =>
             val file = settings.targetToRun
             Jar(file).mainClass match
               case Some(mc) =>
-                ObjectRunner.runAndCatch(newClasspath :+ File(file).toURI.toURL, mc, settings.residualArgs)
+                ObjectRunner.runAndCatch(newClasspath :+ PlatformFile(file).toURI.toURL, mc, settings.residualArgs)
               case None =>
                 Some(IllegalArgumentException(s"No main class defined in manifest in jar: $file"))
           case ex => Some(ex)
         }
 
       case ExecuteMode.Script =>
-        val targetScript = Paths.get(settings.targetScript).toFile
+        val targetScript = PlatformPaths.get(settings.targetScript).toFile
         val targetJar = settings.targetScript.replaceAll("[.][^\\/]*$", "")+".jar"
-        val precompiledJar = File(targetJar)
+        val precompiledJar = PlatformFile(targetJar)
         val mainClass = if !precompiledJar.isFile then "" else Jar(targetJar).mainClass.getOrElse("")
         val jarIsValid = mainClass.nonEmpty && precompiledJar.lastModified >= targetScript.lastModified && settings.save
         if jarIsValid then
@@ -235,7 +235,7 @@ object MainGenericRunner {
           val scalaClasspath = ClasspathFromClassloader(Thread.currentThread().getContextClassLoader).split(classpathSeparator)
           val newClasspath = (settings.classPath.flatMap(_.split(classpathSeparator).filter(_.nonEmpty)) ++ removeCompiler(scalaClasspath) :+ ".").map(File(_).toURI.toURL)
           if mainClass.nonEmpty then
-            ObjectRunner.runAndCatch(newClasspath :+ File(targetJar).toURI.toURL, mainClass, settings.scriptArgs)
+            ObjectRunner.runAndCatch(newClasspath :+ PlatformFile(targetJar).toURI.toURL, mainClass, settings.scriptArgs)
           else
             Some(IllegalArgumentException(s"No main class defined in manifest in jar: $precompiledJar"))
 

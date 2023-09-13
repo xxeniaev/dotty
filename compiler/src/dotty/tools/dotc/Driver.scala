@@ -10,6 +10,7 @@ import dotty.tools.io.AbstractFile
 import reporting._
 import core.Decorators._
 import config.Feature
+import dotty.tools.io.PlatformFile
 
 import scala.util.control.NonFatal
 import fromtasty.{TASTYCompiler, TastyFileUtil}
@@ -111,7 +112,7 @@ class Driver {
         .distinct
       val ctx1 = ctx.fresh
       val fullClassPath =
-        (newEntries :+ ctx.settings.classpath.value).mkString(java.io.File.pathSeparator.nn)
+        (newEntries :+ ctx.settings.classpath.value).mkString(PlatformFile.pathSeparator.nn)
       ctx1.setSetting(ctx1.settings.classpath, fullClassPath)
     else ctx
 

@@ -26,11 +26,10 @@ import dotty.tools.io.{
 }
 import FileUtils.*
 import PlainFile.toPlainFile
-Files
-
 import scala.jdk.CollectionConverters.*
 import scala.collection.immutable.ArraySeq
 import scala.util.control.NonFatal
+import scalajs.js.internal.UnitOps.unitOrOps
 
 /** A trait allowing to look for classpath entries in directories. It provides common logic for
   * classes handling class and source files.
@@ -201,7 +200,7 @@ object JrtClassPath {
 final class JrtClassPath(fs: java.nio.file.FileSystem)
     extends ClassPath
     with NoSourcePaths {
-  import java.nio.file.Path, java.nio.file._
+  import dotty.tools.io.PlatformPath, java.nio.file._
   type F = Path
   private val dir: Path = fs.getPath("/packages")
 
@@ -279,12 +278,13 @@ final class JrtClassPath(fs: java.nio.file.FileSystem)
 final class CtSymClassPath(ctSym: java.nio.file.Path, release: Int)
     extends ClassPath
     with NoSourcePaths {
-  import java.nio.file.Path, java.nio.file._
+  import dotty.tools.io.PlatformPath, java.nio.file._
 
   private val fileSystem: FileSystem =
     FileSystems.newFileSystem(ctSym, null: ClassLoader)
   private val root: Path = fileSystem.getRootDirectories.iterator.next
-  private val roots = PlatformFiles.newDirectoryStream(root).iterator.asScala.toList
+  private val roots =
+    PlatformFiles.newDirectoryStream(root).iterator.asScala.toList
 
   // http://mail.openjdk.java.net/pipermail/compiler-dev/2018-March/011737.html
   private def codeFor(major: Int): String =

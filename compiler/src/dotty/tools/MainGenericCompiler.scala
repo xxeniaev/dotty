@@ -5,7 +5,7 @@ import scala.language.unsafeNulls
 import scala.annotation.tailrec
 import scala.io.Source
 import scala.util.Try
-import java.io.File
+import dotty.tools.io.PlatformFile
 import java.lang.Thread
 import scala.annotation.internal.sharable
 import dotty.tools.dotc.util.ClasspathFromClassloader
@@ -13,7 +13,7 @@ import dotty.tools.runner.ObjectRunner
 import dotty.tools.dotc.config.Properties.envOrNone
 import dotty.tools.io.Jar
 import dotty.tools.runner.ScalaClassLoader
-import java.nio.file.Paths
+import dotty.tools.io.PlatformPaths
 import dotty.tools.dotc.config.CommandLineParser
 import dotty.tools.scripting.StringDriver
 
@@ -87,7 +87,7 @@ case class CompileSettings(
 
 object MainGenericCompiler {
 
-  val classpathSeparator = File.pathSeparator
+  val classpathSeparator = PlatformFile.pathSeparator
 
   @sharable val javaOption = raw"""-J(.*)""".r
   @sharable val javaPropOption = raw"""-D(.+?)=(.?)""".r

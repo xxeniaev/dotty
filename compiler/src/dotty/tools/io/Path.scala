@@ -15,6 +15,8 @@ import java.io.IOException
 import scala.jdk.CollectionConverters._
 import scala.util.Random.alphanumeric
 import dotty.tools.io.PlatformPath
+import scalajs.js.internal.UnitOps.unitOrOps
+import math.Ordered.orderingToOrdered
 
 /** An abstraction for filesystem paths.  The differences between
  *  Path, File, and Directory are primarily to communicate intent.
@@ -53,7 +55,7 @@ object Path {
 
   def roots: List[Path] = FileSystems.getDefault.getRootDirectories.iterator().asScala.map(Path.apply).toList
 
-  def apply(path: String): Path = apply(new java.io.File(path).toPath)
+  def apply(path: String): Path = apply(new PlatformFile(path).toPath)
   def apply(jpath: PlatformPath): Path = try {
     if (Files.isRegularFile(jpath)) new File(jpath)
     else if (Files.isDirectory(jpath)) new Directory(jpath)
@@ -72,8 +74,8 @@ import Path._
  *  ''Note:  This library is considered experimental and should not be used unless you know what you are doing.''
  */
 class Path private[io] (val jpath: PlatformPath) {
-  val separator: Char = java.io.File.separatorChar
-  val separatorStr: String = java.io.File.separator
+  val separator: Char = PlatformFile.separatorChar
+  val separatorStr: String = PlatformFile.separator
 
   // conversions
   def toFile: File = new File(jpath)
@@ -185,17 +187,17 @@ class Path private[io] (val jpath: PlatformPath) {
   // Boolean tests
   def canRead: Boolean = Files.isReadable(jpath)
   def canWrite: Boolean = Files.isWritable(jpath)
-  def exists: Boolean = try Files.exists(jpath)  catch { case ex: SecurityException => false }
-  def isFile: Boolean = try Files.isRegularFile(jpath)  catch { case ex: SecurityException => false }
+  def exists: Boolean = try PlatformFiles.exists(jpath)  catch { case ex: SecurityException => false }
+  def isFile: Boolean = try PlatformFiles.isRegularFile(jpath)  catch { case ex: SecurityException => false }
   def isDirectory: Boolean =
-    try Files.isDirectory(jpath)
+    try PlatformFiles.isDirectory(jpath)
     catch { case ex: SecurityException => jpath.toString == "." }
   def isAbsolute: Boolean = jpath.isAbsolute()
   def isEmpty: Boolean = path.length == 0
 
   // Information
-  def lastModified: FileTime = Files.getLastModifiedTime(jpath)
-  def length: Long = Files.size(jpath)
+  def lastModified: PlatformFileTime = PlatformFiles.getLastModifiedTime(jpath)
+  def length: Long = PlatformFiles.size(jpath)
 
   // Boolean path comparisons
   def endsWith(other: Path): Boolean = segments endsWith other.segments
@@ -204,7 +206,7 @@ class Path private[io] (val jpath: PlatformPath) {
 
   // creations
   def createDirectory(force: Boolean = true, failIfExists: Boolean = false): Directory = {
-    val res = tryCreate(if (force) Files.createDirectories(jpath) else Files.createDirectory(jpath))
+    val res = tryCreate(if (force) PlatformFiles.createDirectories(jpath) else PlatformFiles.createDirectory(jpath))
     if (!res && failIfExists && exists) fail("Directory '%s' already exists." format name)
     else if (isDirectory) toDirectory
     else new Directory(jpath)

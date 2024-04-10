@@ -139,6 +139,7 @@ class PlainFile(val givenPath: Path) extends AbstractFile {
 }
 
 object PlainFile {
-  extension(jPath: PlatformPath)
-  def toPlainFile = new PlainFile(new Path(jPath))
+  extension(jPath: PlatformPath) {
+    def toPlainFile = new PlainFile(new Path(jPath))
+  }
 }

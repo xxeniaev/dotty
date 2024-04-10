@@ -5,15 +5,17 @@ import scala.language.unsafeNulls
 import scala.annotation.tailrec
 import scala.io.Source
 import scala.util.Try
-import dotty.tools.io.PlatformFile
 import java.lang.Thread
 import scala.annotation.internal.sharable
 import dotty.tools.dotc.util.ClasspathFromClassloader
 import dotty.tools.runner.ObjectRunner
 import dotty.tools.dotc.config.Properties.envOrNone
-import dotty.tools.io.Jar
+import dotty.tools.io.{
+  Jar,
+  PlatformPaths,
+  PlatformFile
+}
 import dotty.tools.runner.ScalaClassLoader
-import dotty.tools.io.PlatformPaths
 import dotty.tools.dotc.config.CommandLineParser
 import dotty.tools.scripting.{StringDriver, StringDriverException, ScriptingException}
 

@@ -18,7 +18,7 @@ import Denotations.StaleSymbol
 import util.Spans.Span
 import util.SourceFile
 import transform.SymUtils._
-
+import dotty.tools.io.{PlatformPath, PlatformPaths}
 import scala.collection.mutable
 import scala.annotation.{ threadUnsafe => tu, tailrec }
 import scala.PartialFunction.condOpt
@@ -481,12 +481,12 @@ object ExtractSemanticDB:
     symbolInfos: List[SymbolInformation],
     synthetics: List[Synthetic],
   )(using Context): Unit =
-    def absolutePath(path: Path): Path = path.toAbsolutePath.normalize
+    def absolutePath(path: PlatformPath): PlatformPath = path.toAbsolutePath.normalize
     val semanticdbTarget =
       val semanticdbTargetSetting = ctx.settings.semanticdbTarget.value
       absolutePath(
         if semanticdbTargetSetting.isEmpty then ctx.settings.outputDir.value.jpath
-        else Paths.get(semanticdbTargetSetting)
+        else PlatformPaths.get(semanticdbTargetSetting)
       )
     val relPath = SourceFile.relativePath(source, ctx.settings.sourceroot.value)
     val outpath = semanticdbTarget

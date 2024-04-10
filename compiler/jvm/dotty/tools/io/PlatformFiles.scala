@@ -6,6 +6,6 @@ class PlatformFiles {
 }
 
 object PlatformFiles {
-
+  def list(dir: PlatformPath): Stream[PlatformPath] = ???
 }
 

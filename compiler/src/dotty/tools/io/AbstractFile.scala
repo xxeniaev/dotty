@@ -11,7 +11,7 @@ import java.io.{
   IOException, InputStream, OutputStream, BufferedOutputStream,
   ByteArrayOutputStream
 }
-import dotty.tools.io.{AbstractFile, PlainFile, PlatformFile, ClassPath, ClassRepresentation, EfficientClassPath, JDK9Reflectors}
+import dotty.tools.io.{AbstractFile, PlainFile, PlatformFile, PlatformFiles, PlatformURL, PlatformPaths, ClassPath, ClassRepresentation, EfficientClassPath, JDK9Reflectors}
 import java.net.URL
 import java.nio.file.{FileAlreadyExistsException, Files, Paths}
 
@@ -51,9 +51,9 @@ object AbstractFile {
    * abstract regular file or an abstract directory, respectively, backed by it.
    * Otherwise, returns `null`.
    */
-  def getURL(url: URL): AbstractFile =
+  def getURL(url: PlatformURL): AbstractFile =
     if (url.getProtocol != "file") null
-    else new PlainFile(new Path(Paths.get(url.toURI)))
+    else new PlainFile(new Path(PlatformPaths.get(url.toURI)))
 
   def getResources(url: URL): AbstractFile = ZipArchive fromManifestURL url
 }
@@ -117,14 +117,14 @@ abstract class AbstractFile extends Iterable[AbstractFile] {
   }
 
   /** Returns the underlying Path if any and null otherwise. */
-  def jpath: JPath
+  def jpath: PlatformPath
 
   /** An underlying source, if known.  Mostly, a zip/jar file. */
   def underlyingSource: Option[AbstractFile] = None
 
   /** Does this abstract file denote an existing file? */
   def exists: Boolean = {
-    (jpath eq null) || Files.exists(jpath)
+    (jpath eq null) || PlatformFiles.exists(jpath)
   }
 
   /** Does this abstract file represent something which can contain classfiles? */
@@ -157,7 +157,7 @@ abstract class AbstractFile extends Iterable[AbstractFile] {
   /** size of this file if it is a concrete file. */
   def sizeOption: Option[Int] = None
 
-  def toURL: URL = if (jpath == null) null else jpath.toUri.toURL
+  def toURL: PlatformURL = if (jpath == null) null else jpath.toUri.toURL
 
   /** Returns contents of file (if applicable) in a Char array.
    *  warning: use `Global.getSourceFile()` to use the proper
@@ -256,7 +256,7 @@ abstract class AbstractFile extends Iterable[AbstractFile] {
       case null =>
         // the optional exception may be thrown for symlinks, notably /tmp on macOS.
         // isDirectory tests for existing directory. The default behavior is hypothetical isDirectory(jpath, FOLLOW_LINKS).
-        try Files.createDirectories(jpath)
+        try PlatformFiles.createDirectories(jpath)
         catch { case _: FileAlreadyExistsException if Files.isDirectory(jpath) => }
 
         // a race condition in creating the entry after the failed lookup may throw

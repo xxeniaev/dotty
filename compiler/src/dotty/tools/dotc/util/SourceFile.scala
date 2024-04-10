@@ -21,6 +21,7 @@ import java.nio.file.{FileSystemException, NoSuchFileException}
 import java.util.Optional
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.regex.Pattern
+import scalajs.js.internal.UnitOps.unitOrOps
 
 object ScriptSourceFile {
   @sharable private val headerPattern = Pattern.compile("""^(::)?!#.*(\r|\n|\r\n)""", Pattern.MULTILINE)
@@ -77,7 +78,7 @@ class SourceFile(val file: AbstractFile, computeContent: => Array[Char]) extends
 
   override def name: String = file.name
   override def path: String = file.path
-  override def jfile: Optional[JFile] = Optional.ofNullable(file.file)
+  override def jfile: Optional[PlatformFile] = Optional.ofNullable(file.file)
 
   override def equals(that: Any): Boolean =
     (this `eq` that.asInstanceOf[AnyRef]) || {
@@ -228,12 +229,12 @@ object SourceFile {
    */
   def relativePath(source: SourceFile, reference: String): String = {
     val file = source.file
-    val jpath = file.jpath
+    val jpath: PlatformPath = file.jpath
     if jpath eq null then
       file.path // repl and other custom tests use abstract files with no path
     else
       val sourcePath = jpath.toAbsolutePath.normalize
-      val refPath = java.nio.file.Paths.get(reference).toAbsolutePath.normalize
+      val refPath: PlatformPath = PlatformPaths.get(reference).toAbsolutePath.normalize
 
       if sourcePath.startsWith(refPath) then
         // On Windows we can only relativize paths if root component matches

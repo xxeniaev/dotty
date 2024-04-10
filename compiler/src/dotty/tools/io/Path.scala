@@ -35,7 +35,7 @@ import math.Ordered.orderingToOrdered
  *  ''Note:  This library is considered experimental and should not be used unless you know what you are doing.''
  */
 object Path {
-  def isExtensionJarOrZip(jpath: JPath): Boolean = isExtensionJarOrZip(jpath.getFileName.toString)
+  def isExtensionJarOrZip(jpath: PlatformPath): Boolean = isExtensionJarOrZip(jpath.getFileName.toString)
   def isExtensionJarOrZip(name: String): Boolean = {
     val ext = extension(name)
     ext == "jar" || ext == "zip"

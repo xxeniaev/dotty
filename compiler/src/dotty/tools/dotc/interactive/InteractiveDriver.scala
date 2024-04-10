@@ -10,7 +10,7 @@ import java.nio.file._
 import java.nio.file.attribute.BasicFileAttributes
 import java.nio.charset.StandardCharsets
 import java.util.zip._
-
+import dotty.tools.io.{PlatformFile, PlatformPath, PlatformZipFile, PatformFiles}
 import scala.collection._
 import scala.io.Codec
 
@@ -220,8 +220,8 @@ class InteractiveDriver(val settings: List[String]) extends Driver {
   }
 
   /** Adds the names of the classes that are defined in `file` to `buffer`. */
-  private def classesFromZip(file: File, buffer: mutable.ListBuffer[TypeName]): Unit = {
-    val zipFile = new ZipFile(file)
+  private def classesFromZip(file: PlatformFile, buffer: mutable.ListBuffer[TypeName]): Unit = {
+    val zipFile = PlatformZipFile(file)
     try {
       val entries = zipFile.entries()
       while (entries.hasMoreElements) {
@@ -235,10 +235,10 @@ class InteractiveDriver(val settings: List[String]) extends Driver {
   }
 
   /** Adds the names of the classes that are defined in `dir` to `buffer`. */
-  private def classesFromDir(dir: Path, buffer: mutable.ListBuffer[TypeName]): Unit =
+  private def classesFromDir(dir: PlatformPath, buffer: mutable.ListBuffer[TypeName]): Unit =
     try
-      Files.walkFileTree(dir, new SimpleFileVisitor[Path] {
-        override def visitFile(path: Path, attrs: BasicFileAttributes) = {
+      PatformFiles.walkFileTree(dir, new SimpleFileVisitor[Path] {
+        override def visitFile(path: PlatformPath, attrs: BasicFileAttributes) = {
           if (!attrs.isDirectory) {
             val name = path.getFileName.toString
             if name.endsWith(tastySuffix) then

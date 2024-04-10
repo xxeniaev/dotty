@@ -119,7 +119,7 @@ object Plugin {
 
     def loadDescriptionFromDir(f: Path): Try[String] = {
       val path = f / PluginFile
-      Try(fromFile(new java.io.FileInputStream(path.jpath.toFile), path))
+      Try(fromFile(PlatformFileInputStream(path.jpath.toFile), path))
     }
 
     def loadDescriptionFromJar(jarp: Path): Try[String] = {

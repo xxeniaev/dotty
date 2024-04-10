@@ -1,7 +1,7 @@
 package dotty.tools.io
 
 
-class PlatformDirectoryStream {
+trait PlatformDirectoryStream[T] extends Iterable[T] {
 
 }
 

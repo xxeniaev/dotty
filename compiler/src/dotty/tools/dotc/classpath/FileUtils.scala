@@ -8,7 +8,7 @@ import scala.language.unsafeNulls
 
 import java.io.{File => JFile, FileFilter}
 import java.net.URL
-import dotty.tools.io.AbstractFile
+import dotty.tools.io.{AbstractFile, PlatformFile}
 
 /**
  * Common methods related to Java files and abstract files used in the context of classpath
@@ -32,7 +32,7 @@ object FileUtils {
     def toURLs(default: => Seq[URL] = Seq.empty): Seq[URL] = if (file.file == null) default else Seq(file.toURL)
   }
 
-  extension (file: JFile) {
+  extension (file: PlatformFile) {
     def isPackage: Boolean = file.isDirectory && mayBeValidPackage(file.getName)
 
     def isClass: Boolean = file.isFile && file.getName.endsWith(".class") && !file.getName.endsWith("$class.class")

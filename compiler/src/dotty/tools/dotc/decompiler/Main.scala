@@ -4,7 +4,7 @@ import java.nio.file.Files
 
 import dotty.tools.dotc
 import dotty.tools.dotc.core.Contexts._
-import dotty.tools.io.AbstractFile
+import dotty.tools.io.{AbstractFile, PlatformFiles}
 
 /** Main class of the `dotc -decompiler` decompiler.
  *
@@ -14,7 +14,7 @@ object Main extends dotc.Driver {
   override protected def newCompiler(using Context): dotc.Compiler = {
     assert(ctx.settings.fromTasty.value)
     if (!ctx.settings.outputDir.isDefault)
-      Files.deleteIfExists(ctx.settings.outputDir.value.fileNamed("decompiled.scala").jpath)
+      PlatformFiles.deleteIfExists(ctx.settings.outputDir.value.fileNamed("decompiled.scala").jpath)
     new TASTYDecompiler
   }
 

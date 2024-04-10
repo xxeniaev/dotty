@@ -55,7 +55,7 @@ object PlatformFile {
   def apply(parent: String, child: String): PlatformFile = ???
   def apply(parent: PlatformFile, child: String): PlatformFile = ???
   def apply(uri: PlatformURI): PlatformFile = ???
-
+  val pathSeparator: String = ???
   def listRoots: Array[PlatformFile] = ???
   def createTempFile(prefix: String, suffix: String, directory: PlatformFile): PlatformFile = ???
   def createTempFile(prefix: String, suffix: String): PlatformFile = ???

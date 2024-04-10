@@ -6,6 +6,7 @@ import dotty.tools.dotc.core.Contexts.Context
 import dotty.tools.dotc.core.Flags.*
 import java.nio.file.Path
 import dotty.tools.dotc.util.SourceFile
+import dotty.tools.io.PlatformPath
 
 /** Information about the location of a coverable piece of code.
   *
@@ -22,7 +23,7 @@ final case class Location(
     fullClassName: String,
     classType: String,
     methodName: String,
-    sourcePath: Path
+    sourcePath: PlatformPath
 )
 
 object Location:

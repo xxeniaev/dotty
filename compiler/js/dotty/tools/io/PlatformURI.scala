@@ -1,5 +1,7 @@
 package dotty.tools.io
 
+import java.net.URI
+
 
 class PlatformURI {
   def parseServerAuthority: PlatformURI = ???
@@ -26,7 +28,8 @@ class PlatformURI {
 }
 
 object PlatformURI {
-  def apply(str: String)
+  def create(str: String): PlatformURI = ???
+  def apply(str: String) = ???
   def apply(scheme: String, userInfo: String, host: String, port: Int, path: String, query: String, fragment: String): PlatformURI = ???
   def apply(scheme: String, authority: String, path: String, query: String, fragment: String): PlatformURI = ???
   def apply(scheme: String, host: String, path: String, fragment: String): PlatformURI = ???

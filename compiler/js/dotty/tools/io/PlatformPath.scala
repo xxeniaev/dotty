@@ -1,9 +1,7 @@
 package dotty.tools.io
 
 class PlatformPath {
-  def endsWith(str: String): Boolean = ???
-  def isAbsolute(): Boolean = ???
-  def getFileSystem: FileSystem = ???
+  def getFileSystem: PlatformFileSystem = ???
   def isAbsolute: Boolean = ???
   def getRoot: PlatformPath = ???
   def getFileName: PlatformPath = ???
@@ -21,7 +19,7 @@ class PlatformPath {
   def resolveSibling(other: PlatformPath): PlatformPath = ???
   def resolveSibling(other: String): PlatformPath = ???
   def relativize(other: PlatformPath): PlatformPath = ???
-  def toUri: URI = ???
+  def toUri: PlatformURI = ???
   def toAbsolutePath: PlatformPath = ???
   def toRealPath(options: LinkOption*): PlatformPath = ???
   def toFile: PlatformFile = ???

@@ -3,6 +3,7 @@ package runner
 
 import scala.language.unsafeNulls
 
+import dotty.tools.io.PlatformURL
 import java.lang.ClassLoader
 import java.lang.invoke.{MethodHandles, MethodType}
 import java.lang.reflect.Modifier
@@ -61,7 +62,7 @@ object RichClassLoader {
 object ScalaClassLoader {
   def setContext(cl: ClassLoader) = Thread.currentThread.setContextClassLoader(cl)
 
-  def fromURLsParallelCapable(urls: Seq[URL], parent: ClassLoader | Null = null): URLClassLoader =
+  def fromURLsParallelCapable(urls: Seq[PlatformURL], parent: ClassLoader | Null = null): URLClassLoader =
     new URLClassLoader(urls.toArray, if parent == null then bootClassLoader else parent)
 
   @sharable private[this] val bootClassLoader: ClassLoader =

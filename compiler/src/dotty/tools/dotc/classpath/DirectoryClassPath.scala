@@ -20,12 +20,18 @@ import dotty.tools.io.{
   JPath,
   PlainFile,
   PlatformFile,
+  PlatformFileSystem,
+  PlatformFileSystems,
   PlatformFiles,
   PlatformPath,
+  PlatformPaths,
+  PlatformURI,
   PlatformURL
 }
 import FileUtils.*
 import PlainFile.toPlainFile
+
+import java.io.File
 import scala.jdk.CollectionConverters.*
 import scala.collection.immutable.ArraySeq
 import scala.util.control.NonFatal
@@ -170,15 +176,17 @@ object JrtClassPath {
       release match {
         case Some(v) if v.toInt < currentMajorVersion =>
           try {
-            val ctSym = Paths.get(javaHome).resolve("lib").resolve("ct.sym")
-            if (Files.notExists(ctSym)) None
+            val ctSym =
+              PlatformPaths.get(javaHome).resolve("lib").resolve("ct.sym")
+            if (PlatformFiles.notExists(ctSym)) None
             else Some(new CtSymClassPath(ctSym, v.toInt))
           } catch {
             case NonFatal(_) => None
           }
         case _ =>
           try {
-            val fs = FileSystems.getFileSystem(URI.create("jrt:/"))
+            val fs =
+              PlatformFileSystems.getFileSystem(PlatformURI.create("jrt:/"))
             Some(new JrtClassPath(fs))
           } catch {
             case _: ProviderNotFoundException |
@@ -197,12 +205,12 @@ object JrtClassPath {
   *
   * The implementation assumes that no classes exist in the empty package.
   */
-final class JrtClassPath(fs: java.nio.file.FileSystem)
+final class JrtClassPath(fs: PlatformFileSystem)
     extends ClassPath
     with NoSourcePaths {
-  import dotty.tools.io.PlatformPath, java.nio.file._
+  import java.nio.file._
   type F = Path
-  private val dir: Path = fs.getPath("/packages")
+  private val dir: PlatformPath = fs.getPath("/packages")
 
   // e.g. "java.lang" -> Seq("/modules/java.base")
   private val packageToModuleBases: Map[String, Seq[PlatformPath]] = {
@@ -210,7 +218,7 @@ final class JrtClassPath(fs: java.nio.file.FileSystem)
     def lookup(pack: PlatformPath): Seq[PlatformPath] =
       PlatformFiles
         .list(pack)
-        .iterator()
+        .iterator
         .asScala
         .map(l =>
           if (PlatformFiles.isSymbolicLink(l)) PlatformFiles.readSymbolicLink(l)
@@ -240,7 +248,7 @@ final class JrtClassPath(fs: java.nio.file.FileSystem)
         .flatMap(x =>
           PlatformFiles
             .list(x.resolve(inPackage.dirPathTrailingSlash))
-            .iterator()
+            .iterator
             .asScala
             .filter(_.getFileName.toString.endsWith(".class"))
         )
@@ -275,14 +283,14 @@ final class JrtClassPath(fs: java.nio.file.FileSystem)
 
 /** Implementation `ClassPath` based on the \$JAVA_HOME/lib/ct.sym backing http://openjdk.java.net/jeps/247
   */
-final class CtSymClassPath(ctSym: java.nio.file.Path, release: Int)
+final class CtSymClassPath(ctSym: PlatformPath, release: Int)
     extends ClassPath
     with NoSourcePaths {
-  import dotty.tools.io.PlatformPath, java.nio.file._
+  import java.nio.file._
 
-  private val fileSystem: FileSystem =
-    FileSystems.newFileSystem(ctSym, null: ClassLoader)
-  private val root: Path = fileSystem.getRootDirectories.iterator.next
+  private val fileSystem: PlatformFileSystem =
+    PlatformFileSystems.newFileSystem(ctSym, null: ClassLoader)
+  private val root: PlatformPath = fileSystem.getRootDirectories.iterator.next
   private val roots =
     PlatformFiles.newDirectoryStream(root).iterator.asScala.toList
 
@@ -306,7 +314,7 @@ final class CtSymClassPath(ctSym: java.nio.file.Path, release: Int)
     rootsForRelease.foreach(root =>
       PlatformFiles
         .walk(root)
-        .iterator()
+        .iterator
         .asScala
         .filter(Files.isDirectory(_))
         .foreach { p =>
@@ -372,7 +380,7 @@ final class CtSymClassPath(ctSym: java.nio.file.Path, release: Int)
         .iterator
         .flatMap { p =>
           val path = p.resolve(classSimpleName + ".sig")
-          if (Files.exists(path)) path.toPlainFile :: Nil else Nil
+          if (PlatformFiles.exists(path)) path.toPlainFile :: Nil else Nil
         }
         .take(1)
         .toList
@@ -389,7 +397,7 @@ case class DirectoryClassPath(dir: PlatformFile)
 
   def findClassFile(className: String): Option[AbstractFile] = {
     val relativePath = FileUtils.dirPath(className)
-    val classFile = new PlatformFile(dir, relativePath + ".class")
+    val classFile = PlatformFile(dir, relativePath + ".class")
     if (classFile.exists) {
       Some(classFile.toPath.toPlainFile)
     } else None
@@ -420,8 +428,8 @@ case class DirectorySourcePath(dir: PlatformFile)
   private def findSourceFile(className: String): Option[AbstractFile] = {
     val relativePath = FileUtils.dirPath(className)
     val sourceFile = LazyList("scala", "java")
-      .map(ext => new PlatformFile(dir, relativePath + "." + ext))
-      .collectFirst { case file if file.exists() => file }
+      .map(ext => PlatformFile(dir, relativePath + "." + ext))
+      .collectFirst { case file if file.exists => file }
 
     sourceFile.map(_.toPath.toPlainFile)
   }

@@ -2,6 +2,7 @@ package dotty.tools.io
 
 import java.nio.file.{LinkOption}
 import java.util.List
+import java.util.stream.{Stream => JStream}
 
 
 class PlatformFiles {
@@ -33,13 +34,10 @@ class PlatformFiles {
 
   def delete(path: PlatformPath): Unit = ???
 
-  def deleteIfExists(path: PlatformPath): Boolean = ???
 
   def copy(source: PlatformPath, target: PlatformPath, options: CopyOption*): PlatformPath = ???
 
   def move(source: PlatformPath, target: PlatformPath, options: CopyOption*): PlatformPath = ???
-
-  def readSymbolicLink(link: PlatformPath): PlatformPath = ???
 
   def getFileStore(path: PlatformPath): FileStore = ???
 
@@ -67,7 +65,6 @@ class PlatformFiles {
 
   def setOwner(path: PlatformPath, owner: UserPrincipal): PlatformPath = ???
 
-  def isSymbolicLink(path: PlatformPath): Boolean = ???
 
   def isDirectory(path: PlatformPath, options: LinkOption*): Boolean = ???
 
@@ -129,21 +126,24 @@ class PlatformFiles {
   def lines(path: PlatformPath, cs: Charset): Stream[String] = ???
 
   def lines(path: PlatformPath): Stream[String] = ???
-  }
 }
 
+
 object PlatformFiles {
+  def deleteIfExists(path: PlatformPath): Boolean = ???
   def getLastModifiedTime(path: PlatformPath, options: LinkOption*): PlatformFileTime = ???
   def size(path: PlatformPath): Long = ???
   def isDirectory (path: PlatformPath, options: LinkOption*): Boolean = ???
   def createDirectory (dir: PlatformPath, attrs: FileAttribute[_]*): PlatformPath = ???
   def createDirectories (dir: PlatformPath, attrs: FileAttribute[_]*): PlatformPath = ???
-  def list(dir: PlatformPath): Stream[PlatformPath] = ???
+  def list(dir: PlatformPath): JStream[PlatformPath] = ???
   def newDirectoryStream(dir: PlatformPath): DirectoryStream[PlatformPath] = ???
   def newDirectoryStream(dir: PlatformPath, glob: String): DirectoryStream[PlatformPath] = ???
   def newDirectoryStream(dir: PlatformPath, filter: DirectoryStream.Filter[_ >: PlatformPath]): DirectoryStream[PlatformPath] = ???
-  def walk(start: PlatformPath, maxDepth: Int, options: FileVisitOption*): Stream[PlatformPath] = ???
-  def walk(start: PlatformPath, options: FileVisitOption*): Stream[PlatformPath] = ???
+  def walk(start: PlatformPath, maxDepth: Int, options: FileVisitOption*): JStream[PlatformPath] = ???
+  def walk(start: PlatformPath, options: FileVisitOption*): JStream[PlatformPath] = ???
   def exists(path: PlatformPath, options: LinkOption*): Boolean = ???
+  def readSymbolicLink(link: PlatformPath): PlatformPath = ???
+  def isSymbolicLink(path: PlatformPath): Boolean = ???
 }
 

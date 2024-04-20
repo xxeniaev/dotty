@@ -14,7 +14,7 @@ import java.nio.file.attribute.{BasicFileAttributes, FileTime}
 import java.io.IOException
 import scala.jdk.CollectionConverters._
 import scala.util.Random.alphanumeric
-import dotty.tools.io.PlatformPath
+import dotty.tools.io.{PlatformPath, PlatformFileSystems, PlatformFile, PlatformFiles}
 import scalajs.js.internal.UnitOps.unitOrOps
 import math.Ordered.orderingToOrdered
 
@@ -53,12 +53,12 @@ object Path {
   def onlyDirs(xs: List[Path]): List[Directory] = xs.filter(_.isDirectory).map(_.toDirectory)
   def onlyFiles(xs: Iterator[Path]): Iterator[File] = xs.filter(_.isFile).map(_.toFile)
 
-  def roots: List[Path] = FileSystems.getDefault.getRootDirectories.iterator().asScala.map(Path.apply).toList
+  def roots: List[Path] = PlatformFileSystems.getDefault().getRootDirectories.iterator().asScala.map(Path.apply).toList
 
-  def apply(path: String): Path = apply(new PlatformFile(path).toPath)
+  def apply(path: String): Path = apply(PlatformFile(path).toPath)
   def apply(jpath: PlatformPath): Path = try {
-    if (Files.isRegularFile(jpath)) new File(jpath)
-    else if (Files.isDirectory(jpath)) new Directory(jpath)
+    if (PlatformFiles.isRegularFile(jpath)) new File(jpath)
+    else if (PlatformFiles.isDirectory(jpath)) new Directory(jpath)
     else new Path(jpath)
   } catch { case ex: SecurityException => new Path(jpath) }
 

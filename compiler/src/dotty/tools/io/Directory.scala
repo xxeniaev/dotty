@@ -10,7 +10,7 @@ package dotty.tools.io
 
 import dotty.tools.dotc.config.Platform
 
-import dotty.tools.io.{PlatformPath, PlatformFiles}
+import dotty.tools.io.{PlatformPath, PlatformPaths, PlatformFiles}
 import scala.language.unsafeNulls
 import java.nio.file.{Files, Paths}
 
@@ -29,7 +29,7 @@ object Directory {
     finally temp.deleteRecursively()
   }
 
-  def apply(path: String): Directory = apply(Paths.get(path))
+  def apply(path: String): Directory = apply(PlatformPaths.get(path))
   def apply(path: PlatformPath): Directory = new Directory(path)
 }
 

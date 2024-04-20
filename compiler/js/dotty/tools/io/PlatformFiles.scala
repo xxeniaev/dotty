@@ -23,7 +23,6 @@ class PlatformFiles {
 
   def createTempDirectory(dir: PlatformPath, prefix: String, attrs: FileAttribute[_]*): PlatformPath = ???
 
-  def createTempDirectory(prefix: String, attrs: FileAttribute[_]*): PlatformPath = ???
 
   def createSymbolicLink(link: PlatformPath, target: PlatformPath, attrs: FileAttribute[_]*): PlatformPath = ???
 
@@ -64,7 +63,6 @@ class PlatformFiles {
 
   def isDirectory(path: PlatformPath, options: LinkOption*): Boolean = ???
 
-  def isRegularFile(path: PlatformPath, options: LinkOption*): Boolean = ???
 
   def getLastModifiedTime(path: PlatformPath, options: LinkOption*): PlatformFileTime = ???
 
@@ -144,6 +142,10 @@ object PlatformFiles {
   def newOutputStream(path: PlatformPath, options: OpenOption*): OutputStream = ???
   def newInputStream(path: PlatformPath, options: OpenOption*): InputStream = ???
 
+  def walkFileTree(start: PlatformPath, visitor: FileVisitor[_ >: Path]): PlatformPath = ???
+  def isRegularFile(path: PlatformPath, options: LinkOption*): Boolean = ???
+
+  def createTempDirectory(prefix: String, attrs: FileAttribute[_]*): PlatformPath = ???
   def notExists(path: PlatformPath, options: LinkOption*): Boolean = ???
   def readAttributes(path: PlatformPath, attributes: String, options: LinkOption*): Map[String, AnyRef] = ???
 }

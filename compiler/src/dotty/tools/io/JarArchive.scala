@@ -5,7 +5,7 @@ import scala.language.unsafeNulls
 import java.nio.file.{FileSystemAlreadyExistsException, FileSystems}
 
 import scala.jdk.CollectionConverters._
-import dotty.tools.io.PlatformFileSystems
+import dotty.tools.io.{PlatformFileSystems, PlatformURI}
 
 /** This class implements an [[AbstractFile]] backed by a jar
   * that be can used as the compiler's output directory.
@@ -32,7 +32,7 @@ object JarArchive {
     // creating a new zip file system by using the JAR URL syntax:
     // https://docs.oracle.com/javase/7/docs/technotes/guides/io/fsp/zipfilesystemprovider.html
     val env = Map("create" -> create.toString).asJava
-    val uri = java.net.URI.create("jar:" + path.toAbsolute.toURI.toString)
+    val uri = PlatformURI.create("jar:" + path.toAbsolute.toURI.toString)
     val fs = {
       try PlatformFileSystems.newFileSystem(uri, env)
       catch {
@@ -40,7 +40,7 @@ object JarArchive {
           PlatformFileSystems.getFileSystem(uri)
       }
     }
-    val root = fs.getRootDirectories().iterator.next()
+    val root = fs.getRootDirectories.iterator.next()
     new JarArchive(Directory(root))
   }
 }

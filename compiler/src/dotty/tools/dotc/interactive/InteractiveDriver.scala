@@ -237,7 +237,7 @@ class InteractiveDriver(val settings: List[String]) extends Driver {
   /** Adds the names of the classes that are defined in `dir` to `buffer`. */
   private def classesFromDir(dir: PlatformPath, buffer: mutable.ListBuffer[TypeName]): Unit =
     try
-      PatformFiles.walkFileTree(dir, new SimpleFileVisitor[Path] {
+      PlatformFiles.walkFileTree(dir, new SimpleFileVisitor[Path] {
         override def visitFile(path: PlatformPath, attrs: BasicFileAttributes) = {
           if (!attrs.isDirectory) {
             val name = path.getFileName.toString

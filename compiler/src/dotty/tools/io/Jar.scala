@@ -10,7 +10,12 @@ import scala.language.unsafeNulls
 
 import java.io.{InputStream, OutputStream, DataOutputStream}
 import java.util.jar._
-import dotty.tools.io.{PlatformFile, PlatformJarFile}
+import dotty.tools.io.{
+  PlatformFile,
+  PlatformJarFile,
+  PlatformInputStream,
+  PlatformJarEntry
+}
 import scala.jdk.CollectionConverters._
 import scala.collection.mutable
 import Attributes.Name
@@ -70,7 +75,7 @@ class Jar(file: File) {
     Iterator.continually(in.getNextJarEntry()).takeWhile(_ != null).toList
   }
 
-  def getEntryStream(entry: JarEntry): java.io.InputStream =
+  def getEntryStream(entry: PlatformJarEntry): PlatformInputStream =
     jarFile getInputStream entry match {
       case null => errorFn("No such entry: " + entry); null
       case x    => x

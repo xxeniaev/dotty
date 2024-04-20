@@ -30,7 +30,7 @@ object Serializer:
 
   /** Write out coverage data (info about each statement that can be covered) to a writer.
    */
-  def serialize(coverage: Coverage, writer: Writer, sourceRoot: Path): Unit =
+  def serialize(coverage: Coverage, writer: Writer, sourceRoot: PlatformPath): Unit =
 
     def getRelativePath(filePath: PlatformPath): String =
       // We need to normalize the path here because the relativizing paths containing '.' or '..' differs between Java versions

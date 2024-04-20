@@ -59,6 +59,10 @@ object PlatformFile {
   def listRoots: Array[PlatformFile] = ???
   def createTempFile(prefix: String, suffix: String, directory: PlatformFile): PlatformFile = ???
   def createTempFile(prefix: String, suffix: String): PlatformFile = ???
+
+  private val fs: PlatformFileSystem = DefaultFileSystem.getFileSystem
+  val separatorChar: Char = fs.getSeparator
+  val separator: String = "" + separatorChar
 }
 
 

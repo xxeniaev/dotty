@@ -14,7 +14,7 @@ import java.nio.file.attribute.{BasicFileAttributes, FileTime}
 import java.io.IOException
 import scala.jdk.CollectionConverters._
 import scala.util.Random.alphanumeric
-import dotty.tools.io.{PlatformPath, PlatformFileSystems, PlatformFile, PlatformFiles}
+import dotty.tools.io.{PlatformPath, PlatformFileSystems, PlatformFile, PlatformFiles, PlatformURI, PlatformURL}
 import scalajs.js.internal.UnitOps.unitOrOps
 import math.Ordered.orderingToOrdered
 
@@ -53,7 +53,7 @@ object Path {
   def onlyDirs(xs: List[Path]): List[Directory] = xs.filter(_.isDirectory).map(_.toDirectory)
   def onlyFiles(xs: Iterator[Path]): Iterator[File] = xs.filter(_.isFile).map(_.toFile)
 
-  def roots: List[Path] = PlatformFileSystems.getDefault().getRootDirectories.iterator().asScala.map(Path.apply).toList
+  def roots: List[Path] = PlatformFileSystems.getDefault().getRootDirectories.iterator.asScala.map(Path.apply).toList
 
   def apply(path: String): Path = apply(PlatformFile(path).toPath)
   def apply(jpath: PlatformPath): Path = try {
@@ -82,8 +82,8 @@ class Path private[io] (val jpath: PlatformPath) {
   def toDirectory: Directory = new Directory(jpath)
   def toAbsolute: Path = if (isAbsolute) this else new Path(jpath.toAbsolutePath)
   def toCanonical: Path = normalize.toAbsolute
-  def toURI: URI = jpath.toUri()
-  def toURL: URL = toURI.toURL()
+  def toURI: PlatformURI = jpath.toUri
+  def toURL: PlatformURL = toURI.toURL()
 
   /** If this path is absolute, returns it: otherwise, returns an absolute
    *  path made up of root / this.

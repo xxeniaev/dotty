@@ -6,7 +6,7 @@ import scala.language.unsafeNulls
 
 import scala.util.control.NonFatal
 
-import dotty.tools.io.Directory
+import dotty.tools.io.{Directory, PlatformFiles, PlatformPaths}
 
 import java.io.{File => JFile}
 import java.nio.file.{Files, Paths}
@@ -20,15 +20,19 @@ object Debug {
 
     assert(!args.contains("-d"))
 
-    val outPath = Paths.get("out")
+    val outPath = PlatformPaths.get("out")
     Directory(outPath).createDirectory()
 
-    val tmpOut = Files.createTempDirectory(outPath.toAbsolutePath, "from-tasty-tmp")
+    val tmpOut = PlatformFiles.createTempDirectory(
+      outPath.toAbsolutePath,
+      "from-tasty-tmp"
+    )
 
     val fromSourcesOut = Files.createDirectory(tmpOut.resolve("from-source"))
 
     println("Compiling from .scala sources")
-    val compilation1 = dotc.Main.process("-d" +: fromSourcesOut.toString +: args)
+    val compilation1 =
+      dotc.Main.process("-d" +: fromSourcesOut.toString +: args)
 
     if (compilation1.hasErrors) {
       println("Failed compilation from sources")
@@ -36,7 +40,8 @@ object Debug {
       sys.exit(1)
     }
 
-    val fromTastyOut = Files.createDirectory(tmpOut.resolve("from-tasty"))
+    val fromTastyOut =
+      PlatformFiles.createDirectory(tmpOut.resolve("from-tasty"))
 
     val tastyFiles =
       Directory(fromSourcesOut).walk
@@ -46,9 +51,12 @@ object Debug {
 
     val fromTastyArgs =
       "-from-tasty" ::
-      "-d" :: fromTastyOut.toString ::
-      insertClasspathInArgs(args.filterNot(_.endsWith(".scala")).toList, fromSourcesOut.toString) :::
-      tastyFiles
+        "-d" :: fromTastyOut.toString ::
+        insertClasspathInArgs(
+          args.filterNot(_.endsWith(".scala")).toList,
+          fromSourcesOut.toString
+        ) :::
+        tastyFiles
 
     println("Compiling from .tasty sources")
     val compilation2 = dotc.Main.process(fromTastyArgs.toArray)
@@ -66,9 +74,13 @@ object Debug {
     Directory(tmpOut).deleteRecursively()
   }
 
-  private def insertClasspathInArgs(args: List[String], cp: String): List[String] = {
+  private def insertClasspathInArgs(
+      args: List[String],
+      cp: String
+  ): List[String] = {
     val (beforeCp, fromCp) = args.span(_ != "-classpath")
-    val classpath = fromCp.drop(1).headOption.fold(cp)(_ + JFile.pathSeparator + cp)
+    val classpath =
+      fromCp.drop(1).headOption.fold(cp)(_ + JFile.pathSeparator + cp)
     "-classpath" :: classpath :: beforeCp ::: fromCp.drop(2)
   }
 }

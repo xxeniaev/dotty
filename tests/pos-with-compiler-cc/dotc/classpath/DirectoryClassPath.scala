@@ -83,7 +83,7 @@ trait DirectoryLookup[FileEntryType <: ClassRepresentation] extends EfficientCla
 }
 
 trait JFileDirectoryLookup[FileEntryType <: ClassRepresentation] extends DirectoryLookup[FileEntryType] {
-  type F = JFile
+  type F = PlatformFile
 
   protected def emptyFiles: Array[JFile] = Array.empty
   protected def getSubDir(packageDirName: String): Option[JFile] = {

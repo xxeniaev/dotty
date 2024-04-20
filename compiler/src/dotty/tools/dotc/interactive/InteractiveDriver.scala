@@ -10,7 +10,7 @@ import java.nio.file._
 import java.nio.file.attribute.BasicFileAttributes
 import java.nio.charset.StandardCharsets
 import java.util.zip._
-import dotty.tools.io.{PlatformFile, PlatformPath, PlatformZipFile, PatformFiles}
+import dotty.tools.io.{PlatformFile, PlatformPath, PlatformZipFile, PlatformFiles}
 import scala.collection._
 import scala.io.Codec
 

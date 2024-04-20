@@ -15,7 +15,7 @@ import scala.annotation.tailrec
 import dotty.tools.io.{AbstractFile, ClassPath, ClassRepresentation, FileZipArchive, ManifestResources}
 import dotty.tools.dotc.core.Contexts._
 import FileUtils._
-import dotty.tools.io.{PlatformPath, PlatformFile, PlatformFiles}
+import dotty.tools.io.{PlatformPath, PlatformFile, PlatformFiles, PlatformURL}
 
 /**
  * A trait providing an optional cache for classpath entries obtained from zip and jar files.
@@ -77,7 +77,7 @@ object ZipAndJarClassPathFactory extends ZipAndJarFileLookupFactory {
 
     override def asClassPathStrings: Seq[String] = Seq(file.path)
 
-    override def asURLs: Seq[URL] = file.toURLs()
+    override def asURLs: Seq[PlatformURL] = file.toURLs()
 
     import ManifestResourcesClassPath.PackageFileInfo
     import ManifestResourcesClassPath.PackageInfo

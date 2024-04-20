@@ -76,7 +76,7 @@ object ZipAndJarClassPathFactory extends ZipAndJarFileLookupFactory {
 
     override def asClassPathStrings: Seq[String] = Seq(file.path)
 
-    override def asURLs: Seq[URL] = file.toURLs()
+    override def asURLs: Seq[PlatformURL] = file.toURLs()
 
     import ManifestResourcesClassPath.PackageFileInfo
     import ManifestResourcesClassPath.PackageInfo

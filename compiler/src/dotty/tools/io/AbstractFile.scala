@@ -11,7 +11,7 @@ import java.io.{
   IOException, InputStream, OutputStream, BufferedOutputStream,
   ByteArrayOutputStream
 }
-import dotty.tools.io.{AbstractFile, PlainFile, PlatformFile, PlatformFiles, PlatformURL, PlatformPaths, ClassPath, ClassRepresentation, EfficientClassPath, JDK9Reflectors}
+import dotty.tools.io.{AbstractFile, PlainFile, PlatformFile, PlatformFiles, PlatformURL, PlatformPath, PlatformPaths, ClassPath, ClassRepresentation, EfficientClassPath, JDK9Reflectors}
 import java.net.URL
 import java.nio.file.{FileAlreadyExistsException, Files, Paths}
 
@@ -26,8 +26,8 @@ import java.nio.file.{FileAlreadyExistsException, Files, Paths}
 object AbstractFile {
   def getFile(path: String): AbstractFile = getFile(File(path))
   def getDirectory(path: String): AbstractFile = getDirectory(Directory(path))
-  def getFile(path: JPath): AbstractFile = getFile(File(path))
-  def getDirectory(path: JPath): AbstractFile = getDirectory(Directory(path))
+  def getFile(path: PlatformPath): AbstractFile = getFile(File(path))
+  def getDirectory(path: PlatformPath): AbstractFile = getDirectory(Directory(path))
 
   /**
    * If the specified File exists and is a regular file, returns an
@@ -257,12 +257,12 @@ abstract class AbstractFile extends Iterable[AbstractFile] {
         // the optional exception may be thrown for symlinks, notably /tmp on macOS.
         // isDirectory tests for existing directory. The default behavior is hypothetical isDirectory(jpath, FOLLOW_LINKS).
         try PlatformFiles.createDirectories(jpath)
-        catch { case _: FileAlreadyExistsException if Files.isDirectory(jpath) => }
+        catch { case _: FileAlreadyExistsException if PlatformFiles.isDirectory(jpath) => }
 
         // a race condition in creating the entry after the failed lookup may throw
         val path = jpath.resolve(name)
-        if (isDir) Files.createDirectory(path)
-        else Files.createFile(path)
+        if (isDir) PlatformFiles.createDirectory(path)
+        else PlatformFiles.createFile(path)
         new PlainFile(new File(path))
       case lookup => lookup
     }

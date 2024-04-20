@@ -5,6 +5,7 @@ import java.nio.file.{Path, Paths, Files}
 import java.io.Writer
 import scala.language.unsafeNulls
 import scala.collection.mutable.StringBuilder
+import dotty.tools.io.PlatformPath
 
 /**
  * Serializes scoverage data.
@@ -31,7 +32,7 @@ object Serializer:
    */
   def serialize(coverage: Coverage, writer: Writer, sourceRoot: Path): Unit =
 
-    def getRelativePath(filePath: Path): String =
+    def getRelativePath(filePath: PlatformPath): String =
       // We need to normalize the path here because the relativizing paths containing '.' or '..' differs between Java versions
       // https://bugs.openjdk.java.net/browse/JDK-8066943
       val relPath = sourceRoot.normalize.relativize(filePath)

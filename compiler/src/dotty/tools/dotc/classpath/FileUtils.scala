@@ -8,7 +8,7 @@ import scala.language.unsafeNulls
 
 import java.io.{File => JFile, FileFilter}
 import java.net.URL
-import dotty.tools.io.{AbstractFile, PlatformFile}
+import dotty.tools.io.{AbstractFile, PlatformFile, PlatformURL}
 
 /**
  * Common methods related to Java files and abstract files used in the context of classpath
@@ -29,7 +29,7 @@ object FileUtils {
      * Safe method returning a sequence containing one URL representing this file, when underlying file exists,
      * and returning given default value in other case
      */
-    def toURLs(default: => Seq[URL] = Seq.empty): Seq[URL] = if (file.file == null) default else Seq(file.toURL)
+    def toURLs(default: => Seq[PlatformURL] = Seq.empty): Seq[PlatformURL] = if (file.file == null) default else Seq(file.toURL)
   }
 
   extension (file: PlatformFile) {

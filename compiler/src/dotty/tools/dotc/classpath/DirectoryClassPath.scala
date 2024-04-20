@@ -316,7 +316,7 @@ final class CtSymClassPath(ctSym: PlatformPath, release: Int)
         .walk(root)
         .iterator
         .asScala
-        .filter(Files.isDirectory(_))
+        .filter(PlatformFiles.isDirectory(_))
         .foreach { p =>
           val moduleNamePathElementCount = if (isJava12OrHigher) 1 else 0
           if (p.getNameCount > root.getNameCount + moduleNamePathElementCount) {

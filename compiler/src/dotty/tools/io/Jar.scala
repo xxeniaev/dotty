@@ -10,7 +10,7 @@ import scala.language.unsafeNulls
 
 import java.io.{InputStream, OutputStream, DataOutputStream}
 import java.util.jar._
-import dotty.tools.io.PlatformFile
+import dotty.tools.io.{PlatformFile, PlatformJarFile}
 import scala.jdk.CollectionConverters._
 import scala.collection.mutable
 import Attributes.Name
@@ -36,15 +36,15 @@ import scala.annotation.tailrec
 // static Attributes.Name   SPECIFICATION_VENDOR
 // static Attributes.Name   SPECIFICATION_VERSION
 
-class Jar(file: PlatformFile) {
-  def this(jfile: JFile) = this(File(jfile.toPath))
+class Jar(file: File) {
+  def this(jfile: PlatformFile) = this(File(jfile.toPath))
   def this(path: String) = this(File(path))
 
   protected def errorFn(msg: String): Unit = Console println msg
 
   import Jar._
 
-  lazy val jarFile: JarFile = new JarFile(file.jpath.toFile)
+  lazy val jarFile: PlatformJarFile = PlatformJarFile(file.jpath.toFile)
   lazy val manifest: Option[Manifest] = withJarInput(s => Option(s.getManifest))
 
   def mainClass: Option[String] = manifest.map(_(Name.MAIN_CLASS))

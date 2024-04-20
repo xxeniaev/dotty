@@ -5,11 +5,11 @@ import scala.language.unsafeNulls
 import java.nio.file.{FileSystemAlreadyExistsException, FileSystems}
 
 import scala.jdk.CollectionConverters._
+import dotty.tools.io.PlatformFileSystems
 
-/**
- * This class implements an [[AbstractFile]] backed by a jar
- * that be can used as the compiler's output directory.
- */
+/** This class implements an [[AbstractFile]] backed by a jar
+  * that be can used as the compiler's output directory.
+  */
 class JarArchive private (root: Directory) extends PlainDirectory(root) {
   def close(): Unit = jpath.getFileSystem().close()
   def allFileNames(): Iterator[String] =
@@ -17,6 +17,7 @@ class JarArchive private (root: Directory) extends PlainDirectory(root) {
 }
 
 object JarArchive {
+
   /** Create a new jar file. Overwrite if file already exists */
   def create(path: Path): JarArchive = {
     require(path.extension == "jar")
@@ -33,9 +34,10 @@ object JarArchive {
     val env = Map("create" -> create.toString).asJava
     val uri = java.net.URI.create("jar:" + path.toAbsolute.toURI.toString)
     val fs = {
-      try FileSystems.newFileSystem(uri, env)
+      try PlatformFileSystems.newFileSystem(uri, env)
       catch {
-        case _: FileSystemAlreadyExistsException => FileSystems.getFileSystem(uri)
+        case _: FileSystemAlreadyExistsException =>
+          PlatformFileSystems.getFileSystem(uri)
       }
     }
     val root = fs.getRootDirectories().iterator.next()

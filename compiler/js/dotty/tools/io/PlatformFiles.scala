@@ -6,15 +6,12 @@ import java.util.stream.{Stream => JStream}
 
 
 class PlatformFiles {
-  def newInputStream(path: PlatformPath, options: OpenOption*): InputStream = ???
 
-  def newOutputStream(path: PlatformPath, options: OpenOption*): OutputStream = ???
 
   def newByteChannel(path: PlatformPath, options: Set[_ <: OpenOption], attrs: FileAttribute[_]*): SeekableByteChannel = ???
 
   def newByteChannel(path: PlatformPath, options: OpenOption*): SeekableByteChannel = ???
 
-  def createFile(path: PlatformPath, attrs: FileAttribute[_]*): PlatformPath = ???
 
   def createDirectory(dir: PlatformPath, attrs: FileAttribute[_]*): PlatformPath = ???
 
@@ -55,7 +52,6 @@ class PlatformFiles {
 
   def getAttribute(path: PlatformPath, attribute: String, options: LinkOption*): PlatformObject = ???
 
-  def readAttributes(path: PlatformPath, attributes: String, options: LinkOption*): Map[String, AnyRef] = ???
 
   def getPosixFilePermissions(path: PlatformPath, options: LinkOption*): Set[PosixFilePermission] = ???
 
@@ -77,7 +73,6 @@ class PlatformFiles {
   def size(path: PlatformPath): Long = ???
 
 
-  def notExists(path: PlatformPath, options: LinkOption*): Boolean = ???
 
   def isReadable(path: PlatformPath): Boolean = ???
 
@@ -145,5 +140,11 @@ object PlatformFiles {
   def exists(path: PlatformPath, options: LinkOption*): Boolean = ???
   def readSymbolicLink(link: PlatformPath): PlatformPath = ???
   def isSymbolicLink(path: PlatformPath): Boolean = ???
+  def createFile(path: PlatformPath, attrs: FileAttribute[_]*): PlatformPath = ???
+  def newOutputStream(path: PlatformPath, options: OpenOption*): OutputStream = ???
+  def newInputStream(path: PlatformPath, options: OpenOption*): InputStream = ???
+
+  def notExists(path: PlatformPath, options: LinkOption*): Boolean = ???
+  def readAttributes(path: PlatformPath, attributes: String, options: LinkOption*): Map[String, AnyRef] = ???
 }
 

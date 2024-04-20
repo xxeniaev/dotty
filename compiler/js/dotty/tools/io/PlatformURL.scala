@@ -18,8 +18,8 @@ class PlatformURL {
   def sameFile(other: PlatformURL): Boolean = ???
   def toExternalForm: String = ???
   def toURI: PlatformURI = ???
-  def openConnection: URLConnection = ???
-  def openConnection(proxy: Proxy): URLConnection = ???
+//  def openConnection: URLConnection = ???
+//  def openConnection(proxy: Proxy): URLConnection = ???
 }
 
 object PlatformURL {
@@ -30,7 +30,7 @@ object PlatformURL {
   def apply(context: PlatformURL, spec: String): PlatformURL = ???
   def apply(spec: String): PlatformURL = ???
 
-  def openStream: InputStream = ???
-  def setURLStreamHandlerFactory(fac: URLStreamHandlerFactory): Unit = ???
+//  def openStream: InputStream = ???
+//  def setURLStreamHandlerFactory(fac: URLStreamHandlerFactory): Unit = ???
 }
 

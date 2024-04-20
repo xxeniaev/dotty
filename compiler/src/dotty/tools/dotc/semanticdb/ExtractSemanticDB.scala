@@ -18,7 +18,7 @@ import Denotations.StaleSymbol
 import util.Spans.Span
 import util.SourceFile
 import transform.SymUtils._
-import dotty.tools.io.{PlatformPath, PlatformPaths}
+import dotty.tools.io.{PlatformPath, PlatformPaths, PlatformFiles}
 import scala.collection.mutable
 import scala.annotation.{ threadUnsafe => tu, tailrec }
 import scala.PartialFunction.condOpt
@@ -494,7 +494,7 @@ object ExtractSemanticDB:
       .resolve("semanticdb")
       .resolve(relPath)
       .resolveSibling(source.name + ".semanticdb")
-    Files.createDirectories(outpath.getParent())
+    PlatformFiles.createDirectories(outpath.getParent)
     val doc: TextDocument = TextDocument(
       schema = Schema.SEMANTICDB4,
       language = Language.SCALA,
@@ -506,7 +506,7 @@ object ExtractSemanticDB:
       synthetics = synthetics,
     )
     val docs = TextDocuments(List(doc))
-    val out = Files.newOutputStream(outpath)
+    val out = PlatformFiles.newOutputStream(outpath)
     try
       val stream = internal.SemanticdbOutputStream.newInstance(out)
       docs.writeTo(stream)

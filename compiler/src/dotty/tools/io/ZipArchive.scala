@@ -14,6 +14,7 @@ import java.util.zip.{ZipEntry, ZipFile}
 import java.util.jar.Manifest
 import scala.collection.mutable
 import scala.jdk.CollectionConverters._
+import dotty.tools.io.{PlatformZipFile, PlatformPath, PlatformFiles}
 
 /** An abstraction for zip files and streams.  Everything is written the way
   *  it is for performance: we come through here a lot on every run.  Be careful
@@ -136,7 +137,7 @@ final class FileZipArchive(jpath: PlatformPath, release: Option[String])
         val releaseVersion = JDK9Reflectors.runtimeVersionParse(r)
         JDK9Reflectors.newJarFile(file, true, ZipFile.OPEN_READ, releaseVersion)
       case _ =>
-        new ZipFile(file)
+        new PlatformZipFile(file)
     }
   } catch {
     case ioe: IOException =>

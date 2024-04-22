@@ -14,7 +14,7 @@ import java.nio.file.attribute.{BasicFileAttributes, FileTime}
 import java.io.IOException
 import scala.jdk.CollectionConverters._
 import scala.util.Random.alphanumeric
-import dotty.tools.io.{PlatformPath, PlatformFileSystems, PlatformFile, PlatformFiles, PlatformURI, PlatformURL}
+import dotty.tools.io.{PlatformPath, PlatformFileSystems, PlatformFile, PlatformFiles, PlatformURI, PlatformURL, PlatformFileTime}
 import scalajs.js.internal.UnitOps.unitOrOps
 import math.Ordered.orderingToOrdered
 
@@ -83,7 +83,7 @@ class Path private[io] (val jpath: PlatformPath) {
   def toAbsolute: Path = if (isAbsolute) this else new Path(jpath.toAbsolutePath)
   def toCanonical: Path = normalize.toAbsolute
   def toURI: PlatformURI = jpath.toUri
-  def toURL: PlatformURL = toURI.toURL()
+  def toURL: PlatformURL = toURI.toURL
 
   /** If this path is absolute, returns it: otherwise, returns an absolute
    *  path made up of root / this.
@@ -116,7 +116,7 @@ class Path private[io] (val jpath: PlatformPath) {
   def walk: Iterator[Path] = walkFilter(_ => true)
 
   // identity
-  def name: String = jpath.getFileName() match {
+  def name: String = jpath.getFileName match {
     case null => ""
     case name => name.toString
   }
@@ -185,14 +185,14 @@ class Path private[io] (val jpath: PlatformPath) {
   def ifDirectory[T](f: Directory => T): Option[T] = if (isDirectory) Some(f(toDirectory)) else None
 
   // Boolean tests
-  def canRead: Boolean = Files.isReadable(jpath)
-  def canWrite: Boolean = Files.isWritable(jpath)
+  def canRead: Boolean = PlatformFiles.isReadable(jpath)
+  def canWrite: Boolean = PlatformFiles.isWritable(jpath)
   def exists: Boolean = try PlatformFiles.exists(jpath)  catch { case ex: SecurityException => false }
   def isFile: Boolean = try PlatformFiles.isRegularFile(jpath)  catch { case ex: SecurityException => false }
   def isDirectory: Boolean =
     try PlatformFiles.isDirectory(jpath)
     catch { case ex: SecurityException => jpath.toString == "." }
-  def isAbsolute: Boolean = jpath.isAbsolute()
+  def isAbsolute: Boolean = jpath.isAbsolute
   def isEmpty: Boolean = path.length == 0
 
   // Information
@@ -212,19 +212,19 @@ class Path private[io] (val jpath: PlatformPath) {
     else new Directory(jpath)
   }
   def createFile(failIfExists: Boolean = false): File = {
-    val res = tryCreate(Files.createFile(jpath))
-    Files.createFile(jpath)
+    val res = tryCreate(PlatformFiles.createFile(jpath))
+    PlatformFiles.createFile(jpath)
     if (!res && failIfExists && exists) fail("File '%s' already exists." format name)
     else if (isFile) toFile
     else new File(jpath)
   }
 
-  private def tryCreate(create: => JPath): Boolean =
+  private def tryCreate(create: => PlatformPath): Boolean =
     try { create; true } catch { case _: FileAlreadyExistsException => false }
 
   // deletions
   def delete(): Unit =
-    try { Files.deleteIfExists(jpath) } catch { case _: DirectoryNotEmptyException => }
+    try { PlatformFiles.deleteIfExists(jpath) } catch { case _: DirectoryNotEmptyException => }
 
   /** Deletes the path recursively. Returns false on failure.
    *  Use with caution!
@@ -232,7 +232,7 @@ class Path private[io] (val jpath: PlatformPath) {
   def deleteRecursively(): Boolean = {
     if (!exists) false
     else {
-      Files.walkFileTree(jpath, new SimpleFileVisitor[JPath]() {
+      PlatformFiles.walkFileTree(jpath, new SimpleFileVisitor[JPath]() {
         override def visitFile(file: JPath, attrs: BasicFileAttributes) = {
           Files.delete(file)
           FileVisitResult.CONTINUE
@@ -249,7 +249,7 @@ class Path private[io] (val jpath: PlatformPath) {
 
   def truncate(): Boolean =
     isFile && {
-      val raf = new RandomAccessFile(jpath.toFile, "rw")
+      val raf = PlatformRandomAccessFile(jpath.toFile, "rw")
       raf setLength 0
       raf.close()
       length == 0

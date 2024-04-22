@@ -11,7 +11,7 @@ import scala.language.unsafeNulls
 import java.net.MalformedURLException
 import java.net.URL
 import java.util.regex.PatternSyntaxException
-import dotty.tools.io.PlatformFile
+import dotty.tools.io.{PlatformFile, PlatformURL}
 import File.pathSeparator
 import Jar.isJarOrZip
 
@@ -199,8 +199,8 @@ object ClassPath {
     )
   }
 
-  def specToURL(spec: String): Option[URL] =
-    try Some(new URL(spec))
+  def specToURL(spec: String): Option[PlatformURL] =
+    try Some(PlatformURL(spec))
     catch { case _: MalformedURLException => None }
 
   def manifests: List[java.net.URL] = {

@@ -2,10 +2,9 @@ package dotty.tools.io
 
 import java.net.URI
 import java.nio.file.{FileSystem, Path}
-java.util. {Map ⇒ JMap}
+import java.util.{Map => JMap}
 
 class PlatformFileSystems {
-
 }
 
 object PlatformFileSystems {

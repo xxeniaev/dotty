@@ -3,6 +3,7 @@ package dotty.tools.io
 import java.nio.file.{LinkOption}
 import java.util.List
 import java.util.stream.{Stream => JStream}
+import dotty.tools.nio.PlatformFileAttribute
 
 
 class PlatformFiles {
@@ -13,18 +14,18 @@ class PlatformFiles {
   def newByteChannel(path: PlatformPath, options: OpenOption*): SeekableByteChannel = ???
 
 
-  def createDirectory(dir: PlatformPath, attrs: FileAttribute[_]*): PlatformPath = ???
+  def createDirectory[A](dir: PlatformPath, attrs: PlatformFileAttribute[A]*): PlatformPath = ???
 
-  def createDirectories(dir: PlatformPath, attrs: FileAttribute[_]*): PlatformPath = ???
+  def createDirectories[A](dir: PlatformPath, attrs: PlatformFileAttribute[A]*): PlatformPath = ???
 
-  def createTempFile(dir: PlatformPath, prefix: String, suffix: String, attrs: FileAttribute[_]*): PlatformPath = ???
+  def createTempFile[A](dir: PlatformPath, prefix: String, suffix: String, attrs: PlatformFileAttribute[A]*): PlatformPath = ???
 
-  def createTempFile(prefix: String, suffix: String, attrs: FileAttribute[_]*): PlatformPath = ???
+  def createTempFile[A](prefix: String, suffix: String, attrs: PlatformFileAttribute[A]*): PlatformPath = ???
 
-  def createTempDirectory(dir: PlatformPath, prefix: String, attrs: FileAttribute[_]*): PlatformPath = ???
+  def createTempDirectory[A](dir: PlatformPath, prefix: String, attrs: PlatformFileAttribute[A]*): PlatformPath = ???
 
 
-  def createSymbolicLink(link: PlatformPath, target: PlatformPath, attrs: FileAttribute[_]*): PlatformPath = ???
+  def createSymbolicLink[A](link: PlatformPath, target: PlatformPath, attrs: PlatformFileAttribute[A]*): PlatformPath = ???
 
   def createLink(link: PlatformPath, existing: PlatformPath): PlatformPath = ???
 
@@ -69,12 +70,6 @@ class PlatformFiles {
   def setLastModifiedTime(path: PlatformPath, time: PlatformFileTime): PlatformPath = ???
 
   def size(path: PlatformPath): Long = ???
-
-
-
-  def isReadable(path: PlatformPath): Boolean = ???
-
-  def isWritable(path: PlatformPath): Boolean = ???
 
   def isExecutable(path: PlatformPath): Boolean = ???
 
@@ -127,8 +122,8 @@ object PlatformFiles {
   def getLastModifiedTime(path: PlatformPath, options: LinkOption*): PlatformFileTime = ???
   def size(path: PlatformPath): Long = ???
   def isDirectory (path: PlatformPath, options: LinkOption*): Boolean = ???
-  def createDirectory (dir: PlatformPath, attrs: FileAttribute[_]*): PlatformPath = ???
-  def createDirectories (dir: PlatformPath, attrs: FileAttribute[_]*): PlatformPath = ???
+  def createDirectory[A](dir: PlatformPath, attrs: PlatformFileAttribute[A]*): PlatformPath = ???
+  def createDirectories[A](dir: PlatformPath, attrs: PlatformFileAttribute[A]*): PlatformPath = ???
   def list(dir: PlatformPath): JStream[PlatformPath] = ???
   def newDirectoryStream(dir: PlatformPath): DirectoryStream[PlatformPath] = ???
   def newDirectoryStream(dir: PlatformPath, glob: String): DirectoryStream[PlatformPath] = ???
@@ -138,14 +133,15 @@ object PlatformFiles {
   def exists(path: PlatformPath, options: LinkOption*): Boolean = ???
   def readSymbolicLink(link: PlatformPath): PlatformPath = ???
   def isSymbolicLink(path: PlatformPath): Boolean = ???
-  def createFile(path: PlatformPath, attrs: FileAttribute[_]*): PlatformPath = ???
+  def createFile[A](path: PlatformPath, attrs: PlatformFileAttribute[A]*): PlatformPath = ???
   def newOutputStream(path: PlatformPath, options: OpenOption*): OutputStream = ???
   def newInputStream(path: PlatformPath, options: OpenOption*): InputStream = ???
 
   def walkFileTree(start: PlatformPath, visitor: FileVisitor[_ >: Path]): PlatformPath = ???
   def isRegularFile(path: PlatformPath, options: LinkOption*): Boolean = ???
-
-  def createTempDirectory(prefix: String, attrs: FileAttribute[_]*): PlatformPath = ???
+  def isReadable(path: PlatformPath): Boolean = ???
+  def isWritable(path: PlatformPath): Boolean = ???
+  def createTempDirectory[A](prefix: String, attrs: PlatformFileAttribute[A]*): PlatformPath = ???
   def notExists(path: PlatformPath, options: LinkOption*): Boolean = ???
   def readAttributes(path: PlatformPath, attributes: String, options: LinkOption*): Map[String, AnyRef] = ???
 }

@@ -26,10 +26,10 @@ class PlatformFile {
   def delete: Boolean = ???
   def deleteOnExit(): Unit = ???
   def list: Array[String] = ???
-  def list(filter: FilenameFilter): Array[String] = ???
+  def list(filter: PlatformFilenameFilter): Array[String] = ???
   def listFiles: Array[PlatformFile] = ???
-  def listFiles(filter: FilenameFilter): Array[PlatformFile] = ???
-  def listFiles(filter: FileFilter): Array[PlatformFile] = ???
+  def listFiles(filter: PlatformFilenameFilter): Array[PlatformFile] = ???
+  def listFiles(filter: PlatformFileFilter): Array[PlatformFile] = ???
   def mkdir: Boolean = ???
   def mkdirs: Boolean = ???
   def renameTo(dest: PlatformFile): Boolean = ???
@@ -60,9 +60,8 @@ object PlatformFile {
   def createTempFile(prefix: String, suffix: String, directory: PlatformFile): PlatformFile = ???
   def createTempFile(prefix: String, suffix: String): PlatformFile = ???
 
-  private val fs: PlatformFileSystem = DefaultFileSystem.getFileSystem
-  val separatorChar: Char = fs.getSeparator
-  val separator: String = "" + separatorChar
+  val separatorChar: Char = ???
+  val separator: String = ???
 }
 
 

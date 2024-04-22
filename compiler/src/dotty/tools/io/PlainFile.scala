@@ -7,7 +7,7 @@ package dotty.tools
 package io
 
 import scala.language.unsafeNulls
-import dotty.tools.io.PlatformPath
+import dotty.tools.io.{PlatformPath, PlatformPaths}
 
 import java.io.{InputStream, OutputStream}
 import java.nio.file.{InvalidPathException, Paths}
@@ -29,7 +29,7 @@ class PlainFile(val givenPath: Path) extends AbstractFile {
 
   dotc.util.Stats.record("new PlainFile")
 
-  def jpath: JPath = givenPath.jpath
+  def jpath: PlatformPath = givenPath.jpath
 
   override def underlyingSource = {
     val fileSystem = jpath.getFileSystem
@@ -42,7 +42,9 @@ class PlainFile(val givenPath: Path) extends AbstractFile {
             Some(
               new PlainFile(
                 new Path(
-                  Paths.get(jarPath.stripSuffix(fileSystem.getSeparator))
+                  PlatformPaths.get(
+                    jarPath.stripSuffix(fileSystem.getSeparator)
+                  )
                 )
               )
             )

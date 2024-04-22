@@ -28,7 +28,8 @@ object Debug {
       "from-tasty-tmp"
     )
 
-    val fromSourcesOut = Files.createDirectory(tmpOut.resolve("from-source"))
+    val fromSourcesOut =
+      PlatformFiles.createDirectory(tmpOut.resolve("from-source"))
 
     println("Compiling from .scala sources")
     val compilation1 =

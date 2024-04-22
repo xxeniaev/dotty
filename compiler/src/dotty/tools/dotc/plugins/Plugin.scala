@@ -11,7 +11,7 @@ import transform.MegaPhase.MiniPhase
 
 import java.io.InputStream
 import java.util.Properties
-import dotty.tools.io.{PlatformInputStream, PlatformFileInputStream, PlatformProperties, PlatformJarEntry}
+import dotty.tools.io.{PlatformInputStream, PlatformFileInputStream, PlatformProperties, PlatformJarEntry, PlatformURLClassLoader}
 
 import scala.util.{ Try, Success, Failure }
 
@@ -76,7 +76,7 @@ object Plugin {
     val compilerLoader = classOf[Plugin].getClassLoader
     val urls = locations map (_.toURL)
 
-    new java.net.URLClassLoader(urls.toArray, compilerLoader)
+    PlatformURLClassLoader(urls.toArray, compilerLoader)
   }
 
   type AnyClass = Class[?]

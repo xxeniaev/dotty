@@ -131,13 +131,13 @@ abstract class ZipArchive(
 /** ''Note:  This library is considered experimental and should not be used unless you know what you are doing.'' */
 final class FileZipArchive(jpath: PlatformPath, release: Option[String])
     extends ZipArchive(jpath, release) {
-  private def openZipFile(): ZipFile = try {
+  private def openZipFile(): PlatformZipFile = try {
     release match {
       case Some(r) if file.getName.endsWith(".jar") =>
         val releaseVersion = JDK9Reflectors.runtimeVersionParse(r)
         JDK9Reflectors.newJarFile(file, true, ZipFile.OPEN_READ, releaseVersion)
       case _ =>
-        new PlatformZipFile(file)
+        PlatformZipFile(file)
     }
   } catch {
     case ioe: IOException =>
@@ -224,7 +224,7 @@ final class FileZipArchive(jpath: PlatformPath, release: Option[String])
 
   def name: String = jpath.getFileName.toString
   def path: String = jpath.toString
-  def input: InputStream = Files.newInputStream(jpath)
+  def input: InputStream = PlatformFiles.newInputStream(jpath)
   // тоже ыыы
   def lastModified: Long = PlatformFiles.getLastModifiedTime(jpath).toMillis
 

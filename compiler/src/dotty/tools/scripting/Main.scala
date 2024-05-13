@@ -5,6 +5,7 @@ import scala.language.unsafeNulls
 import java.io.File
 import java.nio.file.{Path, Paths}
 import dotty.tools.dotc.config.Properties.isWin
+import dotty.tools.io.{PlatformPath, PlatformFile}
 
 /** Main entry point to the Scripting execution engine */
 object Main:
@@ -51,7 +52,7 @@ object Main:
       case ex => ex.printStackTrace
    }.foreach(_ => System.exit(1))
 
-  private def writeJarfile(outDir: Path, scriptFile: File, scriptArgs:Array[String],
+  private def writeJarfile(outDir: PlatformPath, scriptFile: PlatformFile, scriptArgs:Array[String],
       classpathEntries:Seq[Path], mainClassName: String): Unit =
 
     val jarTargetDir: Path = Option(scriptFile.toPath.toAbsolutePath.getParent) match {

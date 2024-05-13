@@ -15,6 +15,7 @@ import dotty.tools.dotc.core.StdNames._
 import dotty.tools.dotc.quoted.reflect._
 import dotty.tools.dotc.core.Decorators._
 import dotty.tools.dotc.NoCompilationUnit
+import dotty.tools.io.PlatformPath
 
 import dotty.tools.dotc.quoted.{MacroExpansion, PickledQuotes}
 
@@ -2847,8 +2848,8 @@ class QuotesImpl private (using val ctx: Context) extends Quotes, QuoteUnpickler
 
     given SourceFileMethods: SourceFileMethods with
       extension (self: SourceFile)
-        def jpath: java.nio.file.Path = self.file.jpath
-        def getJPath: Option[java.nio.file.Path] = Option(self.file.jpath)
+        def jpath: PlatformPath = self.file.jpath
+        def getJPath: Option[PlatformPath] = Option(self.file.jpath)
         def name: String = self.name
         def path: String = self.path
         def content: Option[String] =

@@ -3,6 +3,7 @@ package dotty.tools.scripting
 import scala.language.unsafeNulls
 
 import java.nio.file.{ Files, Paths, Path }
+import dotty.tools.io.PlatformFiles
 
 import dotty.tools.dotc.Driver
 import dotty.tools.dotc.core.Contexts, Contexts.{ Context, ctx }
@@ -14,7 +15,7 @@ class StringDriver(compilerArgs: Array[String], scalaSource: String) extends Dri
   override def sourcesRequired: Boolean = false
 
   def compileAndRun(classpath: List[String] = Nil): Option[Throwable] =
-    val outDir = Files.createTempDirectory("scala3-expression")
+    val outDir = PlatformFiles.createTempDirectory("scala3-expression")
     outDir.toFile.deleteOnExit()
 
     setup(compilerArgs, initCtx.fresh) match

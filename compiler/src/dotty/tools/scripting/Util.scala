@@ -4,11 +4,12 @@ import scala.language.unsafeNulls
 
 import java.nio.file.{ Path }
 import java.io.File
+import dotty.tools.io.{PlatformFile, PlatformPath}
 import java.net.{ URLClassLoader }
 import java.lang.reflect.{ Modifier, Method }
 
 object Util:
-  def deleteFile(target: File): Unit =
+  def deleteFile(target: PlatformFile): Unit =
     if target.isDirectory then
       for member <- target.listFiles.toList
       do deleteFile(member)
@@ -16,7 +17,7 @@ object Util:
   end deleteFile
 
   def detectMainClassAndMethod(
-    outDir: Path,
+    outDir: PlatformPath,
     classpathEntries: Seq[Path],
     srcFile: String
   ): Either[Throwable, (String, Method)] =

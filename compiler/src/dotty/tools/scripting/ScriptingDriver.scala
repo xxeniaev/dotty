@@ -8,10 +8,10 @@ import java.io.File
 import dotty.tools.dotc.Driver
 import dotty.tools.dotc.core.Contexts, Contexts.{ Context, ctx }
 import dotty.tools.io.{ PlainDirectory, Directory, ClassPath }
-import dotty.tools.io.{PlatformFiles, PlatformPath}
+import dotty.tools.io.{PlatformFiles, PlatformPath, PlatformFile}
 import Util.*
 
-class ScriptingDriver(compilerArgs: Array[String], scriptFile: File, scriptArgs: Array[String]) extends Driver:
+class ScriptingDriver(compilerArgs: Array[String], scriptFile: PlatformFile, scriptArgs: Array[String]) extends Driver:
   def compileAndRun(pack:(PlatformPath, Seq[Path], String) => Boolean = null): Option[Throwable] =
     val outDir = PlatformFiles.createTempDirectory("scala3-scripting")
     outDir.toFile.deleteOnExit()

@@ -189,12 +189,12 @@ object ClassPath {
   /** Expand manifest jar classpath entries: these are either urls, or paths
     *  relative to the location of the jar.
     */
-  def expandManifestPath(jarPath: String): List[URL] = {
+  def expandManifestPath(jarPath: String): List[PlatformURL] = {
     val file = File(jarPath)
     if (!file.isFile) return Nil
 
     val baseDir = file.parent
-    new Jar(file).classPathElements map (elem =>
+    Jar(file).classPathElements map (elem =>
       specToURL(elem) getOrElse (baseDir / elem).toURL
     )
   }

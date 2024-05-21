@@ -1,6 +1,7 @@
 package dotty.tools.io
 
-class PlatformFileInputStream extends PlatformInputStream {
+class PlatformFileInputStream {
+
 }
 
 object PlatformFileInputStream {

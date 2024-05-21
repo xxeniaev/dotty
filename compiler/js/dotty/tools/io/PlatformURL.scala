@@ -29,8 +29,5 @@ object PlatformURL {
   def apply(context: PlatformURL, spec: String, handler: URLStreamHandler): PlatformURL = ???
   def apply(context: PlatformURL, spec: String): PlatformURL = ???
   def apply(spec: String): PlatformURL = ???
-
-//  def openStream: InputStream = ???
-//  def setURLStreamHandlerFactory(fac: URLStreamHandlerFactory): Unit = ???
 }
 

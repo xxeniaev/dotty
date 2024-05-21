@@ -1,9 +1,7 @@
 package dotty.tools.io
 
-import dotty.tools.file.{PlatformFileSystem as FileSystem}
-
 class PlatformPath {
-  def getFileSystem: FileSystem = ???
+  def getFileSystem: PlatformFileSystem = ???
   def isAbsolute: Boolean = ???
   def getRoot: PlatformPath = ???
   def getFileName: PlatformPath = ???

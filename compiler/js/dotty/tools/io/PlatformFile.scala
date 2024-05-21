@@ -26,10 +26,7 @@ class PlatformFile {
   def delete: Boolean = ???
   def deleteOnExit(): Unit = ???
   def list: Array[String] = ???
-  def list(filter: PlatformFilenameFilter): Array[String] = ???
   def listFiles: Array[PlatformFile] = ???
-  def listFiles(filter: PlatformFilenameFilter): Array[PlatformFile] = ???
-  def listFiles(filter: PlatformFileFilter): Array[PlatformFile] = ???
   def mkdir: Boolean = ???
   def mkdirs: Boolean = ???
   def renameTo(dest: PlatformFile): Boolean = ???

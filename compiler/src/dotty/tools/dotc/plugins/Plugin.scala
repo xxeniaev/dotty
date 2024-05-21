@@ -11,7 +11,7 @@ import transform.MegaPhase.MiniPhase
 
 import java.io.InputStream
 import java.util.Properties
-import dotty.tools.io.{PlatformInputStream, PlatformFileInputStream, PlatformProperties, PlatformJarEntry, PlatformURLClassLoader}
+import dotty.tools.io.{PlatformFileInputStream, PlatformProperties, PlatformJarEntry}
 
 import scala.util.{ Try, Success, Failure }
 
@@ -76,7 +76,7 @@ object Plugin {
     val compilerLoader = classOf[Plugin].getClassLoader
     val urls = locations map (_.toURL)
 
-    PlatformURLClassLoader(urls.toArray, compilerLoader)
+    URLClassLoader(urls.toArray, compilerLoader)
   }
 
   type AnyClass = Class[?]
@@ -107,7 +107,7 @@ object Plugin {
     dirs: List[Path],
     ignoring: List[String]): List[Try[Plugin]] = {
 
-    def fromFile(inputStream: PlatformInputStream, path: Path): String = {
+    def fromFile(inputStream: InputStream, path: Path): String = {
       val props = PlatformProperties()
       props.load(inputStream)
       inputStream.close()
@@ -125,7 +125,7 @@ object Plugin {
 
     def loadDescriptionFromJar(jarp: Path): Try[String] = {
       // XXX Return to this once we have more ARM support
-      def read(is: PlatformInputStream) =
+      def read(is: InputStream) =
         if (is == null) throw new PluginLoadException(jarp.path, s"Missing $PluginFile in $jarp")
         else fromFile(is, jarp)
 

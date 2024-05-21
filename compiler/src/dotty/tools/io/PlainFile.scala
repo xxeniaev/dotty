@@ -59,7 +59,7 @@ class PlainFile(val givenPath: Path) extends AbstractFile {
           val moduleName = jpath.getName(1)
           Some(
             new PlainFile(
-              new PlatformPath(
+              new Path(
                 PlatformPaths.get(
                   System.getProperty("java.home"),
                   "jmods",

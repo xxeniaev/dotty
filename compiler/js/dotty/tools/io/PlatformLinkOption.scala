@@ -1,14 +1,7 @@
-enum PlatformLinkOption:
-  case NOFOLLOW_LINKS
+package dotty.tools.io
 
-// ыыыыыы???
-//  public enum LinkOption implements OpenOption, CopyOption {
-//    /**
-//     * Do not follow symbolic links.
-//     *
-//     * @see Files#getFileAttributeView(Path,Class,LinkOption[])
-//     * @see Files#copy
-//     * @see SecureDirectoryStream#newByteChannel
-//     */
-//    NOFOLLOW_LINKS;
-//  }
+enum PlatformLinkOption extends PlatformOpenOption, PlatformCopyOption:
+  /**
+   * Do not follow symbolic links.
+   */
+  case NOFOLLOW_LINKS

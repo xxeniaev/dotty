@@ -169,8 +169,8 @@ final class FileZipArchive(jpath: PlatformPath, release: Option[String])
   // classloaders from being garbage collected). But is slightly
   // faster than LazyEntry.
   private class LeakyEntry(
-      zipFile: ZipFile,
-      zipEntry: ZipEntry,
+      zipFile: PlatformZipFile,
+      zipEntry: PlatformZipEntry,
       parent: DirEntry
   ) extends Entry(zipEntry.getName, parent) {
     override def lastModified: Long = zipEntry.getTime

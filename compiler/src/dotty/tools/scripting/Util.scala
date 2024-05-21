@@ -1,19 +1,21 @@
 package dotty.tools.scripting
 
-import scala.language.unsafeNulls
+import dotty.tools.dotc.config.Platform
 
-import java.nio.file.{ Path }
+import scala.language.unsafeNulls
+import java.nio.file.Path
 import java.io.File
 import dotty.tools.io.{PlatformFile, PlatformPath}
-import java.net.{ URLClassLoader }
-import java.lang.reflect.{ Modifier, Method }
+
+import java.net.URLClassLoader
+import java.lang.reflect.{Method, Modifier}
 
 object Util:
   def deleteFile(target: PlatformFile): Unit =
     if target.isDirectory then
       for member <- target.listFiles.toList
       do deleteFile(member)
-    target.delete()
+    target.delete
   end deleteFile
 
   def detectMainClassAndMethod(
@@ -24,7 +26,7 @@ object Util:
     val classpathUrls = (classpathEntries :+ outDir).map { _.toUri.toURL }
     val cl = URLClassLoader(classpathUrls.toArray)
 
-    def collectMainMethods(target: File, path: String): List[(String, Method)] =
+    def collectMainMethods(target: PlatformFile, path: String): List[(String, Method)] =
       val nameWithoutExtension = target.getName.takeWhile(_ != '.')
       val targetPath =
         if path.nonEmpty then s"${path}.${nameWithoutExtension}"

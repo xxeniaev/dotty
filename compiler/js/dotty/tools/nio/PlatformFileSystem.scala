@@ -1,11 +1,6 @@
-package dotty.tools.file
-
-import java.lang.{Iterable as JIterable}
+package dotty.tools.nio
 
 class PlatformFileSystem {
-  def provider: FileSystemProvider = ???
-  def getFileStores: Iterable[FileStore] = ???
-
 }
 
 object PlatformFileSystem {

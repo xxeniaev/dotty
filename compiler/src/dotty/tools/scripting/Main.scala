@@ -11,11 +11,11 @@ import dotty.tools.io.{PlatformPath, PlatformFile}
 object Main:
   /** All arguments before -script <target_script> are compiler arguments.
       All arguments afterwards are script arguments.*/
-  private def distinguishArgs(args: Array[String]): (Array[String], File, Array[String], Boolean, Boolean) =
+  private def distinguishArgs(args: Array[String]): (Array[String], PlatformFile, Array[String], Boolean, Boolean) =
     val (leftArgs, rest) = args.splitAt(args.indexOf("-script"))
     assert(rest.size >= 2, s"internal error: rest == Array(${rest.mkString(",")})")
 
-    val file = File(rest(1))
+    val file = PlatformFile(rest(1))
     // write script path to script.path property, so called script can see it
     sys.props("script.path") = file.toPath.toAbsolutePath.toString
     val scriptArgs = rest.drop(2)
@@ -37,7 +37,7 @@ object Main:
   def process(args: Array[String]): Option[Throwable] =
     val (compilerArgs, scriptFile, scriptArgs, saveJar, invokeFlag) = distinguishArgs(args)
     val driver = ScriptingDriver(compilerArgs, scriptFile, scriptArgs)
-    driver.compileAndRun { (outDir:Path, classpathEntries:Seq[Path], mainClass: String) =>
+    driver.compileAndRun { (outDir:PlatformPath, classpathEntries:Seq[Path], mainClass: String) =>
       // write expanded classpath to java.class.path property, so called script can see it
       sys.props("java.class.path") = classpathEntries.map(_.toString).mkString(pathsep)
       if saveJar then
@@ -55,7 +55,7 @@ object Main:
   private def writeJarfile(outDir: PlatformPath, scriptFile: PlatformFile, scriptArgs:Array[String],
       classpathEntries:Seq[Path], mainClassName: String): Unit =
 
-    val jarTargetDir: Path = Option(scriptFile.toPath.toAbsolutePath.getParent) match {
+    val jarTargetDir: PlatformPath = Option(scriptFile.toPath.toAbsolutePath.getParent) match {
       case None => sys.error(s"no parent directory for script file [$scriptFile]")
       case Some(parent) => parent
     }

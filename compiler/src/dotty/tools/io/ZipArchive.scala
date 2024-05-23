@@ -119,7 +119,7 @@ abstract class ZipArchive(
 
   protected def getDir(
       dirs: mutable.Map[String, DirEntry],
-      entry: ZipEntry
+      entry: PlatformZipEntry
   ): DirEntry = {
     if (entry.isDirectory) ensureDir(dirs, entry.getName)
     else ensureDir(dirs, dirName(entry.getName))
@@ -132,13 +132,15 @@ abstract class ZipArchive(
 final class FileZipArchive(jpath: PlatformPath, release: Option[String])
     extends ZipArchive(jpath, release) {
   private def openZipFile(): PlatformZipFile = try {
-    release match {
-      case Some(r) if file.getName.endsWith(".jar") =>
-        val releaseVersion = JDK9Reflectors.runtimeVersionParse(r)
-        JDK9Reflectors.newJarFile(file, true, ZipFile.OPEN_READ, releaseVersion)
-      case _ =>
-        PlatformZipFile(file)
-    }
+    // release match {
+    //   case Some(r) if file.getName.endsWith(".jar") =>
+    //     val releaseVersion = JDK9Reflectors.runtimeVersionParse(r)
+    //     JDK9Reflectors.newJarFile(file, true, ZipFile.OPEN_READ, releaseVersion)
+    //   case _ =>
+    //     PlatformZipFile(file)
+    // }
+    /// HMMMMM
+    PlatformZipFile(file)
   } catch {
     case ioe: IOException =>
       throw new IOException("Error accessing " + file.getPath, ioe)
@@ -201,9 +203,9 @@ final class FileZipArchive(jpath: PlatformPath, release: Option[String])
             val f =
               if (ZipArchive.closeZipFile)
                 new LazyEntry(
-                  zipEntry.getName(),
-                  zipEntry.getTime(),
-                  zipEntry.getSize().toInt,
+                  zipEntry.getName,
+                  zipEntry.getTime,
+                  zipEntry.getSize.toInt,
                   dir
                 )
               else
@@ -257,7 +259,7 @@ final class ManifestResources(val url: URL) extends ZipArchive(null, None) {
       .iterator()
       .asScala
       .filter(_.endsWith(".class"))
-      .map(new ZipEntry(_))
+      .map(PlatformZipEntry(_))
 
     closeables ::= stream
 
@@ -265,7 +267,7 @@ final class ManifestResources(val url: URL) extends ZipArchive(null, None) {
       val dir = getDir(dirs, zipEntry)
       if (!zipEntry.isDirectory) {
         class FileEntry() extends Entry(zipEntry.getName, dir) {
-          override def lastModified = zipEntry.getTime()
+          override def lastModified = zipEntry.getTime
           override def input = resourceInputStream(this.path)
           override def sizeOption = None
         }

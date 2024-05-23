@@ -8,6 +8,7 @@ class PlatformFileSystem {
   def getRootDirectories: JIterable[PlatformPath] = ???
   def getFileStores: JIterable[PlatformFileStore] = ???
   def close(): Unit = ???
+  def getSeparator: String = ???
 }
 
 object PlatformFileSystem {

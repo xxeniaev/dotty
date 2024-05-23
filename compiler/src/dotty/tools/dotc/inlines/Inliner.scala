@@ -1025,30 +1025,32 @@ class Inliner(val call: tpd.Tree)(using Context):
 
   private def expandMacro(body: Tree, splicePos: SrcPos)(using Context) = {
     assert(StagingContext.level == 0)
-    val inlinedFrom = enclosingInlineds.last
-    val dependencies = macroDependencies(body)
-    val suspendable = ctx.compilationUnit.isSuspendable
-    if dependencies.nonEmpty && !ctx.reporter.errorsReported then
-      for sym <- dependencies do
-        if ctx.compilationUnit.source.file == sym.associatedFile then
-          report.error(em"Cannot call macro $sym defined in the same source file", call.srcPos)
-        if (suspendable && ctx.settings.XprintSuspension.value)
-          report.echo(i"suspension triggered by macro call to ${sym.showLocated} in ${sym.associatedFile}", call.srcPos)
-      if suspendable then
-        ctx.compilationUnit.suspend() // this throws a SuspendException
+    // TODO!!!
+    body
+    // val inlinedFrom = enclosingInlineds.last
+    // val dependencies = macroDependencies(body)
+    // val suspendable = ctx.compilationUnit.isSuspendable
+    // if dependencies.nonEmpty && !ctx.reporter.errorsReported then
+    //   for sym <- dependencies do
+    //     if ctx.compilationUnit.source.file == sym.associatedFile then
+    //       report.error(em"Cannot call macro $sym defined in the same source file", call.srcPos)
+    //     if (suspendable && ctx.settings.XprintSuspension.value)
+    //       report.echo(i"suspension triggered by macro call to ${sym.showLocated} in ${sym.associatedFile}", call.srcPos)
+    //   if suspendable then
+    //     ctx.compilationUnit.suspend() // this throws a SuspendException
 
-    val evaluatedSplice = inContext(quoted.MacroExpansion.context(inlinedFrom)) {
-      Splicer.splice(body, splicePos, inlinedFrom.srcPos, MacroClassLoader.fromContext)
-    }
-    val inlinedNormailizer = new TreeMap {
-      override def transform(tree: tpd.Tree)(using Context): tpd.Tree = tree match {
-        case Inlined(EmptyTree, Nil, expr) if enclosingInlineds.isEmpty => transform(expr)
-        case _ => super.transform(tree)
-      }
-    }
-    val normalizedSplice = inlinedNormailizer.transform(evaluatedSplice)
-    if (normalizedSplice.isEmpty) normalizedSplice
-    else normalizedSplice.withSpan(splicePos.span)
+    // val evaluatedSplice = inContext(quoted.MacroExpansion.context(inlinedFrom)) {
+    //   Splicer.splice(body, splicePos, inlinedFrom.srcPos, MacroClassLoader.fromContext)
+    // }
+    // val inlinedNormailizer = new TreeMap {
+    //   override def transform(tree: tpd.Tree)(using Context): tpd.Tree = tree match {
+    //     case Inlined(EmptyTree, Nil, expr) if enclosingInlineds.isEmpty => transform(expr)
+    //     case _ => super.transform(tree)
+    //   }
+    // }
+    // val normalizedSplice = inlinedNormailizer.transform(evaluatedSplice)
+    // if (normalizedSplice.isEmpty) normalizedSplice
+    // else normalizedSplice.withSpan(splicePos.span)
   }
 
   /** Return the set of symbols that are referred at level -1 by the tree and defined in the current run.

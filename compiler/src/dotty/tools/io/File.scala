@@ -12,7 +12,8 @@ import scala.language.unsafeNulls
 
 import java.io.{File => JavaIoFile, _}
 import java.nio.file.{Files, Paths}
-import java.nio.file.StandardOpenOption._
+// import java.nio.file.StandardOpenOption._
+import dotty.tools.io.PlatformOpenOption._
 import dotty.tools.io.{PlatformFiles, PlatformPath, PlatformPaths}
 
 import scala.io.Codec

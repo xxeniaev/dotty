@@ -35,7 +35,6 @@ import java.io.File
 import scala.jdk.CollectionConverters.*
 import scala.collection.immutable.ArraySeq
 import scala.util.control.NonFatal
-import scalajs.js.internal.UnitOps.unitOrOps
 
 /** A trait allowing to look for classpath entries in directories. It provides common logic for
   * classes handling class and source files.
@@ -214,7 +213,7 @@ final class JrtClassPath(fs: PlatformFileSystem)
 
   // e.g. "java.lang" -> Seq("/modules/java.base")
   private val packageToModuleBases: Map[String, Seq[PlatformPath]] = {
-    val ps = PlatformFiles.newDirectoryStream(dir).iterator().asScala
+    val ps = PlatformFiles.newDirectoryStream(dir).iterator.asScala
     def lookup(pack: PlatformPath): Seq[PlatformPath] =
       PlatformFiles
         .list(pack)

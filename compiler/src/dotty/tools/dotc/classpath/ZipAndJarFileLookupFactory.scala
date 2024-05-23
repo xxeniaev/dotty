@@ -184,7 +184,8 @@ final class FileBasedCache[T] {
   private val cache = collection.mutable.Map.empty[PlatformPath, (Stamp, T)]
 
   def getOrCreate(path: PlatformPath, create: () => T): T = cache.synchronized {
-    val attrs = PlatformFiles.readAttributes(path, classOf[BasicFileAttributes])
+    //val attrs = PlatformFiles.readAttributes(path, classOf[BasicFileAttributes])
+    val attrs = PlatformFiles.readAttributes(path)
     val lastModified = attrs.lastModifiedTime()
     // only null on some platforms, but that's okay, we just use the last modified timestamp as our stamp
     val fileKey = attrs.fileKey()

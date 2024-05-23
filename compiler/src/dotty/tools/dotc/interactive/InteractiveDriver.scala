@@ -77,7 +77,7 @@ class InteractiveDriver(val settings: List[String]) extends Driver {
       // standard Java library, but this will change once we start supporting
       // adding entries to the modulepath.
       val zipCps = cps.collect { case cp: ZipArchiveFileLookup[?] => cp }
-      val dirCps = cps.collect { case cp: JFileDirectoryLookup[?] => cp }
+      val dirCps = cps.collect { case cp: PlatformFileDirectoryLookup[?] => cp }
       (zipCps, dirCps)
     case _ =>
       (Seq(), Seq())
@@ -236,20 +236,22 @@ class InteractiveDriver(val settings: List[String]) extends Driver {
 
   /** Adds the names of the classes that are defined in `dir` to `buffer`. */
   private def classesFromDir(dir: PlatformPath, buffer: mutable.ListBuffer[TypeName]): Unit =
-    try
-      PlatformFiles.walkFileTree(dir, new SimpleFileVisitor[Path] {
-        override def visitFile(path: PlatformPath, attrs: BasicFileAttributes) = {
-          if (!attrs.isDirectory) {
-            val name = path.getFileName.toString
-            if name.endsWith(tastySuffix) then
-              buffer += dir.relativize(path).toString.replace("/", ".").stripSuffix(tastySuffix).toTypeName
-          }
-          FileVisitResult.CONTINUE
-        }
-      })
-    catch {
-      case _: NoSuchFileException =>
-    }
+    // TODO
+    ()
+    // try
+    //   PlatformFiles.walkFileTree(dir, new SimpleFileVisitor[Path] {
+    //     override def visitFile(path: PlatformPath, attrs: BasicFileAttributes) = {
+    //       if (!attrs.isDirectory) {
+    //         val name = path.getFileName.toString
+    //         if name.endsWith(tastySuffix) then
+    //           buffer += dir.relativize(path).toString.replace("/", ".").stripSuffix(tastySuffix).toTypeName
+    //       }
+    //       FileVisitResult.CONTINUE
+    //     }
+    //   })
+    // catch {
+    //   case _: NoSuchFileException =>
+    // }
 
   private def topLevelTrees(topTree: Tree, source: SourceFile): List[SourceTree] = {
     val trees = new mutable.ListBuffer[SourceTree]

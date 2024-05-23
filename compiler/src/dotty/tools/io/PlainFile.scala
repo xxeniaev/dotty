@@ -33,7 +33,7 @@ class PlainFile(val givenPath: Path) extends AbstractFile {
 
   override def underlyingSource = {
     val fileSystem = jpath.getFileSystem
-    fileSystem.provider().getScheme match {
+    fileSystem.provider.getScheme match {
       case "jar" =>
         val fileStores = fileSystem.getFileStores.iterator()
         if (fileStores.hasNext) {

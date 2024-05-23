@@ -22,8 +22,11 @@ class PlatformURI {
   def getHost: String = ???
   def getPort: Int = ???
   def getPath: String = ???
+  def getRawPath: String = ???
   def getQuery: String = ???
+  def getRawQuery: String = ???
   def getFragment: String = ???
+  def getRawFragment: String = ???
   def toASCIIString: String = ???
 }
 

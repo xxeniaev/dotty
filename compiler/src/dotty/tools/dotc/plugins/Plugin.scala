@@ -72,12 +72,12 @@ object Plugin {
   /** Create a class loader with the specified locations plus
    *  the loader that loaded the Scala compiler.
    */
-  private def loaderFor(locations: Seq[Path]): ClassLoader = {
-    val compilerLoader = classOf[Plugin].getClassLoader
-    val urls = locations map (_.toURL)
+  // private def loaderFor(locations: Seq[Path]): ClassLoader = {
+  //   val compilerLoader = classOf[Plugin].getClassLoader
+  //   val urls = locations map (_.toURL)
 
-    URLClassLoader(urls.toArray, compilerLoader)
-  }
+  //   URLClassLoader(urls.toArray, compilerLoader)
+  // }
 
   type AnyClass = Class[?]
 
@@ -105,82 +105,86 @@ object Plugin {
   def loadAllFrom(
     paths: List[List[Path]],
     dirs: List[Path],
-    ignoring: List[String]): List[Try[Plugin]] = {
+    ignoring: List[String]): List[Try[Plugin]] = List.empty
+  // def loadAllFrom(
+  //   paths: List[List[Path]],
+  //   dirs: List[Path],
+  //   ignoring: List[String]): List[Try[Plugin]] = {
 
-    def fromFile(inputStream: InputStream, path: Path): String = {
-      val props = PlatformProperties()
-      props.load(inputStream)
-      inputStream.close()
+  //   def fromFile(inputStream: InputStream, path: Path): String = {
+  //     val props = PlatformProperties()
+  //     props.load(inputStream)
+  //     inputStream.close()
 
-      val pluginClass = props.getProperty("pluginClass")
+  //     val pluginClass = props.getProperty("pluginClass")
 
-      if (pluginClass == null) throw new RuntimeException("Bad plugin descriptor: " + path)
-      else pluginClass
-    }
+  //     if (pluginClass == null) throw new RuntimeException("Bad plugin descriptor: " + path)
+  //     else pluginClass
+  //   }
 
-    def loadDescriptionFromDir(f: Path): Try[String] = {
-      val path = f / PluginFile
-      Try(fromFile(PlatformFileInputStream(path.jpath.toFile), path))
-    }
+  //   def loadDescriptionFromDir(f: Path): Try[String] = {
+  //     val path = f / PluginFile
+  //     Try(fromFile(PlatformFileInputStream(path.jpath.toFile), path))
+  //   }
 
-    def loadDescriptionFromJar(jarp: Path): Try[String] = {
-      // XXX Return to this once we have more ARM support
-      def read(is: InputStream) =
-        if (is == null) throw new PluginLoadException(jarp.path, s"Missing $PluginFile in $jarp")
-        else fromFile(is, jarp)
+  //   def loadDescriptionFromJar(jarp: Path): Try[String] = {
+  //     // XXX Return to this once we have more ARM support
+  //     def read(is: InputStream) =
+  //       if (is == null) throw new PluginLoadException(jarp.path, s"Missing $PluginFile in $jarp")
+  //       else fromFile(is, jarp)
 
-      val fileEntry = PlatformJarEntry(PluginFile)
-      Try(read(new Jar(jarp.jpath.toFile).getEntryStream(fileEntry)))
-    }
+  //     val fileEntry = PlatformJarEntry(PluginFile)
+  //     Try(read(new Jar(jarp.jpath.toFile).getEntryStream(fileEntry)))
+  //   }
 
-    // List[(jar, Try(descriptor))] in dir
-    def scan(d: Directory) =
-      d.files.toList sortBy (_.name) filter (Jar isJarOrZip _) map (j => (j, loadDescriptionFromJar(j)))
+  //   // List[(jar, Try(descriptor))] in dir
+  //   def scan(d: Directory) =
+  //     d.files.toList sortBy (_.name) filter (Jar isJarOrZip _) map (j => (j, loadDescriptionFromJar(j)))
 
-    type PDResults = List[Try[(String, ClassLoader)]]
+  //   type PDResults = List[Try[(String, ClassLoader)]]
 
-    // scan plugin dirs for jars containing plugins, ignoring dirs with none and other jars
-    val fromDirs: PDResults = dirs filter (_.isDirectory) flatMap { d =>
-      scan(d.toDirectory) collect {
-        case (j, Success(pd)) => Success((pd, loaderFor(Seq(j))))
-      }
-    }
+  //   // scan plugin dirs for jars containing plugins, ignoring dirs with none and other jars
+  //   val fromDirs: PDResults = dirs filter (_.isDirectory) flatMap { d =>
+  //     scan(d.toDirectory) collect {
+  //       case (j, Success(pd)) => Success((pd, loaderFor(Seq(j))))
+  //     }
+  //   }
 
-    // scan jar paths for plugins, taking the first plugin you find.
-    // a path element can be either a plugin.jar or an exploded dir.
-    def findDescriptor(ps: List[Path]) = {
-      def loop(qs: List[Path]): Try[String] = qs match {
-        case Nil       => Failure(new MissingPluginException(ps))
-        case p :: rest =>
-          if (p.isDirectory) loadDescriptionFromDir(p.toDirectory) orElse loop(rest)
-          else if (p.isFile) loadDescriptionFromJar(p.toFile) orElse loop(rest)
-          else loop(rest)
-      }
-      loop(ps)
-    }
+  //   // scan jar paths for plugins, taking the first plugin you find.
+  //   // a path element can be either a plugin.jar or an exploded dir.
+  //   def findDescriptor(ps: List[Path]) = {
+  //     def loop(qs: List[Path]): Try[String] = qs match {
+  //       case Nil       => Failure(new MissingPluginException(ps))
+  //       case p :: rest =>
+  //         if (p.isDirectory) loadDescriptionFromDir(p.toDirectory) orElse loop(rest)
+  //         else if (p.isFile) loadDescriptionFromJar(p.toFile) orElse loop(rest)
+  //         else loop(rest)
+  //     }
+  //     loop(ps)
+  //   }
 
-    val fromPaths: PDResults = paths map (p => findDescriptor(p) match {
-      case Success(classname) => Success((classname, loaderFor(p)))
-      case Failure(e)  => Failure(e)
-    })
+  //   val fromPaths: PDResults = paths map (p => findDescriptor(p) match {
+  //     case Success(classname) => Success((classname, loaderFor(p)))
+  //     case Failure(e)  => Failure(e)
+  //   })
 
-    val seen = util.HashSet[String]()
-    val enabled = (fromPaths ::: fromDirs) map(_.flatMap {
-      case (classname, loader) =>
-        Plugin.load(classname, loader).flatMap {  clazz =>
-          val plugin = instantiate(clazz)
-          if (seen.contains(classname))   // a nod to scala/bug#7494, take the plugin classes distinctly
-            Failure(new PluginLoadException(plugin.name, s"Ignoring duplicate plugin ${plugin.name} (${classname})"))
-          else if (ignoring contains plugin.name)
-            Failure(new PluginLoadException(plugin.name, s"Disabling plugin ${plugin.name}"))
-          else {
-            seen += classname
-            Success(plugin)
-          }
-        }
-    })
-    enabled   // distinct and not disabled
-  }
+  //   val seen = util.HashSet[String]()
+  //   val enabled = (fromPaths ::: fromDirs) map(_.flatMap {
+  //     case (classname, loader) =>
+  //       Plugin.load(classname, loader).flatMap {  clazz =>
+  //         val plugin = instantiate(clazz)
+  //         if (seen.contains(classname))   // a nod to scala/bug#7494, take the plugin classes distinctly
+  //           Failure(new PluginLoadException(plugin.name, s"Ignoring duplicate plugin ${plugin.name} (${classname})"))
+  //         else if (ignoring contains plugin.name)
+  //           Failure(new PluginLoadException(plugin.name, s"Disabling plugin ${plugin.name}"))
+  //         else {
+  //           seen += classname
+  //           Success(plugin)
+  //         }
+  //       }
+  //   })
+  //   enabled   // distinct and not disabled
+  // }
 
   /** Instantiate a plugin class, given the class and
    *  the compiler it is to be used in.

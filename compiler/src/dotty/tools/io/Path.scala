@@ -14,8 +14,8 @@ import java.nio.file.attribute.{BasicFileAttributes, FileTime}
 import java.io.IOException
 import scala.jdk.CollectionConverters._
 import scala.util.Random.alphanumeric
-import dotty.tools.io.{PlatformPath, PlatformFileSystems, PlatformFile, PlatformFiles, PlatformURI, PlatformURL, PlatformFileTime}
-import scalajs.js.internal.UnitOps.unitOrOps
+import dotty.tools.io._
+import dotty.tools.nio.PlatformFileVisitor
 import math.Ordered.orderingToOrdered
 
 /** An abstraction for filesystem paths.  The differences between
@@ -202,7 +202,8 @@ class Path private[io] (val jpath: PlatformPath) {
   // Boolean path comparisons
   def endsWith(other: Path): Boolean = segments endsWith other.segments
   def isSame(other: Path): Boolean = toCanonical == other.toCanonical
-  def isFresher(other: Path): Boolean = lastModified.compareTo(other.lastModified) > 0
+  //def isFresher(other: Path): Boolean = lastModified.compareTo(other.lastModified) > 0
+  def isFresher(other: Path): Boolean = lastModified.toMillis > other.lastModified.toMillis
 
   // creations
   def createDirectory(force: Boolean = true, failIfExists: Boolean = false): Directory = {
@@ -232,14 +233,14 @@ class Path private[io] (val jpath: PlatformPath) {
   def deleteRecursively(): Boolean = {
     if (!exists) false
     else {
-      PlatformFiles.walkFileTree(jpath, new SimpleFileVisitor[JPath]() {
-        override def visitFile(file: JPath, attrs: BasicFileAttributes) = {
-          Files.delete(file)
+      PlatformFiles.walkFileTree(jpath, new PlatformFileVisitor[PlatformPath]() {
+        override def visitFile(file: PlatformPath, attrs: BasicFileAttributes) = {
+          PlatformFiles.delete(file)
           FileVisitResult.CONTINUE
         }
 
-        override def postVisitDirectory(dir: JPath, exc: IOException) = {
-          Files.delete(dir)
+        override def postVisitDirectory(dir: PlatformPath, exc: IOException) = {
+          PlatformFiles.delete(dir)
           FileVisitResult.CONTINUE
         }
       })

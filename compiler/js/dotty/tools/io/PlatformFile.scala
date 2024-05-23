@@ -26,7 +26,8 @@ class PlatformFile {
   def delete: Boolean = ???
   def deleteOnExit(): Unit = ???
   def list: Array[String] = ???
-  def listFiles: Array[PlatformFile] = ???
+  def listFiles(): Array[PlatformFile] = ???
+  def listFiles(f: PlatformFile => Boolean): Array[PlatformFile] = ???
   def mkdir: Boolean = ???
   def mkdirs: Boolean = ???
   def renameTo(dest: PlatformFile): Boolean = ???
@@ -52,13 +53,13 @@ object PlatformFile {
   def apply(parent: String, child: String): PlatformFile = ???
   def apply(parent: PlatformFile, child: String): PlatformFile = ???
   def apply(uri: PlatformURI): PlatformFile = ???
-  val pathSeparator: String = ???
   def listRoots: Array[PlatformFile] = ???
   def createTempFile(prefix: String, suffix: String, directory: PlatformFile): PlatformFile = ???
   def createTempFile(prefix: String, suffix: String): PlatformFile = ???
 
   val separatorChar: Char = ???
   val separator: String = ???
+  val pathSeparator: String = ???
 }
 
 

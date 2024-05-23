@@ -17,16 +17,16 @@ object Serializer:
   private val CoverageDataFormatVersion = "3.0"
 
   /** Write out coverage data to the given data directory, using the default coverage filename */
-  def serialize(coverage: Coverage, dataDir: String, sourceRoot: String): Unit =
-    serialize(coverage, Paths.get(dataDir, CoverageFileName).toAbsolutePath, Paths.get(sourceRoot).toAbsolutePath)
+  // def serialize(coverage: Coverage, dataDir: String, sourceRoot: String): Unit =
+  //   serialize(coverage, Paths.get(dataDir, CoverageFileName).toAbsolutePath, Paths.get(sourceRoot).toAbsolutePath)
 
-  /** Write out coverage data to a file. */
-  def serialize(coverage: Coverage, file: Path, sourceRoot: Path): Unit =
-    val writer = Files.newBufferedWriter(file)
-    try
-      serialize(coverage, writer, sourceRoot)
-    finally
-      writer.close()
+  // /** Write out coverage data to a file. */
+  // def serialize(coverage: Coverage, file: Path, sourceRoot: Path): Unit =
+  //   val writer = Files.newBufferedWriter(file)
+  //   try
+  //     serialize(coverage, writer, sourceRoot)
+  //   finally
+  //     writer.close()
 
   /** Write out coverage data (info about each statement that can be covered) to a writer.
    */

@@ -12,6 +12,7 @@ class PlatformFiles {
 
 
 object PlatformFiles {
+  def delete(path: PlatformPath): Unit = ???
   def deleteIfExists(path: PlatformPath): Boolean = ???
   def getLastModifiedTime(path: PlatformPath, options: PlatformLinkOption*): PlatformFileTime = ???
   def size(path: PlatformPath): Long = ???
@@ -27,12 +28,14 @@ object PlatformFiles {
   def createFile[A](path: PlatformPath, attrs: PlatformFileAttribute[A]*): PlatformPath = ???
   def newOutputStream(path: PlatformPath, options: PlatformOpenOption*): PlatformOutputStream = ???
   def newInputStream(path: PlatformPath, options: PlatformOpenOption*): PlatformInputStream = ???
-  def walkFileTree(start: PlatformPath, visitor: PlatformFileVisitor[_ >: Path]): PlatformPath = ???
+  def walkFileTree(start: PlatformPath, visitor: PlatformFileVisitor[PlatformPath]): PlatformPath = ???
   def isRegularFile(path: PlatformPath, options: PlatformLinkOption*): Boolean = ???
   def isReadable(path: PlatformPath): Boolean = ???
   def isWritable(path: PlatformPath): Boolean = ???
   def createTempDirectory[A](prefix: String, attrs: PlatformFileAttribute[A]*): PlatformPath = ???
+  def createTempDirectory[A](dir: PlatformPath, prefix: String, attrs: PlatformFileAttribute[A]*): PlatformPath = ???
   def notExists(path: PlatformPath, options: PlatformLinkOption*): Boolean = ???
   def readAttributes(path: PlatformPath, attributes: String, options: PlatformLinkOption*): JMap[String, AnyRef] = ???
+  def readAttributes(path: PlatformPath, options: PlatformLinkOption*): java.nio.file.attribute.BasicFileAttributes = ???
 }
 

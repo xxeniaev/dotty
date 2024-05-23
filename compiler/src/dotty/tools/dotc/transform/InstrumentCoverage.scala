@@ -55,7 +55,7 @@ class InstrumentCoverage extends MacroTransform with IdentityDenotTransformer:
     end if
     super.run
 
-    Serializer.serialize(coverage, outputPath, ctx.settings.sourceroot.value)
+    //Serializer.serialize(coverage, outputPath, ctx.settings.sourceroot.value)
 
   override protected def newTransformer(using Context) =
     CoverageTransformer(ctx.settings.coverageOutputDir.value)

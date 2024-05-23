@@ -9,13 +9,11 @@ import dotty.tools.io.PlatformFile
 import java.lang.Thread
 import scala.annotation.internal.sharable
 import dotty.tools.dotc.util.ClasspathFromClassloader
-import dotty.tools.runner.ObjectRunner
 import dotty.tools.dotc.config.Properties.envOrNone
 import dotty.tools.io.Jar
-import dotty.tools.runner.ScalaClassLoader
 import dotty.tools.io.PlatformPaths
 import dotty.tools.dotc.config.CommandLineParser
-import dotty.tools.scripting.StringDriver
+// import dotty.tools.scripting.StringDriver
 
 enum CompileMode:
   case Guess
@@ -168,17 +166,17 @@ object MainGenericCompiler {
         addJavaProps()
         val properArgs = reconstructedArgs()
         dotty.tools.dotc.core.tasty.TastyPrinter.main(properArgs.toArray)
-      case CompileMode.Script => // Naive copy from scalac bash script
-        addJavaProps()
-        val properArgs =
-          reconstructedArgs()
-          ++ List("-script", settings.targetScript)
-          ++ settings.scriptArgs
-        scripting.Main.main(properArgs.toArray)
-      case CompileMode.Repl | CompileMode.Run =>
-        addJavaProps()
-        val properArgs = reconstructedArgs()
-//        repl.Main.main(properArgs.toArray)
+      // case CompileMode.Script => // Naive copy from scalac bash script
+      //   addJavaProps()
+      //   val properArgs =
+      //     reconstructedArgs()
+      //     ++ List("-script", settings.targetScript)
+      //     ++ settings.scriptArgs
+      //   scripting.Main.main(properArgs.toArray)
+//       case CompileMode.Repl | CompileMode.Run =>
+//         addJavaProps()
+//         val properArgs = reconstructedArgs()
+// //        repl.Main.main(properArgs.toArray)
       case CompileMode.Guess =>
         run(settings.withCompileMode(CompileMode.Compile))
     end run

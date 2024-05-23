@@ -1,12 +1,13 @@
 package dotty.tools.io
 
 import java.io.InputStream as PlatformInputStream
+import java.io.Closeable
 
-class PlatformZipFile {
+class PlatformZipFile extends Closeable {
   def close(): Unit = ???
   def getEntry(name: String): PlatformZipEntry = ???
   def getInputStream(entry: PlatformZipEntry): PlatformInputStream = ???
-  def entries(): Iterator[_ <: ZipEntry] = ???
+  def entries(): java.util.Enumeration[PlatformZipEntry] = ???
 }
 
 object PlatformZipFile {

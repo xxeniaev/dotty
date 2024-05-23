@@ -21,7 +21,6 @@ import java.nio.file.{FileSystemException, NoSuchFileException}
 import java.util.Optional
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.regex.Pattern
-import scalajs.js.internal.UnitOps.unitOrOps
 
 object ScriptSourceFile {
   @sharable private val headerPattern = Pattern.compile("""^(::)?!#.*(\r|\n|\r\n)""", Pattern.MULTILINE)

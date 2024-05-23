@@ -22,6 +22,7 @@ class PlatformPath {
   def toUri: PlatformURI = ???
   def toAbsolutePath: PlatformPath = ???
   def toFile: PlatformFile = ???
+  def iterator: java.util.Iterator[PlatformPath]
 }
 
 object PlatformPath {

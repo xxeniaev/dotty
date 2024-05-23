@@ -16,6 +16,8 @@ import dotty.tools.io.{
   PlatformFile
 }
 import dotty.tools.runner.ScalaClassLoader
+import java.io.File
+import java.nio.file.Paths
 import dotty.tools.dotc.config.CommandLineParser
 import dotty.tools.scripting.{StringDriver, StringDriverException, ScriptingException}
 
@@ -174,112 +176,112 @@ object MainGenericRunner {
         processArgs(tail, newSettings.withResidualArgs(arg))
   end processArgs
 
-  def process(args: Array[String]): Boolean =
-    val scalaOpts = envOrNone("SCALA_OPTS").toArray.flatMap(_.split(" ")).filter(_.nonEmpty)
-    val allArgs = scalaOpts ++ args
-    val settings = processArgs(allArgs.toList, Settings())
-    if settings.exitCode != 0 then System.exit(settings.exitCode)
-
-    def removeCompiler(cp: Array[String]) =
-      if (!settings.compiler) then // Let's remove compiler from the classpath
-        val compilerLibs = Seq("scala3-compiler", "scala3-interfaces", "tasty-core", "scala-asm", "scala3-staging", "scala3-tasty-inspector")
-        cp.filterNot(c => compilerLibs.exists(c.contains))
-      else
-        cp
-
-    def run(settings: Settings): Option[Throwable] = settings.executeMode match
-      case ExecuteMode.Repl =>
-        val properArgs =
-          List("-classpath", settings.classPath.mkString(classpathSeparator)).filter(Function.const(settings.classPath.nonEmpty))
-            ++ settings.residualArgs
-//        repl.Main.main(properArgs.toArray)
-        None
-
-      case ExecuteMode.PossibleRun =>
-        val newClasspath = (settings.classPath :+ ".").flatMap(_.split(classpathSeparator).filter(_.nonEmpty)).map(PlatformFile(_).toURI.toURL)
-        import dotty.tools.runner.RichClassLoader._
-        val newClassLoader = ScalaClassLoader.fromURLsParallelCapable(newClasspath)
-        val targetToRun = settings.possibleEntryPaths.to(LazyList).find { entryPath =>
-          newClassLoader.tryToLoadClass(entryPath).orElse {
-            Option.when(Jar.isJarOrZip(dotty.tools.io.Path(entryPath)))(Jar(entryPath).mainClass).flatten
-          }.isDefined
-        }
-        val newSettings = targetToRun match
-          case Some(fqName) =>
-            settings.withTargetToRun(fqName).copy(residualArgs = settings.residualArgs.filterNot(fqName.==)).withExecuteMode(ExecuteMode.Run)
-          case None =>
-            settings.withExecuteMode(ExecuteMode.Repl)
-        run(newSettings)
-
-      case ExecuteMode.Run =>
-        val scalaClasspath = ClasspathFromClassloader(Thread.currentThread().getContextClassLoader).split(classpathSeparator)
-        val newClasspath = (settings.classPath.flatMap(_.split(classpathSeparator).filter(_.nonEmpty)) ++ removeCompiler(scalaClasspath) :+ ".").map(PlatformFile(_).toURI.toURL)
-        ObjectRunner.runAndCatch(newClasspath, settings.targetToRun, settings.residualArgs).flatMap {
-          case ex: ClassNotFoundException if ex.getMessage == settings.targetToRun =>
-            val file = settings.targetToRun
-            Jar(file).mainClass match
-              case Some(mc) =>
-                ObjectRunner.runAndCatch(newClasspath :+ PlatformFile(file).toURI.toURL, mc, settings.residualArgs)
-              case None =>
-                Some(IllegalArgumentException(s"No main class defined in manifest in jar: $file"))
-          case ex => Some(ex)
-        }
-
-      case ExecuteMode.Script =>
-        val targetScript = PlatformPaths.get(settings.targetScript).toFile
-        val targetJar = settings.targetScript.replaceAll("[.][^\\/]*$", "")+".jar"
-        val precompiledJar = PlatformFile(targetJar)
-        val mainClass = if !precompiledJar.isFile then "" else Jar(targetJar).mainClass.getOrElse("")
-        val jarIsValid = mainClass.nonEmpty && precompiledJar.lastModified >= targetScript.lastModified && settings.save
-        if jarIsValid then
-          // precompiledJar exists, is newer than targetScript, and manifest defines a mainClass
-          sys.props("script.path") = targetScript.toPath.toAbsolutePath.normalize.toString
-          val scalaClasspath = ClasspathFromClassloader(Thread.currentThread().getContextClassLoader).split(classpathSeparator)
-          val newClasspath = (settings.classPath.flatMap(_.split(classpathSeparator).filter(_.nonEmpty)) ++ removeCompiler(scalaClasspath) :+ ".").map(File(_).toURI.toURL)
-          if mainClass.nonEmpty then
-            ObjectRunner.runAndCatch(newClasspath :+ PlatformFile(targetJar).toURI.toURL, mainClass, settings.scriptArgs)
-          else
-            Some(IllegalArgumentException(s"No main class defined in manifest in jar: $precompiledJar"))
-
-        else
-          val properArgs =
-            List("-classpath", settings.classPath.mkString(classpathSeparator)).filter(Function.const(settings.classPath.nonEmpty))
-              ++ settings.residualArgs
-              ++ (if settings.save then List("-save") else Nil)
-              ++ settings.scalaArgs
-              ++ List("-script", settings.targetScript)
-              ++ settings.scriptArgs
-          scripting.Main.process(properArgs.toArray)
-
-      case ExecuteMode.Expression =>
-        val cp = settings.classPath match {
-          case Nil => ""
-          case list => list.mkString(classpathSeparator)
-        }
-        val cpArgs = if cp.isEmpty then Nil else List("-classpath", cp)
-        val properArgs = cpArgs ++ settings.residualArgs ++ settings.scalaArgs
-        val driver = StringDriver(properArgs.toArray, settings.targetExpression)
-        driver.compileAndRun(settings.classPath)
-
-      case ExecuteMode.Guess =>
-        if settings.modeShouldBePossibleRun then
-          run(settings.withExecuteMode(ExecuteMode.PossibleRun))
-        else if settings.modeShouldBeRun then
-          run(settings.withExecuteMode(ExecuteMode.Run))
-        else
-          run(settings.withExecuteMode(ExecuteMode.Repl))
-
-    run(settings) match
-      case Some(ex: (StringDriverException | ScriptingException)) => errorFn(ex.getMessage)
-      case e @ Some(ex)                                           => errorFn("", e)
-      case _                                                      => true
+//  def process(args: Array[String]): Boolean =
+//    val scalaOpts = envOrNone("SCALA_OPTS").toArray.flatMap(_.split(" ")).filter(_.nonEmpty)
+//    val allArgs = scalaOpts ++ args
+//    val settings = processArgs(allArgs.toList, Settings())
+//    if settings.exitCode != 0 then System.exit(settings.exitCode)
+//
+//    def removeCompiler(cp: Array[String]) =
+//      if (!settings.compiler) then // Let's remove compiler from the classpath
+//        val compilerLibs = Seq("scala3-compiler", "scala3-interfaces", "tasty-core", "scala-asm", "scala3-staging", "scala3-tasty-inspector")
+//        cp.filterNot(c => compilerLibs.exists(c.contains))
+//      else
+//        cp
+//
+//    def run(settings: Settings): Option[Throwable] = settings.executeMode match
+//      case ExecuteMode.Repl =>
+//        val properArgs =
+//          List("-classpath", settings.classPath.mkString(classpathSeparator)).filter(Function.const(settings.classPath.nonEmpty))
+//            ++ settings.residualArgs
+////        repl.Main.main(properArgs.toArray)
+//        None
+//
+//      case ExecuteMode.PossibleRun =>
+//        val newClasspath = (settings.classPath :+ ".").flatMap(_.split(classpathSeparator).filter(_.nonEmpty)).map(PlatformFile(_).toURI.toURL)
+//        import dotty.tools.runner.RichClassLoader._
+//        val newClassLoader = ScalaClassLoader.fromURLsParallelCapable(newClasspath)
+//        val targetToRun = settings.possibleEntryPaths.to(LazyList).find { entryPath =>
+//          newClassLoader.tryToLoadClass(entryPath).orElse {
+//            Option.when(Jar.isJarOrZip(dotty.tools.io.Path(entryPath)))(Jar(entryPath).mainClass).flatten
+//          }.isDefined
+//        }
+//        val newSettings = targetToRun match
+//          case Some(fqName) =>
+//            settings.withTargetToRun(fqName).copy(residualArgs = settings.residualArgs.filterNot(fqName.==)).withExecuteMode(ExecuteMode.Run)
+//          case None =>
+//            settings.withExecuteMode(ExecuteMode.Repl)
+//        run(newSettings)
+//
+//      case ExecuteMode.Run =>
+//        val scalaClasspath = ClasspathFromClassloader(Thread.currentThread().getContextClassLoader).split(classpathSeparator)
+//        val newClasspath = (settings.classPath.flatMap(_.split(classpathSeparator).filter(_.nonEmpty)) ++ removeCompiler(scalaClasspath) :+ ".").map(PlatformFile(_).toURI.toURL)
+//        ObjectRunner.runAndCatch(newClasspath, settings.targetToRun, settings.residualArgs).flatMap {
+//          case ex: ClassNotFoundException if ex.getMessage == settings.targetToRun =>
+//            val file = settings.targetToRun
+//            Jar(file).mainClass match
+//              case Some(mc) =>
+//                ObjectRunner.runAndCatch(newClasspath :+ PlatformFile(file).toURI.toURL, mc, settings.residualArgs)
+//              case None =>
+//                Some(IllegalArgumentException(s"No main class defined in manifest in jar: $file"))
+//          case ex => Some(ex)
+//        }
+//
+//      case ExecuteMode.Script =>
+//        val targetScript = PlatformPaths.get(settings.targetScript).toFile
+//        val targetJar = settings.targetScript.replaceAll("[.][^\\/]*$", "")+".jar"
+//        val precompiledJar = PlatformFile(targetJar)
+//        val mainClass = if !precompiledJar.isFile then "" else Jar(targetJar).mainClass.getOrElse("")
+//        val jarIsValid = mainClass.nonEmpty && precompiledJar.lastModified >= targetScript.lastModified && settings.save
+//        if jarIsValid then
+//          // precompiledJar exists, is newer than targetScript, and manifest defines a mainClass
+//          sys.props("script.path") = targetScript.toPath.toAbsolutePath.normalize.toString
+//          val scalaClasspath = ClasspathFromClassloader(Thread.currentThread().getContextClassLoader).split(classpathSeparator)
+//          val newClasspath = (settings.classPath.flatMap(_.split(classpathSeparator).filter(_.nonEmpty)) ++ removeCompiler(scalaClasspath) :+ ".").map(PlatformFile(_).toURI.toURL)
+//          if mainClass.nonEmpty then
+//            ObjectRunner.runAndCatch(newClasspath :+ PlatformFile(targetJar).toURI.toURL, mainClass, settings.scriptArgs)
+//          else
+//            Some(IllegalArgumentException(s"No main class defined in manifest in jar: $precompiledJar"))
+//
+//        else
+//          val properArgs =
+//            List("-classpath", settings.classPath.mkString(classpathSeparator)).filter(Function.const(settings.classPath.nonEmpty))
+//              ++ settings.residualArgs
+//              ++ (if settings.save then List("-save") else Nil)
+//              ++ settings.scalaArgs
+//              ++ List("-script", settings.targetScript)
+//              ++ settings.scriptArgs
+//          scripting.Main.process(properArgs.toArray)
+//
+//      case ExecuteMode.Expression =>
+//        val cp = settings.classPath match {
+//          case Nil => ""
+//          case list => list.mkString(classpathSeparator)
+//        }
+//        val cpArgs = if cp.isEmpty then Nil else List("-classpath", cp)
+//        val properArgs = cpArgs ++ settings.residualArgs ++ settings.scalaArgs
+//        val driver = StringDriver(properArgs.toArray, settings.targetExpression)
+//        driver.compileAndRun(settings.classPath)
+//
+//      case ExecuteMode.Guess =>
+//        if settings.modeShouldBePossibleRun then
+//          run(settings.withExecuteMode(ExecuteMode.PossibleRun))
+//        else if settings.modeShouldBeRun then
+//          run(settings.withExecuteMode(ExecuteMode.Run))
+//        else
+//          run(settings.withExecuteMode(ExecuteMode.Repl))
+//
+//    run(settings) match
+//      case Some(ex: (StringDriverException | ScriptingException)) => errorFn(ex.getMessage)
+//      case e @ Some(ex)                                           => errorFn("", e)
+//      case _                                                      => true
 
   def errorFn(str: String, e: Option[Throwable] = None): Boolean =
     if (str.nonEmpty) Console.err.println(str)
     e.foreach(_.printStackTrace())
     false
 
-  def main(args: Array[String]): Unit =
-    if (!process(args)) System.exit(1)
+//  def main(args: Array[String]): Unit =
+//    if (!process(args)) System.exit(1)
 
 }

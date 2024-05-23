@@ -34,5 +34,6 @@ object PlatformFiles {
   def createTempDirectory[A](prefix: String, attrs: PlatformFileAttribute[A]*): PlatformPath = ???
   def notExists(path: PlatformPath, options: PlatformLinkOption*): Boolean = ???
   def readAttributes(path: PlatformPath, attributes: String, options: PlatformLinkOption*): JMap[String, AnyRef] = ???
+  def readAttributes[A <: BasicFileAttributes](path: Path, `type`: Class[A], options: PlatformLinkOption*): A = ???
 }
 

@@ -6,7 +6,7 @@ class PlatformZipFile {
   def close(): Unit = ???
   def getEntry(name: String): PlatformZipEntry = ???
   def getInputStream(entry: PlatformZipEntry): PlatformInputStream = ???
-  def entries(): Iterator[_ <: ZipEntry] = ???
+  def entries(): Iterator[_ <: PlatformZipEntry] = ???
 }
 
 object PlatformZipFile {

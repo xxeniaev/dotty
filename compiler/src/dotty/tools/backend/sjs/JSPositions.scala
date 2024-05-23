@@ -84,7 +84,7 @@ class JSPositions()(using Context) {
           PlatformURI(
               "virtualfile",        // Pseudo-Scheme
               dotcSource.file.path, // Scheme specific part
-              null: String                  // Fragment
+              null                  // Fragment
           )
         case file =>
           val srcURI = file.toURI

@@ -19,33 +19,33 @@ trait CommonRunner {
     *  @throws java.lang.NoSuchMethodException
     *  @throws java.lang.reflect.InvocationTargetException
     */
-  def run(
-      urls: Seq[PlatformURL],
-      objectName: String,
-      arguments: Seq[String]
-  ): Unit = {
-    import RichClassLoader._
-    ScalaClassLoader.fromURLsParallelCapable(urls).run(objectName, arguments)
-  }
+//  def run(
+//      urls: Seq[PlatformURL],
+//      objectName: String,
+//      arguments: Seq[String]
+//  ): Unit = {
+//    import RichClassLoader._
+//    ScalaClassLoader.fromURLsParallelCapable(urls).run(objectName, arguments)
+//  }
 
   /** Catches any non-fatal exception thrown by run (in the case of InvocationTargetException,
     *  unwrapping it) and returns it in an Option.
     */
-  def runAndCatch(
-      urls: Seq[PlatformURL],
-      objectName: String,
-      arguments: Seq[String]
-  ): Option[Throwable] =
-    try { run(urls, objectName, arguments); None }
-    catch { case NonFatal(e) => Some(rootCause(e)) }
+//  def runAndCatch(
+//      urls: Seq[PlatformURL],
+//      objectName: String,
+//      arguments: Seq[String]
+//  ): Option[Throwable] =
+//    try { run(urls, objectName, arguments); None }
+//    catch { case NonFatal(e) => Some(rootCause(e)) }
 
-  private def rootCause(x: Throwable): Throwable = x match {
-    case _: InvocationTargetException | _: ExceptionInInitializerError |
-        _: UndeclaredThrowableException | _: ExecutionException
-        if x.getCause != null =>
-      rootCause(x.getCause.nn)
-    case _ => x
-  }
+//  private def rootCause(x: Throwable): Throwable = x match {
+//    case _: InvocationTargetException | _: ExceptionInInitializerError |
+//        _: UndeclaredThrowableException | _: ExecutionException
+//        if x.getCause != null =>
+//      rootCause(x.getCause.nn)
+//    case _ => x
+//  }
 }
 
 /** An object that runs another object specified by name.

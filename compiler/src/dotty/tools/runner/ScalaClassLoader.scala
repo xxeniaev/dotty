@@ -62,15 +62,15 @@ object RichClassLoader {
 object ScalaClassLoader {
   def setContext(cl: ClassLoader) = Thread.currentThread.setContextClassLoader(cl)
 
-  def fromURLsParallelCapable(urls: Seq[PlatformURL], parent: ClassLoader | Null = null): URLClassLoader =
-    URLClassLoader(urls.toArray, if parent == null then bootClassLoader else parent)
+//  def fromURLsParallelCapable(urls: Seq[PlatformURL], parent: ClassLoader | Null = null): URLClassLoader =
+//    URLClassLoader(urls.toArray, if parent == null then bootClassLoader else parent)
 
-  @sharable private[this] val bootClassLoader: ClassLoader =
-    if scala.util.Properties.isJavaAtLeast("9") then
-      try
-        ClassLoader.getSystemClassLoader.getParent 
-      catch case _: Throwable => null
-    else null
+//  @sharable private[this] val bootClassLoader: ClassLoader =
+//    if scala.util.Properties.isJavaAtLeast("9") then
+//      try
+//        ClassLoader.getSystemClassLoader.getParent
+//      catch case _: Throwable => null
+//    else null
 
   extension (classLoader: ClassLoader)
     /** Execute an action with this classloader as context classloader. */

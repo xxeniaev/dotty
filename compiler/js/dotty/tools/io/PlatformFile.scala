@@ -1,8 +1,9 @@
 package dotty.tools.io
 
 import sun.security.action.GetPropertyAction
+import java.io.Serializable
 
-class PlatformFile {
+class PlatformFile extends Serializable with Comparable[File] {
   def getName: String = ???
   def getParent: String = ???
   def getParentFile: PlatformFile = ???
@@ -43,6 +44,9 @@ class PlatformFile {
   def getFreeSpace: Long = ???
   def getUsableSpace: Long = ???
   def toPath: PlatformPath = ???
+
+  override def compareTo(pathname: PlatformFile): Int = ???
+
 }
 
 object PlatformFile {

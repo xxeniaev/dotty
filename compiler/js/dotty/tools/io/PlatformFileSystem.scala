@@ -1,6 +1,7 @@
 package dotty.tools.io
 
 import java.lang.Iterable as JIterable
+import dotty.tools.nio.{PlatformFileStore, PlatformFileSystemProvider}
 
 class PlatformFileSystem {
   def provider: PlatformFileSystemProvider = ???

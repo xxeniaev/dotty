@@ -1,6 +1,8 @@
 package dotty.tools.io
 
-class PlatformFileInputStream {
+import java.io.InputStream as PlatformInputStream
+
+class PlatformFileInputStream extends PlatformInputStream {
 
 }
 

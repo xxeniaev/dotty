@@ -1,9 +1,9 @@
 package dotty.tools.io
 
 import java.net.URLStreamHandler
+import java.io.Serializable
 
-
-class PlatformURL {
+final class PlatformURL extends Serializable {
   def fromURI(uri: PlatformURI): PlatformURL  = ???
   def getQuery: String = ???
   def getPath: String = ???
@@ -18,8 +18,6 @@ class PlatformURL {
   def sameFile(other: PlatformURL): Boolean = ???
   def toExternalForm: String = ???
   def toURI: PlatformURI = ???
-//  def openConnection: URLConnection = ???
-//  def openConnection(proxy: Proxy): URLConnection = ???
 }
 
 object PlatformURL {

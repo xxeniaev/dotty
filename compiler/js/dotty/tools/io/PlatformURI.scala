@@ -1,9 +1,10 @@
 package dotty.tools.io
 
 import java.net.URI
+import java.io.Serializable
 
 
-class PlatformURI {
+final class PlatformURI extends Comparable[PlatformURI] with Serializable {
   def parseServerAuthority: PlatformURI = ???
   def normalize: PlatformURI = ???
   def resolve(uri: PlatformURI): PlatformURI = ???
@@ -25,6 +26,9 @@ class PlatformURI {
   def getQuery: String = ???
   def getFragment: String = ???
   def toASCIIString: String = ???
+
+  override def compareTo(that: PlatformURI): Int = ???
+
 }
 
 object PlatformURI {
@@ -33,6 +37,7 @@ object PlatformURI {
   def apply(scheme: String, userInfo: String, host: String, port: Int, path: String, query: String, fragment: String): PlatformURI = ???
   def apply(scheme: String, authority: String, path: String, query: String, fragment: String): PlatformURI = ???
   def apply(scheme: String, host: String, path: String, fragment: String): PlatformURI = ???
-  def apply(scheme: String, ssp: String, fragment: String): PlatformURI = ???
+  def apply(scheme: String, ssp: String, fragment: String): PlatformURI = apply(scheme, ssp, Option(fragment))
+  def apply(scheme: String, ssp: String, fragment: Option[String]): PlatformURI = ???
   def apply(scheme: String, path: String): PlatformURI = ???
 }

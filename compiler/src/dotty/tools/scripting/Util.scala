@@ -13,7 +13,7 @@ import java.lang.reflect.{Method, Modifier}
 object Util:
   def deleteFile(target: PlatformFile): Unit =
     if target.isDirectory then
-      for member <- target.listFiles.toList
+      for member <- target.listFiles().toList
       do deleteFile(member)
     target.delete
   end deleteFile

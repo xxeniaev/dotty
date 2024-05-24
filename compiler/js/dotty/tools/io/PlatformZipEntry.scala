@@ -11,5 +11,7 @@ class PlatformZipEntry {
 }
 
 object PlatformZipEntry {
+  def apply(name: String): PlatformZipEntry = ???
+  def apply(e: PlatformZipEntry): PlatformZipEntry = ???
 }
 

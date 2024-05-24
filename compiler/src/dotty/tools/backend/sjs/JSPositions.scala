@@ -9,7 +9,6 @@ import Contexts._
 import Decorators.em
 
 import dotty.tools.dotc.report
-import dotty.tools.io.PlatformURI
 
 import dotty.tools.dotc.util.{SourceFile, SourcePosition}
 import dotty.tools.dotc.util.Spans.Span
@@ -28,8 +27,8 @@ class JSPositions()(using Context) {
         Nil
       } else {
         try {
-          val from = PlatformURI(uris.head)
-          val to = uris.lift(1).map(str => PlatformURI(str))
+          val from = new URI(uris.head)
+          val to = uris.lift(1).map(str => new URI(str))
           URIMap(from, to) :: Nil
         } catch {
           case e: URISyntaxException =>
@@ -81,13 +80,20 @@ class JSPositions()(using Context) {
     private def convert(dotcSource: SourceFile): ir.Position.SourceFile = {
       dotcSource.file.file match {
         case null =>
-          PlatformURI(
-              "virtualfile",        // Pseudo-Scheme
-              dotcSource.file.path, // Scheme specific part
-              null                  // Fragment
+          new java.net.URI(
+            "virtualfile",        // Pseudo-Scheme
+            dotcSource.file.path, // Scheme specific part
+            null: String          // Fragment
           )
         case file =>
-          val srcURI = file.toURI
+          val srcPlatformURI = file.toURI
+          val srcURI = new URI(
+            srcPlatformURI.getScheme,
+            srcPlatformURI.getRawAuthority,
+            srcPlatformURI.getRawPath,
+            srcPlatformURI.getRawQuery,
+            srcPlatformURI.getRawFragment
+          )
           sourceURIMaps.collectFirst {
             case URIMap(from, to) if from.relativize(srcURI) != srcURI =>
               val relURI = from.relativize(srcURI)
@@ -99,5 +105,5 @@ class JSPositions()(using Context) {
 }
 
 object JSPositions {
-  final case class URIMap(from: PlatformURI, to: Option[PlatformURI])
+  final case class URIMap(from: URI, to: Option[URI])
 }

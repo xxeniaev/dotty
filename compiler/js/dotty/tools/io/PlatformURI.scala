@@ -18,6 +18,9 @@ final class PlatformURI extends Comparable[PlatformURI] with Serializable {
   def getPort: Int = ???
   def getPath: String = ???
   def getFragment: String = ???
+  def getRawPath: String = ???
+  def getRawQuery: String = ???
+  def getRawFragment: String = ???
 
   override def compareTo(that: PlatformURI): Int = ???
 }

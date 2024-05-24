@@ -31,7 +31,8 @@ object JarArchive {
 
     // creating a new zip file system by using the JAR URL syntax:
     // https://docs.oracle.com/javase/7/docs/technotes/guides/io/fsp/zipfilesystemprovider.html
-    val env = Map("create" -> create.toString).asJava
+    val m: Map[String, Any] = Map("create" -> create.toString)
+    val env = m.asJava
     val uri = PlatformURI.create("jar:" + path.toAbsolute.toURI.toString)
     val fs = {
       try PlatformFileSystems.newFileSystem(uri, env)

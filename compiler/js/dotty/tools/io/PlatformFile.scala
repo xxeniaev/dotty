@@ -27,7 +27,8 @@ class PlatformFile extends Serializable with Comparable[File] {
   def delete: Boolean = ???
   def deleteOnExit(): Unit = ???
   def list: Array[String] = ???
-  def listFiles: Array[PlatformFile] = ???
+  def listFiles(): Array[PlatformFile] = ???
+  def listFiles(filter: PlatformFileFilter): Array[PlatformFile] = ???
   def mkdir: Boolean = ???
   def mkdirs: Boolean = ???
   def renameTo(dest: PlatformFile): Boolean = ???

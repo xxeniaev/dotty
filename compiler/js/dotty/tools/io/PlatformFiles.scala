@@ -4,7 +4,9 @@ import java.util.List
 import java.util.stream.Stream as JStream
 import java.util.Map as JMap
 import dotty.tools.nio.{PlatformFileAttribute, PlatformFileVisitor}
-import java.io.{InputStream as PlatformInputStream, OutputStream as PlatformOutputStream}
+
+import java.io.{BufferedWriter, InputStream as PlatformInputStream, OutputStream as PlatformOutputStream}
+import java.nio.file.{OpenOption, Path}
 
 
 class PlatformFiles {
@@ -12,6 +14,7 @@ class PlatformFiles {
 
 
 object PlatformFiles {
+  def newBufferedWriter(path: PlatformPath, options: PlatformOpenOption*): PlatformBufferedWriter = ???
   def deleteIfExists(path: PlatformPath): Boolean = ???
   def getLastModifiedTime(path: PlatformPath, options: PlatformLinkOption*): PlatformFileTime = ???
   def size(path: PlatformPath): Long = ???
@@ -32,6 +35,7 @@ object PlatformFiles {
   def isReadable(path: PlatformPath): Boolean = ???
   def isWritable(path: PlatformPath): Boolean = ???
   def createTempDirectory[A](prefix: String, attrs: PlatformFileAttribute[A]*): PlatformPath = ???
+  def createTempDirectory[A](dir: PlatformPath, prefix: String, attrs: PlatformFileAttribute[A]*): PlatformPath = ???
   def notExists(path: PlatformPath, options: PlatformLinkOption*): Boolean = ???
   def readAttributes(path: PlatformPath, attributes: String, options: PlatformLinkOption*): JMap[String, AnyRef] = ???
   def readAttributes[A <: PlatformBasicFileAttributes](path: Path, `type`: Class[A], options: PlatformLinkOption*): A = ???

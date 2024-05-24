@@ -5,7 +5,7 @@ import java.nio.file.{Path, Paths, Files}
 import java.io.Writer
 import scala.language.unsafeNulls
 import scala.collection.mutable.StringBuilder
-import dotty.tools.io.PlatformPath
+import dotty.tools.io.{PlatformPath, PlatformFiles, PlatformPaths}
 
 /**
  * Serializes scoverage data.
@@ -18,11 +18,11 @@ object Serializer:
 
   /** Write out coverage data to the given data directory, using the default coverage filename */
   def serialize(coverage: Coverage, dataDir: String, sourceRoot: String): Unit =
-    serialize(coverage, Paths.get(dataDir, CoverageFileName).toAbsolutePath, Paths.get(sourceRoot).toAbsolutePath)
+    serialize(coverage, PlatformPaths.get(dataDir, CoverageFileName).toAbsolutePath, PlatformPaths.get(sourceRoot).toAbsolutePath)
 
   /** Write out coverage data to a file. */
-  def serialize(coverage: Coverage, file: Path, sourceRoot: Path): Unit =
-    val writer = Files.newBufferedWriter(file)
+  def serialize(coverage: Coverage, file: PlatformPath, sourceRoot: PlatformPath): Unit =
+    val writer = PlatformFiles.newBufferedWriter(file)
     try
       serialize(coverage, writer, sourceRoot)
     finally

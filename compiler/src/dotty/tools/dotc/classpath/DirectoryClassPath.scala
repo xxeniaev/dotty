@@ -287,11 +287,11 @@ final class CtSymClassPath(ctSym: PlatformPath, release: Int)
     with NoSourcePaths {
   import java.nio.file._
 
-  private val fileSystem: PlatformFileSystem =
-    PlatformFileSystems.newFileSystem(ctSym, null: ClassLoader)
-  private val root: PlatformPath = fileSystem.getRootDirectories.iterator.next
-  private val roots =
-    PlatformFiles.newDirectoryStream(root).iterator.asScala.toList
+//  private val fileSystem: PlatformFileSystem =
+//    PlatformFileSystems.newFileSystem(ctSym, null: ClassLoader)
+//  private val root: PlatformPath = fileSystem.getRootDirectories.iterator.next
+//  private val roots =
+//    PlatformFiles.newDirectoryStream(root).iterator.asScala.toList
 
   // http://mail.openjdk.java.net/pipermail/compiler-dev/2018-March/011737.html
   private def codeFor(major: Int): String =
@@ -301,68 +301,68 @@ final class CtSymClassPath(ctSym: PlatformPath, release: Int)
   private def fileNameMatchesRelease(fileName: String) = !fileName.contains(
     "-"
   ) && fileName.contains(releaseCode) // exclude `9-modules`
-  private val rootsForRelease: List[PlatformPath] =
-    roots.filter(root => fileNameMatchesRelease(root.getFileName.toString))
+//  private val rootsForRelease: List[PlatformPath] =
+//    roots.filter(root => fileNameMatchesRelease(root.getFileName.toString))
 
   // e.g. "java.lang" -> Seq(/876/java/lang, /87/java/lang, /8/java/lang))
-  private val packageIndex
-      : scala.collection.Map[String, scala.collection.Seq[PlatformPath]] = {
-    val index = collection.mutable
-      .AnyRefMap[String, collection.mutable.ListBuffer[PlatformPath]]()
-    val isJava12OrHigher = scala.util.Properties.isJavaAtLeast("12")
-    rootsForRelease.foreach(root =>
-      PlatformFiles
-        .walk(root)
-        .iterator
-        .asScala
-        .filter(PlatformFiles.isDirectory(_))
-        .foreach { p =>
-          val moduleNamePathElementCount = if (isJava12OrHigher) 1 else 0
-          if (p.getNameCount > root.getNameCount + moduleNamePathElementCount) {
-            val packageDotted = p
-              .subpath(
-                moduleNamePathElementCount + root.getNameCount,
-                p.getNameCount
-              )
-              .toString
-              .replace('/', '.')
-            index.getOrElseUpdate(
-              packageDotted,
-              new collection.mutable.ListBuffer
-            ) += p
-          }
-        }
-    )
-    index
-  }
+//  private val packageIndex
+//      : scala.collection.Map[String, scala.collection.Seq[PlatformPath]] = {
+//    val index = collection.mutable
+//      .AnyRefMap[String, collection.mutable.ListBuffer[PlatformPath]]()
+//    val isJava12OrHigher = scala.util.Properties.isJavaAtLeast("12")
+//    rootsForRelease.foreach(root =>
+//      PlatformFiles
+//        .walk(root)
+//        .iterator
+//        .asScala
+//        .filter(PlatformFiles.isDirectory(_))
+//        .foreach { p =>
+//          val moduleNamePathElementCount = if (isJava12OrHigher) 1 else 0
+//          if (p.getNameCount > root.getNameCount + moduleNamePathElementCount) {
+//            val packageDotted = p
+//              .subpath(
+//                moduleNamePathElementCount + root.getNameCount,
+//                p.getNameCount
+//              )
+//              .toString
+//              .replace('/', '.')
+//            index.getOrElseUpdate(
+//              packageDotted,
+//              new collection.mutable.ListBuffer
+//            ) += p
+//          }
+//        }
+//    )
+//    index
+//  }
 
   /** Empty string represents root package */
-  override private[dotty] def hasPackage(pkg: PackageName) =
-    packageIndex.contains(pkg.dottedString)
-  override private[dotty] def packages(
-      inPackage: PackageName
-  ): Seq[PackageEntry] = {
-    packageIndex.keysIterator
-      .filter(pack => packageContains(inPackage.dottedString, pack))
-      .map(PackageEntryImpl(_))
-      .toVector
-  }
-  private[dotty] def classes(inPackage: PackageName): Seq[ClassFileEntry] = {
-    if (inPackage.isRoot) Nil
-    else {
-      val sigFiles = packageIndex
-        .getOrElse(inPackage.dottedString, Nil)
-        .iterator
-        .flatMap(p =>
-          PlatformFiles
-            .list(p)
-            .iterator
-            .asScala
-            .filter(_.getFileName.toString.endsWith(".sig"))
-        )
-      sigFiles.map(f => ClassFileEntryImpl(f.toPlainFile)).toVector
-    }
-  }
+//  override private[dotty] def hasPackage(pkg: PackageName) =
+//    packageIndex.contains(pkg.dottedString)
+//  override private[dotty] def packages(
+//      inPackage: PackageName
+//  ): Seq[PackageEntry] = {
+//    packageIndex.keysIterator
+//      .filter(pack => packageContains(inPackage.dottedString, pack))
+//      .map(PackageEntryImpl(_))
+//      .toVector
+//  }
+//  private[dotty] def classes(inPackage: PackageName): Seq[ClassFileEntry] = {
+//    if (inPackage.isRoot) Nil
+//    else {
+//      val sigFiles = packageIndex
+//        .getOrElse(inPackage.dottedString, Nil)
+//        .iterator
+//        .flatMap(p =>
+//          PlatformFiles
+//            .list(p)
+//            .iterator
+//            .asScala
+//            .filter(_.getFileName.toString.endsWith(".sig"))
+//        )
+//      sigFiles.map(f => ClassFileEntryImpl(f.toPlainFile)).toVector
+//    }
+//  }
 
   override private[dotty] def list(inPackage: PackageName): ClassPathEntries =
     if (inPackage.isRoot) ClassPathEntries(packages(inPackage), Nil)
@@ -370,22 +370,22 @@ final class CtSymClassPath(ctSym: PlatformPath, release: Int)
 
   def asURLs: Seq[URL] = Nil
   def asClassPathStrings: Seq[String] = Nil
-  def findClassFile(className: String): Option[AbstractFile] = {
-    if (!className.contains(".")) None
-    else {
-      val (inPackage, classSimpleName) = separatePkgAndClassNames(className)
-      packageIndex
-        .getOrElse(inPackage, Nil)
-        .iterator
-        .flatMap { p =>
-          val path = p.resolve(classSimpleName + ".sig")
-          if (PlatformFiles.exists(path)) path.toPlainFile :: Nil else Nil
-        }
-        .take(1)
-        .toList
-        .headOption
-    }
-  }
+//  def findClassFile(className: String): Option[AbstractFile] = {
+//    if (!className.contains(".")) None
+//    else {
+//      val (inPackage, classSimpleName) = separatePkgAndClassNames(className)
+//      packageIndex
+//        .getOrElse(inPackage, Nil)
+//        .iterator
+//        .flatMap { p =>
+//          val path = p.resolve(classSimpleName + ".sig")
+//          if (PlatformFiles.exists(path)) path.toPlainFile :: Nil else Nil
+//        }
+//        .take(1)
+//        .toList
+//        .headOption
+//    }
+//  }
 }
 
 case class DirectoryClassPath(dir: PlatformFile)

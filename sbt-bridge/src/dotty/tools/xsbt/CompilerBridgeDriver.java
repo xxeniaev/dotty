@@ -83,9 +83,9 @@ public class CompilerBridgeDriver extends Driver {
         );
 
         ListBuffer<AbstractFile> sourcesBuffer = new ListBuffer<>();
-        for (VirtualFile file: sortedSources)
-          sourcesBuffer.append(asDottyFile(file));
-        doCompile(compiler, sourcesBuffer.toList(), context);
+//        for (VirtualFile file: sortedSources)
+//          sourcesBuffer.append(asDottyFile(file));
+//        doCompile(compiler, sourcesBuffer.toList(), context);
 
         for (xsbti.Problem problem: delegate.problems()) {
           callback.problem(problem.category(), problem.position(), problem.message(), problem.severity(),

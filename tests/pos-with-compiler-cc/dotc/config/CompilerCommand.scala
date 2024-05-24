@@ -16,7 +16,7 @@ abstract class CompilerCommand extends CliCommand:
         else if (settings.Whelp.value) wusageMessage
         else if (settings.Xhelp.value) xusageMessage
         else if (settings.Yhelp.value) yusageMessage
-        else if (settings.showPlugins.value) ctx.base.pluginDescriptions
+//        else if (settings.showPlugins.value) ctx.base.pluginDescriptions
         else if (settings.XshowPhases.value) phasesMessage
         else ""
 

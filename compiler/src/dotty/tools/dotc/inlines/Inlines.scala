@@ -336,14 +336,14 @@ object Inlines:
               ctx.reporter.allErrors.map((ErrorKind.Parser, _))
             else
               val tree3 = ctx.typer.typed(tree2)
-              ctx.base.postTyperPhase match
-                case postTyper: PostTyper if ctx.reporter.allErrors.isEmpty =>
-                  val tree4 = atPhase(postTyper) { postTyper.newTransformer.transform(tree3) }
-                  ctx.base.inliningPhase match
-                    case inlining: Inlining if ctx.reporter.allErrors.isEmpty =>
-                      atPhase(inlining) { inlining.newTransformer.transform(tree4) }
-                    case _ =>
-                case _ =>
+//              ctx.base.postTyperPhase match
+//                case postTyper: PostTyper if ctx.reporter.allErrors.isEmpty =>
+//                  val tree4 = atPhase(postTyper) { postTyper.newTransformer.transform(tree3) }
+//                  ctx.base.inliningPhase match
+//                    case inlining: Inlining if ctx.reporter.allErrors.isEmpty =>
+//                      atPhase(inlining) { inlining.newTransformer.transform(tree4) }
+//                    case _ =>
+//                case _ =>
               ctx.reporter.allErrors.map((ErrorKind.Typer, _))
           }
         case t =>

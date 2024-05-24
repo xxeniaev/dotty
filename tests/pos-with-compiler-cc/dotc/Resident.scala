@@ -37,7 +37,6 @@ class Resident extends Driver {
     Console.print(prompt)
     try scala.io.StdIn.readLine() catch { case _: EOFException => quit }
   }
-
   final override def process(args: Array[String], rootCtx: Context): Reporter = {
     @tailrec def loop(args: Array[String], prevCtx: Context): Reporter = {
       setup(args, prevCtx) match

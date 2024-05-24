@@ -34,23 +34,23 @@ object Main:
     (compilerArgs, file, scriptArgs, saveJar, invokeFlag)
   end distinguishArgs
 
-  def process(args: Array[String]): Option[Throwable] =
-    val (compilerArgs, scriptFile, scriptArgs, saveJar, invokeFlag) = distinguishArgs(args)
-    val driver = ScriptingDriver(compilerArgs, scriptFile, scriptArgs)
-    driver.compileAndRun { (outDir:PlatformPath, classpathEntries:Seq[Path], mainClass: String) =>
-      // write expanded classpath to java.class.path property, so called script can see it
-      sys.props("java.class.path") = classpathEntries.map(_.toString).mkString(pathsep)
-      if saveJar then
-        // write a standalone jar to the script parent directory
-        writeJarfile(outDir, scriptFile, scriptArgs, classpathEntries, mainClass)
-      invokeFlag
-    }
+//  def process(args: Array[String]): Option[Throwable] =
+//    val (compilerArgs, scriptFile, scriptArgs, saveJar, invokeFlag) = distinguishArgs(args)
+//    val driver = ScriptingDriver(compilerArgs, scriptFile, scriptArgs)
+//    driver.compileAndRun { (outDir:PlatformPath, classpathEntries:Seq[PlatformPath], mainClass: String) =>
+//      // write expanded classpath to java.class.path property, so called script can see it
+//      sys.props("java.class.path") = classpathEntries.map(_.toString).mkString(pathsep)
+//      if saveJar then
+//        // write a standalone jar to the script parent directory
+//        writeJarfile(outDir, scriptFile, scriptArgs, classpathEntries, mainClass)
+//      invokeFlag
+//    }
 
-  def main(args: Array[String]): Unit =
-   process(args).map {
-      case ScriptingException(msg) => println(msg)
-      case ex => ex.printStackTrace
-   }.foreach(_ => System.exit(1))
+//  def main(args: Array[String]): Unit =
+//   process(args).map {
+//      case ScriptingException(msg) => println(msg)
+//      case ex => ex.printStackTrace
+//   }.foreach(_ => System.exit(1))
 
   private def writeJarfile(outDir: PlatformPath, scriptFile: PlatformFile, scriptArgs:Array[String],
       classpathEntries:Seq[Path], mainClassName: String): Unit =

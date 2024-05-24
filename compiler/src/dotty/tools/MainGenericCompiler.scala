@@ -174,10 +174,10 @@ object MainGenericCompiler {
           reconstructedArgs()
           ++ List("-script", settings.targetScript)
           ++ settings.scriptArgs
-        scripting.Main.main(properArgs.toArray)
+//        scripting.Main.main(properArgs.toArray)
       case CompileMode.Repl | CompileMode.Run =>
         addJavaProps()
-        val properArgs = reconstructedArgs()
+//        val properArgs = reconstructedArgs()
 //        repl.Main.main(properArgs.toArray)
       case CompileMode.Guess =>
         run(settings.withCompileMode(CompileMode.Compile))

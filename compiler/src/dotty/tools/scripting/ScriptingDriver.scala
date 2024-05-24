@@ -8,39 +8,39 @@ import java.io.File
 import dotty.tools.dotc.Driver
 import dotty.tools.dotc.core.Contexts, Contexts.{ Context, ctx }
 import dotty.tools.io.{ PlainDirectory, Directory, ClassPath }
-import dotty.tools.io.{PlatformFiles, PlatformPath, PlatformFile}
+import dotty.tools.io.{PlatformFiles, PlatformPath, PlatformFile, PlatformPaths}
 import Util.*
 
 class ScriptingDriver(compilerArgs: Array[String], scriptFile: PlatformFile, scriptArgs: Array[String]) extends Driver:
-  def compileAndRun(pack:(PlatformPath, Seq[Path], String) => Boolean = null): Option[Throwable] =
-    val outDir = PlatformFiles.createTempDirectory("scala3-scripting")
-    outDir.toFile.deleteOnExit()
-    setup(compilerArgs :+ scriptFile.getAbsolutePath, initCtx.fresh) match
-      case Some((toCompile, rootCtx)) =>
-        given Context = rootCtx.fresh.setSetting(rootCtx.settings.outputDir,
-          new PlainDirectory(Directory(outDir)))
-
-        if doCompile(newCompiler, toCompile).hasErrors then
-          Some(ScriptingException("Errors encountered during compilation"))
-        else
-          try
-            val classpath = s"${ctx.settings.classpath.value}${pathsep}${sys.props("java.class.path")}"
-            val classpathEntries: Seq[Path] = ClassPath.expandPath(classpath, expandStar=true).map { Paths.get(_) }
-            detectMainClassAndMethod(outDir, classpathEntries, scriptFile.toString) match
-              case Right((mainClass, mainMethod)) =>
-                val invokeMain: Boolean = Option(pack).map { func =>
-                    func(outDir, classpathEntries, mainClass)
-                  }.getOrElse(true)
-                if invokeMain then mainMethod.invoke(null, scriptArgs)
-                None
-              case Left(ex) => Some(ex)
-          catch
-            case e: java.lang.reflect.InvocationTargetException =>
-              Some(e.getCause)
-          finally
-            deleteFile(outDir.toFile)
-      case None => None
-  end compileAndRun
+//  def compileAndRun(pack:(PlatformPath, Seq[PlatformPath], String) => Boolean = null): Option[Throwable] =
+//    val outDir = PlatformFiles.createTempDirectory("scala3-scripting")
+//    outDir.toFile.deleteOnExit()
+//    setup(compilerArgs :+ scriptFile.getAbsolutePath, initCtx.fresh) match
+//      case Some((toCompile, rootCtx)) =>
+//        given Context = rootCtx.fresh.setSetting(rootCtx.settings.outputDir,
+//          new PlainDirectory(Directory(outDir)))
+//
+//        if doCompile(newCompiler, toCompile).hasErrors then
+//          Some(ScriptingException("Errors encountered during compilation"))
+//        else
+//          try
+//            val classpath = s"${ctx.settings.classpath.value}${pathsep}${sys.props("java.class.path")}"
+//            val classpathEntries: Seq[PlatformPath] = ClassPath.expandPath(classpath, expandStar=true).map { PlatformPaths.get(_) }
+//            detectMainClassAndMethod(outDir, classpathEntries, scriptFile.toString) match
+//              case Right((mainClass, mainMethod)) =>
+//                val invokeMain: Boolean = Option(pack).map { func =>
+//                    func(outDir, classpathEntries, mainClass)
+//                  }.getOrElse(true)
+//                if invokeMain then mainMethod.invoke(null, scriptArgs)
+//                None
+//              case Left(ex) => Some(ex)
+//          catch
+//            case e: java.lang.reflect.InvocationTargetException =>
+//              Some(e.getCause)
+//          finally
+//            deleteFile(outDir.toFile)
+//      case None => None
+//  end compileAndRun
 
 end ScriptingDriver
 

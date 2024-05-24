@@ -14,7 +14,12 @@ import java.util.zip.{ZipEntry, ZipFile}
 import java.util.jar.Manifest
 import scala.collection.mutable
 import scala.jdk.CollectionConverters._
-import dotty.tools.io.{PlatformZipFile, PlatformPath, PlatformFiles}
+import dotty.tools.io.{
+  PlatformZipFile,
+  PlatformPath,
+  PlatformFiles,
+  PlatformZipEntry
+}
 
 /** An abstraction for zip files and streams.  Everything is written the way
   *  it is for performance: we come through here a lot on every run.  Be careful
@@ -119,7 +124,7 @@ abstract class ZipArchive(
 
   protected def getDir(
       dirs: mutable.Map[String, DirEntry],
-      entry: ZipEntry
+      entry: PlatformZipEntry
   ): DirEntry = {
     if (entry.isDirectory) ensureDir(dirs, entry.getName)
     else ensureDir(dirs, dirName(entry.getName))
@@ -201,9 +206,9 @@ final class FileZipArchive(jpath: PlatformPath, release: Option[String])
             val f =
               if (ZipArchive.closeZipFile)
                 new LazyEntry(
-                  zipEntry.getName(),
-                  zipEntry.getTime(),
-                  zipEntry.getSize().toInt,
+                  zipEntry.getName,
+                  zipEntry.getTime,
+                  zipEntry.getSize.toInt,
                   dir
                 )
               else
@@ -257,7 +262,7 @@ final class ManifestResources(val url: URL) extends ZipArchive(null, None) {
       .iterator()
       .asScala
       .filter(_.endsWith(".class"))
-      .map(new ZipEntry(_))
+      .map(PlatformZipEntry(_))
 
     closeables ::= stream
 
@@ -265,7 +270,7 @@ final class ManifestResources(val url: URL) extends ZipArchive(null, None) {
       val dir = getDir(dirs, zipEntry)
       if (!zipEntry.isDirectory) {
         class FileEntry() extends Entry(zipEntry.getName, dir) {
-          override def lastModified = zipEntry.getTime()
+          override def lastModified = zipEntry.getTime
           override def input = resourceInputStream(this.path)
           override def sizeOption = None
         }

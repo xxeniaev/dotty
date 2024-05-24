@@ -34,7 +34,7 @@ class Driver {
       try
         val run = compiler.newRun
         run.compile(files)
-        finish(compiler, run)
+//        finish(compiler, run)
       catch
         case ex: FatalError =>
           report.error(ex.getMessage.nn) // signals that we should fail compilation.
@@ -46,16 +46,16 @@ class Driver {
           throw ex
     ctx.reporter
 
-  protected def finish(compiler: Compiler, run: Run)(using Context): Unit =
-    run.printSummary()
-    if !ctx.reporter.errorsReported && run.suspendedUnits.nonEmpty then
-      val suspendedUnits = run.suspendedUnits.toList
-      if (ctx.settings.XprintSuspension.value)
-        report.echo(i"compiling suspended $suspendedUnits%, %")
-      val run1 = compiler.newRun
-      for unit <- suspendedUnits do unit.suspended = false
-      run1.compileUnits(suspendedUnits)
-      finish(compiler, run1)(using MacroClassLoader.init(ctx.fresh))
+//  protected def finish(compiler: Compiler, run: Run)(using Context): Unit =
+//    run.printSummary()
+//    if !ctx.reporter.errorsReported && run.suspendedUnits.nonEmpty then
+//      val suspendedUnits = run.suspendedUnits.toList
+//      if (ctx.settings.XprintSuspension.value)
+//        report.echo(i"compiling suspended $suspendedUnits%, %")
+//      val run1 = compiler.newRun
+//      for unit <- suspendedUnits do unit.suspended = false
+//      run1.compileUnits(suspendedUnits)
+//      finish(compiler, run1)(using MacroClassLoader.init(ctx.fresh))
 
   protected def initCtx: Context = (new ContextBase).initialCtx
 
@@ -75,7 +75,7 @@ class Driver {
     val summary = command.distill(args, ictx.settings)(ictx.settingsState)(using ictx)
     ictx.setSettings(summary.sstate)
     Feature.checkExperimentalSettings(using ictx)
-    MacroClassLoader.init(ictx)
+//    MacroClassLoader.init(ictx)
     Positioned.init(using ictx)
 
     inContext(ictx) {

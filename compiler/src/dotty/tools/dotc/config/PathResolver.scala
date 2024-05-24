@@ -264,5 +264,5 @@ class PathResolver(using c: Context) {
     cp
   }
 
-  def asURLs: Seq[java.net.URL] = result.asURLs
+  def asURLs: Seq[dotty.tools.io.PlatformURL] = result.asURLs
 }

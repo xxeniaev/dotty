@@ -8,6 +8,7 @@ import scala.language.unsafeNulls
 
 import scala.collection.mutable
 import java.io.{InputStream, OutputStream}
+import dotty.tools.io.PlatformPath
 /**
  * An in-memory directory.
  *
@@ -30,7 +31,7 @@ extends AbstractFile {
   override def isVirtual: Boolean = true
   val lastModified: Long = System.currentTimeMillis
 
-  override def jpath: JPath = null
+  override def jpath: PlatformPath = null
   override def input: InputStream = sys.error("directories cannot be read")
   override def output: OutputStream = sys.error("directories cannot be written")
 

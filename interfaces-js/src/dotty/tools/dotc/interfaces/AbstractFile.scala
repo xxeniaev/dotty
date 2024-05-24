@@ -19,5 +19,5 @@ trait AbstractFile {
   /** @return If this is a real file on disk, a `java.io.File` that corresponds to this file.
    *  Otherwise, an empty `Optional`.
    */
-  def jfile: Optional[File]
+  //def jfile: Optional[File]
 }

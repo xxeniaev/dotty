@@ -8,6 +8,7 @@ package dotty.tools.io
 import scala.language.unsafeNulls
 
 import java.io.{ ByteArrayInputStream, ByteArrayOutputStream, InputStream, OutputStream }
+import dotty.tools.io.PlatformPath
 
 /** This class implements an in-memory file.
  *
@@ -45,7 +46,7 @@ class VirtualFile(val name: String, override val path: String) extends AbstractF
   def absolute: AbstractFile = this
 
   /** Returns null. */
-  def jpath: JPath = null
+  def jpath: PlatformPath = null
 
   override def sizeOption: Option[Int] = Some(content.length)
 

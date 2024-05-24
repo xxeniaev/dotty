@@ -30,59 +30,59 @@ private[repl] class Rendering(parentClassLoader: Option[ClassLoader] = None):
   var myReplStringOf: (Object, Int, Int) => String = _
 
   /** Class loader used to load compiled code */
-  private[repl] def classLoader()(using Context) =
-    if (myClassLoader != null && myClassLoader.root == ctx.settings.outputDir.value) myClassLoader
-    else {
-      val parent = Option(myClassLoader).orElse(parentClassLoader).getOrElse {
-        val compilerClasspath = ctx.platform.classPath(using ctx).asURLs
-        // We can't use the system classloader as a parent because it would
-        // pollute the user classpath with everything passed to the JVM
-        // `-classpath`. We can't use `null` as a parent either because on Java
-        // 9+ that's the bootstrap classloader which doesn't contain modules
-        // like `java.sql`, so we use the parent of the system classloader,
-        // which should correspond to the platform classloader on Java 9+.
-        val baseClassLoader = ClassLoader.getSystemClassLoader.getParent
-        new java.net.URLClassLoader(compilerClasspath.toArray, baseClassLoader)
-      }
+  // private[repl] def classLoader()(using Context) =
+  //   if (myClassLoader != null && myClassLoader.root == ctx.settings.outputDir.value) myClassLoader
+  //   else {
+  //     val parent = Option(myClassLoader).orElse(parentClassLoader).getOrElse {
+  //       val compilerClasspath = ctx.platform.classPath(using ctx).asURLs
+  //       // We can't use the system classloader as a parent because it would
+  //       // pollute the user classpath with everything passed to the JVM
+  //       // `-classpath`. We can't use `null` as a parent either because on Java
+  //       // 9+ that's the bootstrap classloader which doesn't contain modules
+  //       // like `java.sql`, so we use the parent of the system classloader,
+  //       // which should correspond to the platform classloader on Java 9+.
+  //       val baseClassLoader = ClassLoader.getSystemClassLoader.getParent
+  //       new java.net.URLClassLoader(compilerClasspath.toArray, baseClassLoader)
+  //     }
 
-      myClassLoader = new AbstractFileClassLoader(ctx.settings.outputDir.value, parent)
-      myReplStringOf = {
-        // We need to use the ScalaRunTime class coming from the scala-library
-        // on the user classpath, and not the one available in the current
-        // classloader, so we use reflection instead of simply calling
-        // `ScalaRunTime.replStringOf`. Probe for new API without extraneous newlines.
-        // For old API, try to clean up extraneous newlines by stripping suffix and maybe prefix newline.
-        val scalaRuntime = Class.forName("scala.runtime.ScalaRunTime", true, myClassLoader)
-        val renderer = "stringOf"
-        def stringOfMaybeTruncated(value: Object, maxElements: Int): String = {
-          try {
-            val meth = scalaRuntime.getMethod(renderer, classOf[Object], classOf[Int], classOf[Boolean])
-            val truly = java.lang.Boolean.TRUE
-            meth.invoke(null, value, maxElements, truly).asInstanceOf[String]
-          } catch {
-            case _: NoSuchMethodException =>
-              val meth = scalaRuntime.getMethod(renderer, classOf[Object], classOf[Int])
-              meth.invoke(null, value, maxElements).asInstanceOf[String]
-          }
-        }
+  //     myClassLoader = new AbstractFileClassLoader(ctx.settings.outputDir.value, parent)
+  //     myReplStringOf = {
+  //       // We need to use the ScalaRunTime class coming from the scala-library
+  //       // on the user classpath, and not the one available in the current
+  //       // classloader, so we use reflection instead of simply calling
+  //       // `ScalaRunTime.replStringOf`. Probe for new API without extraneous newlines.
+  //       // For old API, try to clean up extraneous newlines by stripping suffix and maybe prefix newline.
+  //       val scalaRuntime = Class.forName("scala.runtime.ScalaRunTime", true, myClassLoader)
+  //       val renderer = "stringOf"
+  //       def stringOfMaybeTruncated(value: Object, maxElements: Int): String = {
+  //         try {
+  //           val meth = scalaRuntime.getMethod(renderer, classOf[Object], classOf[Int], classOf[Boolean])
+  //           val truly = java.lang.Boolean.TRUE
+  //           meth.invoke(null, value, maxElements, truly).asInstanceOf[String]
+  //         } catch {
+  //           case _: NoSuchMethodException =>
+  //             val meth = scalaRuntime.getMethod(renderer, classOf[Object], classOf[Int])
+  //             meth.invoke(null, value, maxElements).asInstanceOf[String]
+  //         }
+  //       }
 
-        (value: Object, maxElements: Int, maxCharacters: Int) => {
-          // `ScalaRuntime.stringOf` may truncate the output, in which case we want to indicate that fact to the user
-          // In order to figure out if it did get truncated, we invoke it twice - once with the `maxElements` that we
-          // want to print, and once without a limit. If the first is shorter, truncation did occur.
-          val notTruncated = stringOfMaybeTruncated(value, Int.MaxValue)
-          val maybeTruncatedByElementCount = stringOfMaybeTruncated(value, maxElements)
-          val maybeTruncated = truncate(maybeTruncatedByElementCount, maxCharacters)
+  //       (value: Object, maxElements: Int, maxCharacters: Int) => {
+  //         // `ScalaRuntime.stringOf` may truncate the output, in which case we want to indicate that fact to the user
+  //         // In order to figure out if it did get truncated, we invoke it twice - once with the `maxElements` that we
+  //         // want to print, and once without a limit. If the first is shorter, truncation did occur.
+  //         val notTruncated = stringOfMaybeTruncated(value, Int.MaxValue)
+  //         val maybeTruncatedByElementCount = stringOfMaybeTruncated(value, maxElements)
+  //         val maybeTruncated = truncate(maybeTruncatedByElementCount, maxCharacters)
 
-          // our string representation may have been truncated by element and/or character count
-          // if so, append an info string - but only once
-          if (notTruncated.length == maybeTruncated.length) maybeTruncated
-          else s"$maybeTruncated ... large output truncated, print value to show all"
-        }
+  //         // our string representation may have been truncated by element and/or character count
+  //         // if so, append an info string - but only once
+  //         if (notTruncated.length == maybeTruncated.length) maybeTruncated
+  //         else s"$maybeTruncated ... large output truncated, print value to show all"
+  //       }
 
-      }
-      myClassLoader
-    }
+  //     }
+  //     myClassLoader
+  //   }
 
   private[repl] def truncate(str: String, maxPrintCharacters: Int)(using ctx: Context): String =
     val ncp = str.codePointCount(0, str.length) // to not cut inside code point
@@ -103,22 +103,23 @@ private[repl] class Rendering(parentClassLoader: Option[ClassLoader] = None):
    *  Calling this method evaluates the expression using reflection
    */
   private def valueOf(sym: Symbol)(using Context): Option[String] =
-    val objectName = sym.owner.fullName.encode.toString.stripSuffix("$")
-    val resObj: Class[?] = Class.forName(objectName, true, classLoader())
-    val symValue = resObj
-      .getDeclaredMethods.find(_.getName == sym.name.encode.toString)
-      .flatMap(result => rewrapValueClass(sym.info.classSymbol, result.invoke(null)))
-    val valueString = symValue.map(replStringOf)
+    None
+    // val objectName = sym.owner.fullName.encode.toString.stripSuffix("$")
+    // val resObj: Class[?] = Class.forName(objectName, true, classLoader())
+    // val symValue = resObj
+    //   .getDeclaredMethods.find(_.getName == sym.name.encode.toString)
+    //   .flatMap(result => rewrapValueClass(sym.info.classSymbol, result.invoke(null)))
+    // val valueString = symValue.map(replStringOf)
 
-    if (!sym.is(Flags.Method) && sym.info == defn.UnitType)
-      None
-    else
-      valueString.map { s =>
-        if (s.startsWith(REPL_WRAPPER_NAME_PREFIX))
-          s.drop(REPL_WRAPPER_NAME_PREFIX.length).dropWhile(c => c.isDigit || c == '$')
-        else
-          s
-      }
+    // if (!sym.is(Flags.Method) && sym.info == defn.UnitType)
+    //   None
+    // else
+    //   valueString.map { s =>
+    //     if (s.startsWith(REPL_WRAPPER_NAME_PREFIX))
+    //       s.drop(REPL_WRAPPER_NAME_PREFIX.length).dropWhile(c => c.isDigit || c == '$')
+    //     else
+    //       s
+    //   }
 
   /** Rewrap value class to their Wrapper class
    *
@@ -126,11 +127,12 @@ private[repl] class Rendering(parentClassLoader: Option[ClassLoader] = None):
    * @param value underlying value
    */
   private def rewrapValueClass(sym: Symbol, value: Object)(using Context): Option[Object] =
-    if ValueClasses.isDerivedValueClass(sym) then
-      val valueClass = Class.forName(sym.binaryClassName, true, classLoader())
-      valueClass.getConstructors.headOption.map(_.newInstance(value))
-    else
-      Some(value)
+    None
+    // if ValueClasses.isDerivedValueClass(sym) then
+    //   val valueClass = Class.forName(sym.binaryClassName, true, classLoader())
+    //   valueClass.getConstructors.headOption.map(_.newInstance(value))
+    // else
+    //   Some(value)
 
   def renderTypeDef(d: Denotation)(using Context): Diagnostic =
     infoDiagnostic("// defined " ++ d.symbol.showUser, d)
@@ -156,14 +158,15 @@ private[repl] class Rendering(parentClassLoader: Option[ClassLoader] = None):
 
   /** Force module initialization in the absence of members. */
   def forceModule(sym: Symbol)(using Context): Seq[Diagnostic] =
-    def load() =
-      val objectName = sym.fullName.encode.toString
-      Class.forName(objectName, true, classLoader())
-      Nil
-    try load()
-    catch
-      case e: ExceptionInInitializerError => List(renderError(e, sym.denot))
-      case NonFatal(e) => List(renderError(e, sym.denot))
+    List.empty
+    // def load() =
+    //   val objectName = sym.fullName.encode.toString
+    //   Class.forName(objectName, true, classLoader())
+    //   Nil
+    // try load()
+    // catch
+    //   case e: ExceptionInInitializerError => List(renderError(e, sym.denot))
+    //   case NonFatal(e) => List(renderError(e, sym.denot))
 
   /** Render the stack trace of the underlying exception. */
   def renderError(thr: Throwable, d: Denotation)(using Context): Diagnostic =

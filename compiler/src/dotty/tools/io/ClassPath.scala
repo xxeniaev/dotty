@@ -9,7 +9,6 @@ package io
 import scala.language.unsafeNulls
 
 import java.net.MalformedURLException
-import java.net.URL
 import java.util.regex.PatternSyntaxException
 import dotty.tools.io.{PlatformFile, PlatformURL}
 import File.pathSeparator
@@ -21,7 +20,7 @@ import dotc.classpath.{PackageEntry, ClassPathEntries, PackageName}
   */
 trait ClassPath {
   import dotty.tools.dotc.classpath._
-  def asURLs: Seq[URL]
+  def asURLs: Seq[PlatformURL]
 
   final def hasPackage(pkg: String): Boolean = hasPackage(PackageName(pkg))
   final def packages(inPackage: String): Seq[PackageEntry] = packages(

@@ -179,6 +179,7 @@ object MainGenericCompiler {
 // //        repl.Main.main(properArgs.toArray)
       case CompileMode.Guess =>
         run(settings.withCompileMode(CompileMode.Compile))
+      case _ => ???
     end run
 
     run(settings)

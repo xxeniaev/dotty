@@ -258,7 +258,7 @@ final class JrtClassPath(fs: PlatformFileSystem)
     if (inPackage.isRoot) ClassPathEntries(packages(inPackage), Nil)
     else ClassPathEntries(packages(inPackage), classes(inPackage))
 
-  def asURLs: Seq[URL] = Seq(new URL("jrt:/"))
+  def asURLs: Seq[PlatformURL] = Seq(PlatformURL("jrt:/"))
   // We don't yet have a scheme to represent the JDK modules in our `-classpath`.
   // java models them as entries in the new "module path", we'll probably need to follow this.
   def asClassPathStrings: Seq[String] = Nil
@@ -368,7 +368,7 @@ final class CtSymClassPath(ctSym: PlatformPath, release: Int)
     if (inPackage.isRoot) ClassPathEntries(packages(inPackage), Nil)
     else ClassPathEntries(packages(inPackage), classes(inPackage))
 
-  def asURLs: Seq[URL] = Nil
+  def asURLs: Seq[PlatformURL] = Nil
   def asClassPathStrings: Seq[String] = Nil
   def findClassFile(className: String): Option[AbstractFile] = {
     if (!className.contains(".")) None

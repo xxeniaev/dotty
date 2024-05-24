@@ -15,7 +15,7 @@ import java.io.IOException
 import scala.jdk.CollectionConverters._
 import scala.util.Random.alphanumeric
 import dotty.tools.io._
-import dotty.tools.nio.PlatformFileVisitor
+import dotty.tools.nio._
 import math.Ordered.orderingToOrdered
 
 /** An abstraction for filesystem paths.  The differences between
@@ -233,17 +233,19 @@ class Path private[io] (val jpath: PlatformPath) {
   def deleteRecursively(): Boolean = {
     if (!exists) false
     else {
-      PlatformFiles.walkFileTree(jpath, new PlatformFileVisitor[PlatformPath]() {
-        override def visitFile(file: PlatformPath, attrs: BasicFileAttributes) = {
-          PlatformFiles.delete(file)
-          FileVisitResult.CONTINUE
-        }
+      // TODO!!
+      ???
+      // PlatformFiles.walkFileTree(jpath, new PlatformFileVisitor[PlatformPath]() {
+      //   override def visitFile(file: PlatformPath, attrs: BasicFileAttributes) = {
+      //     PlatformFiles.delete(file)
+      //     PlatformFileVisitResult.CONTINUE
+      //   }
 
-        override def postVisitDirectory(dir: PlatformPath, exc: IOException) = {
-          PlatformFiles.delete(dir)
-          FileVisitResult.CONTINUE
-        }
-      })
+      //   override def postVisitDirectory(dir: PlatformPath, exc: IOException) = {
+      //     PlatformFiles.delete(dir)
+      //     PlatformFileVisitResult.CONTINUE
+      //   }
+      // })
       true
     }
   }

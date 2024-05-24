@@ -4463,11 +4463,11 @@ trait Quotes { self: runtime.QuoteUnpickler & runtime.QuoteMatching =>
     trait SourceFileMethods {
       extension (self: SourceFile)
         /** Path to this source file. May be `null` for virtual files such as in the REPL.  */
-        @deprecated("Use getJPath, name, or path instead of jpath", "3.0.2")
-        def jpath: java.nio.file.Path
+        // @deprecated("Use getJPath, name, or path instead of jpath", "3.0.2")
+        // def jpath: java.nio.file.Path
 
-        /** Path to this source file. May be `None` for virtual files such as in the REPL. */
-        def getJPath: Option[java.nio.file.Path]
+        // /** Path to this source file. May be `None` for virtual files such as in the REPL. */
+        // def getJPath: Option[java.nio.file.Path]
 
         /** Name of the source file */
         def name: String

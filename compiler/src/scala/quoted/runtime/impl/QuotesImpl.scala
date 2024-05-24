@@ -2848,8 +2848,8 @@ class QuotesImpl private (using val ctx: Context) extends Quotes, QuoteUnpickler
 
     given SourceFileMethods: SourceFileMethods with
       extension (self: SourceFile)
-        def jpath: PlatformPath = self.file.jpath
-        def getJPath: Option[PlatformPath] = Option(self.file.jpath)
+        // def jpath: PlatformPath = self.file.jpath
+        // def getJPath: Option[PlatformPath] = Option(self.file.jpath)
         def name: String = self.name
         def path: String = self.path
         def content: Option[String] =

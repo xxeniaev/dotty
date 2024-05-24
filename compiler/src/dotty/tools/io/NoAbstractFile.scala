@@ -8,6 +8,7 @@ package dotty.tools.io
 import scala.language.unsafeNulls
 
 import java.io.InputStream
+import dotty.tools.io.PlatformPath
 
 /** A distinguished object so you can avoid both null
  *  and Option.
@@ -19,7 +20,7 @@ object NoAbstractFile extends AbstractFile {
   def container: AbstractFile = this
   def create(): Unit = ???
   def delete(): Unit = ???
-  def jpath: JPath = null
+  def jpath: PlatformPath = null
   def input: InputStream = null
   def isDirectory: Boolean = false
   override def isVirtual: Boolean = true

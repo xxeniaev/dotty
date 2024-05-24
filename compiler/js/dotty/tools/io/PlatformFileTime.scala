@@ -1,8 +1,10 @@
 package dotty.tools.io
 
 
-class PlatformFileTime {
+class PlatformFileTime extends Comparable[PlatformFileTime] {
   def toMillis: Long = ???
+
+  override def compareTo(other: PlatformFileTime): Int = ???
 }
 
 object PlatformFileTime {

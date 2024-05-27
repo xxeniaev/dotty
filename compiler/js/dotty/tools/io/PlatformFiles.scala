@@ -5,8 +5,9 @@ import java.util.stream.Stream as JStream
 import java.util.Map as JMap
 import dotty.tools.nio.{PlatformFileAttribute, PlatformFileVisitor}
 
+import java.lang
+
 import java.io.{BufferedWriter, InputStream as PlatformInputStream, OutputStream as PlatformOutputStream}
-import java.nio.file.{OpenOption, Path}
 
 
 class PlatformFiles {
@@ -38,6 +39,6 @@ object PlatformFiles {
   def createTempDirectory[A](dir: PlatformPath, prefix: String, attrs: PlatformFileAttribute[A]*): PlatformPath = ???
   def notExists(path: PlatformPath, options: PlatformLinkOption*): Boolean = ???
   def readAttributes(path: PlatformPath, attributes: String, options: PlatformLinkOption*): JMap[String, AnyRef] = ???
-  def readAttributes[A <: PlatformBasicFileAttributes](path: Path, `type`: Class[A], options: PlatformLinkOption*): A = ???
+  def readAttributes[A <: PlatformBasicFileAttributes](path: PlatformPath, `type`: Class[A], options: PlatformLinkOption*): A = ???
 }
 

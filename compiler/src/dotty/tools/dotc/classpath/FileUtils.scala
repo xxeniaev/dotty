@@ -8,7 +8,12 @@ import scala.language.unsafeNulls
 
 import java.io.{File => JFile, FileFilter}
 import java.net.URL
-import dotty.tools.io.{AbstractFile, PlatformFile, PlatformURL}
+import dotty.tools.io.AbstractFile
+import dotty.tools.io.{
+  PlatformFile,
+  PlatformFileFilter,
+  PlatformURL
+}
 
 /**
  * Common methods related to Java files and abstract files used in the context of classpath
@@ -78,4 +83,7 @@ object FileUtils {
   def mayBeValidPackage(dirName: String): Boolean =
     (dirName != "META-INF") && (dirName != "") && (dirName.charAt(0) != '.')
 
+  def mkFileFilter(f: PlatformFile => Boolean): PlatformFileFilter = new PlatformFileFilter {
+    override def accept(pathname: PlatformFile): Boolean = f(pathname)
+  }
 }

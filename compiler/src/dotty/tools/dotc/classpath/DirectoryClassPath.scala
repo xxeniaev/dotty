@@ -124,7 +124,7 @@ trait PlatformFileDirectoryLookup[FileEntryType <: ClassRepresentation]
       filter: Option[PlatformFile => Boolean]
   ): Array[PlatformFile] = {
     val listing = filter match {
-      case Some(f) => dir.listFiles(f)
+      case Some(f) => dir.listFiles(mkFileFilter(f))
       case None    => dir.listFiles()
     }
 

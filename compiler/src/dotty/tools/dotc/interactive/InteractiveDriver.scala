@@ -77,7 +77,7 @@ class InteractiveDriver(val settings: List[String]) extends Driver {
       // standard Java library, but this will change once we start supporting
       // adding entries to the modulepath.
       val zipCps = cps.collect { case cp: ZipArchiveFileLookup[?] => cp }
-      val dirCps = cps.collect { case cp: JFileDirectoryLookup[?] => cp }
+      val dirCps = cps.collect { case cp: PlatformFileDirectoryLookup[?] => cp }
       (zipCps, dirCps)
     case _ =>
       (Seq(), Seq())

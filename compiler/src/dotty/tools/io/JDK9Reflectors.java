@@ -58,7 +58,7 @@ public final class JDK9Reflectors {
         }
     }
 
-    public static JarFile newJarFile(PlatformFile file, boolean verify, int mode, /*java.lang.Runtime.Version*/ Object version) throws IOException {
+    public static PlatformJarFile newJarFile(PlatformFile file, boolean verify, int mode, /*java.lang.Runtime.Version*/ Object version) throws IOException {
         try {
             if (version == null) return new JarFile(file, verify, mode);
             else {

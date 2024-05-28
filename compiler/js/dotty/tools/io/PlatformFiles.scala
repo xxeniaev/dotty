@@ -31,7 +31,7 @@ object PlatformFiles {
   def createFile[A](path: PlatformPath, attrs: PlatformFileAttribute[A]*): PlatformPath = ???
   def newOutputStream(path: PlatformPath, options: PlatformOpenOption*): PlatformOutputStream = ???
   def newInputStream(path: PlatformPath, options: PlatformOpenOption*): PlatformInputStream = ???
-  def walkFileTree(start: PlatformPath, visitor: PlatformFileVisitor[_ >: Path]): PlatformPath = ???
+  def walkFileTree(start: PlatformPath, visitor: PlatformFileVisitor[_ >: PlatformPath]): PlatformPath = ???
   def isRegularFile(path: PlatformPath, options: PlatformLinkOption*): Boolean = ???
   def isReadable(path: PlatformPath): Boolean = ???
   def isWritable(path: PlatformPath): Boolean = ???

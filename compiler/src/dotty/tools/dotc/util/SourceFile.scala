@@ -3,18 +3,17 @@ package dotc
 package util
 
 import scala.language.unsafeNulls
-
-import dotty.tools.io._
-import Spans._
-import core.Contexts._
+import dotty.tools.io.{PlatformPath, *}
+import Spans.*
+import core.Contexts.*
 
 import scala.io.Codec
-import Chars._
+import Chars.*
+
 import scala.annotation.internal.sharable
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.util.chaining.given
-
 import java.io.File.separator
 import java.nio.charset.StandardCharsets
 import java.nio.file.{FileSystemException, NoSuchFileException}
@@ -253,8 +252,10 @@ object SourceFile {
         // as separator, backslash as file name character.
 
         import scala.jdk.CollectionConverters._
-        val path = refPath.relativize(sourcePath)
-        path.iterator.asScala.mkString("/")
+        import java.util.Iterator as JIterator
+        val path: PlatformPath = refPath.relativize(sourcePath)
+        val hey: JIterator[PlatformPath] = path.iterator
+        hey.asScala.mkString("/")
       else
         sourcePath.toString
   }

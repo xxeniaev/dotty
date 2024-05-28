@@ -10,7 +10,7 @@ import java.nio.file._
 import java.nio.file.attribute.BasicFileAttributes
 import java.nio.charset.StandardCharsets
 import java.util.zip._
-import dotty.tools.io.{PlatformFile, PlatformPath, PlatformZipFile, PlatformFiles}
+import dotty.tools.io.{PlatformFile, PlatformPath, PlatformZipFile, PlatformFiles, PlatformSimpleFileVisitor}
 import scala.collection._
 import scala.io.Codec
 
@@ -237,7 +237,7 @@ class InteractiveDriver(val settings: List[String]) extends Driver {
   /** Adds the names of the classes that are defined in `dir` to `buffer`. */
   private def classesFromDir(dir: PlatformPath, buffer: mutable.ListBuffer[TypeName]): Unit =
     try
-      PlatformFiles.walkFileTree(dir, new SimpleFileVisitor[Path] {
+      PlatformFiles.walkFileTree(dir, new PlatformSimpleFileVisitor[PlatformPath] {
         override def visitFile(path: PlatformPath, attrs: BasicFileAttributes) = {
           if (!attrs.isDirectory) {
             val name = path.getFileName.toString

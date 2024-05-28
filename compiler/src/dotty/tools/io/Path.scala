@@ -14,7 +14,7 @@ import java.nio.file.attribute.{BasicFileAttributes, FileTime}
 import java.io.IOException
 import scala.jdk.CollectionConverters._
 import scala.util.Random.alphanumeric
-import dotty.tools.io.{PlatformPath, PlatformFileSystems, PlatformFile, PlatformFiles, PlatformURI, PlatformURL, PlatformFileTime}
+import dotty.tools.io.{PlatformPath, PlatformFileSystems, PlatformFile, PlatformFiles, PlatformURI, PlatformURL, PlatformFileTime, PlatformSimpleFileVisitor}
 import scalajs.js.internal.UnitOps.unitOrOps
 import math.Ordered.orderingToOrdered
 
@@ -232,7 +232,7 @@ class Path private[io] (val jpath: PlatformPath) {
   def deleteRecursively(): Boolean = {
     if (!exists) false
     else {
-      PlatformFiles.walkFileTree(jpath, new SimpleFileVisitor[JPath]() {
+      PlatformFiles.walkFileTree(jpath, new PlatformSimpleFileVisitor[PlatformPath]() {
         override def visitFile(file: JPath, attrs: BasicFileAttributes) = {
           Files.delete(file)
           FileVisitResult.CONTINUE

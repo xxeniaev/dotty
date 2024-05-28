@@ -15,7 +15,6 @@ import java.io.IOException
 import scala.jdk.CollectionConverters._
 import scala.util.Random.alphanumeric
 import dotty.tools.io.{PlatformPath, PlatformFileSystems, PlatformFile, PlatformFiles, PlatformURI, PlatformURL, PlatformFileTime, PlatformSimpleFileVisitor}
-import scalajs.js.internal.UnitOps.unitOrOps
 import math.Ordered.orderingToOrdered
 
 /** An abstraction for filesystem paths.  The differences between

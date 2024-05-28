@@ -253,9 +253,8 @@ object SourceFile {
 
         import scala.jdk.CollectionConverters._
         import java.util.Iterator as JIterator
-        val path: PlatformPath = refPath.relativize(sourcePath)
-        val hey: JIterator[PlatformPath] = path.iterator
-        hey.asScala.mkString("/")
+        val path = refPath.relativize(sourcePath)
+        path.iterator.asScala.mkString("/")
       else
         sourcePath.toString
   }

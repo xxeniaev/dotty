@@ -3,7 +3,7 @@ package dotty.tools.io
 import sun.security.action.GetPropertyAction
 import java.io.Serializable
 
-class PlatformFile extends Serializable with Comparable[File] {
+class PlatformFile extends Serializable with Comparable[PlatformFile] {
   def getName: String = ???
   def getParent: String = ???
   def getParentFile: PlatformFile = ???

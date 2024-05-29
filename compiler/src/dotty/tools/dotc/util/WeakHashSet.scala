@@ -29,7 +29,7 @@ abstract class WeakHashSet[A <: AnyRef](initialCapacity: Int = 8, loadFactor: Do
    * the removeStaleEntries() method works through the queue to remove
    * stale entries from the table
    */
-  protected val queue = new ReferenceQueue[A]
+  // protected val queue = new ReferenceQueue[A]
 
   /**
    * the number of elements in this set
@@ -82,27 +82,28 @@ abstract class WeakHashSet[A <: AnyRef](initialCapacity: Int = 8, loadFactor: Do
    * remove entries associated with elements that have been gc'ed
    */
   protected def removeStaleEntries(): Unit = {
-    def poll(): Entry[A] | Null = queue.poll().asInstanceOf
+    // def poll(): Entry[A] | Null = queue.poll().asInstanceOf
 
-    @tailrec
-    def queueLoop(): Unit = {
-      val stale = poll()
-      if (stale != null) {
-        val bucket = index(stale.hash)
+    // @tailrec
+    // def queueLoop(): Unit = {
+    //   val stale = poll()
+    //   if (stale != null) {
+    //     val bucket = index(stale.hash)
 
-        @tailrec
-        def linkedListLoop(prevEntry: Entry[A] | Null, entry: Entry[A] | Null): Unit =
-          if entry != null then
-            if stale eq entry then remove(bucket, prevEntry, entry)
-            else linkedListLoop(entry, entry.tail)
+    //     @tailrec
+    //     def linkedListLoop(prevEntry: Entry[A] | Null, entry: Entry[A] | Null): Unit =
+    //       if entry != null then
+    //         if stale eq entry then remove(bucket, prevEntry, entry)
+    //         else linkedListLoop(entry, entry.tail)
 
-        linkedListLoop(null, table(bucket))
+    //     linkedListLoop(null, table(bucket))
 
-        queueLoop()
-      }
-    }
+    //     queueLoop()
+    //   }
+    // }
 
-    queueLoop()
+    // queueLoop()
+    ()
   }
 
   /**
@@ -156,7 +157,8 @@ abstract class WeakHashSet[A <: AnyRef](initialCapacity: Int = 8, loadFactor: Do
 
   protected def addEntryAt(bucket: Int, elem: A, elemHash: Int, oldHead: Entry[A] | Null): A = {
     Stats.record(statsItem("addEntryAt"))
-    table(bucket) = new Entry(elem, elemHash, oldHead, queue)
+    //table(bucket) = new Entry(elem, elemHash, oldHead, queue)
+    table(bucket) = new Entry(elem, elemHash, oldHead)
     count += 1
     if (count > threshold) resize()
     elem
@@ -205,13 +207,14 @@ abstract class WeakHashSet[A <: AnyRef](initialCapacity: Int = 8, loadFactor: Do
   }
 
   def clear(): Unit = {
-    table = new Array[Entry[A] | Null](table.size)
-    threshold = computeThreshold
-    count = 0
+    // table = new Array[Entry[A] | Null](table.size)
+    // threshold = computeThreshold
+    // count = 0
 
-    // drain the queue - doesn't do anything because we're throwing away all the values anyway
-    @tailrec def queueLoop(): Unit = if (queue.poll() != null) queueLoop()
-    queueLoop()
+    // // drain the queue - doesn't do anything because we're throwing away all the values anyway
+    // @tailrec def queueLoop(): Unit = if (queue.poll() != null) queueLoop()
+    // queueLoop()
+    ()
   }
 
   def size: Int = {
@@ -344,6 +347,9 @@ object WeakHashSet {
    * A single entry in a WeakHashSet. It's a WeakReference plus a cached hash code and
    * a link to the next Entry in the same bucket
    */
-  class Entry[A](@constructorOnly element: A, val hash:Int, var tail: Entry[A] | Null, @constructorOnly queue: ReferenceQueue[A]) extends WeakReference[A](element, queue)
+  //class Entry[A](@constructorOnly element: A, val hash:Int, var tail: Entry[A] | Null, @constructorOnly queue: ReferenceQueue[A]) extends WeakReference[A](element, queue)
+  class Entry[A](element: A, val hash:Int, var tail: Entry[A] | Null) {
+    def get: A = element
+  }
 
 }

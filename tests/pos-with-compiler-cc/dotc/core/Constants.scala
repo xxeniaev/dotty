@@ -23,8 +23,8 @@ object Constants {
   inline val ClazzTag   = 12
 
   class Constant(val value: Any, val tag: Int) extends printing.Showable with Product1[Any] {
-    import java.lang.Double.doubleToRawLongBits
-    import java.lang.Float.floatToRawIntBits
+//    import java.lang.Double.doubleToRawLongBits
+//    import java.lang.Float.floatToRawIntBits
 
     def isByteRange: Boolean     = isIntRange && Byte.MinValue <= intValue && intValue <= Byte.MaxValue
     def isShortRange: Boolean    = isIntRange && Short.MinValue <= intValue && intValue <= Short.MaxValue

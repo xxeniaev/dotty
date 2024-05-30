@@ -4,7 +4,7 @@ import scala.annotation.*
 import scala.language.unsafeNulls
 
 import java.io.{FileWriter, PrintWriter}
-import java.lang.management.{ManagementFactory, GarbageCollectorMXBean, RuntimeMXBean, MemoryMXBean, ClassLoadingMXBean, CompilationMXBean}
+import java.lang.management.{ManagementFactory, RuntimeMXBean, MemoryMXBean, ClassLoadingMXBean, CompilationMXBean}
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import javax.management.openmbean.CompositeData
@@ -85,7 +85,7 @@ private [profile] object RealProfiler {
   import scala.jdk.CollectionConverters._
   val runtimeMx: RuntimeMXBean = ManagementFactory.getRuntimeMXBean
   val memoryMx: MemoryMXBean = ManagementFactory.getMemoryMXBean
-  val gcMx: List[GarbageCollectorMXBean] = ManagementFactory.getGarbageCollectorMXBeans.asScala.toList
+//  val gcMx: List[GarbageCollectorMXBean] = ManagementFactory.getGarbageCollectorMXBeans.asScala.toList
   val classLoaderMx: ClassLoadingMXBean = ManagementFactory.getClassLoadingMXBean
   val compileMx: CompilationMXBean = ManagementFactory.getCompilationMXBean
   val threadMx: ExtendedThreadMxBean = ExtendedThreadMxBean.proxy
@@ -127,19 +127,19 @@ private [profile] class RealProfiler(reporter : ProfileReporter)(using Context) 
     System.runFinalization()
   }
 
-  RealProfiler.gcMx foreach {
-    case emitter: NotificationEmitter => emitter.addNotificationListener(this, null, null)
-    case gc => println(s"Cant connect gcListener to ${gc.getClass}")
-  }
+//  RealProfiler.gcMx foreach {
+//    case emitter: NotificationEmitter => emitter.addNotificationListener(this, null, null)
+//    case gc => println(s"Cant connect gcListener to ${gc.getClass}")
+//  }
 
   reporter.header(this)
 
   override def finished(): Unit = {
     //we may miss a GC event if gc is occurring as we call this
-    RealProfiler.gcMx foreach {
-      case emitter: NotificationEmitter => emitter.removeNotificationListener(this)
-      case gc =>
-    }
+//    RealProfiler.gcMx foreach {
+//      case emitter: NotificationEmitter => emitter.removeNotificationListener(this)
+//      case gc =>
+//    }
     reporter.close(this)
   }
 

@@ -126,12 +126,12 @@ class TreePickler(pickler: TastyPickler) {
     case LongTag =>
       writeByte(LONGconst)
       writeLongInt(c.longValue)
-    case FloatTag =>
-      writeByte(FLOATconst)
-      writeInt(java.lang.Float.floatToRawIntBits(c.floatValue))
-    case DoubleTag =>
-      writeByte(DOUBLEconst)
-      writeLongInt(java.lang.Double.doubleToRawLongBits(c.doubleValue))
+//    case FloatTag =>
+//      writeByte(FLOATconst)
+//      writeInt(java.lang.Float.floatToRawIntBits(c.floatValue))
+//    case DoubleTag =>
+//      writeByte(DOUBLEconst)
+//      writeLongInt(java.lang.Double.doubleToRawLongBits(c.doubleValue))
     case StringTag =>
       writeByte(STRINGconst)
       pickleName(c.stringValue.toTermName)

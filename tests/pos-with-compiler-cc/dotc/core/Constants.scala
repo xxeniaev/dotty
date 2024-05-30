@@ -203,20 +203,20 @@ object Constants {
      * constants in regular Scala code, but it is conceivable that you could
      * conjure them with a macro.
      */
-    private def equalHashValue: Any = value match {
-      case f: Float  => floatToRawIntBits(f)
-      case d: Double => doubleToRawLongBits(d)
-      case v         => v
-    }
-
-    override def hashCode: Int = {
-      import scala.util.hashing.MurmurHash3._
-      val seed = 17
-      var h = seed
-      h = mix(h, tag.##) // include tag in the hash, otherwise 0, 0d, 0L, 0f collide.
-      h = mix(h, equalHashValue.##)
-      finalizeHash(h, length = 2)
-    }
+//    private def equalHashValue: Any = value match {
+//      case f: Float  => floatToRawIntBits(f)
+//      case d: Double => doubleToRawLongBits(d)
+//      case v         => v
+//    }
+//
+//    override def hashCode: Int = {
+//      import scala.util.hashing.MurmurHash3._
+//      val seed = 17
+//      var h = seed
+//      h = mix(h, tag.##) // include tag in the hash, otherwise 0, 0d, 0L, 0f collide.
+//      h = mix(h, equalHashValue.##)
+//      finalizeHash(h, length = 2)
+//    }
 
     override def toString: String = s"Constant($value)"
     def canEqual(x: Any): Boolean = true

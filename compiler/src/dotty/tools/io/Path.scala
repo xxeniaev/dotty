@@ -225,7 +225,9 @@ class Path private[io] (val jpath: PlatformPath) {
 
   // deletions
   def delete(): Unit =
-    try { PlatformFiles.deleteIfExists(jpath) } catch { case _: DirectoryNotEmptyException => }
+//    try {
+      PlatformFiles.deleteIfExists(jpath)
+//    } catch { case _: DirectoryNotEmptyException => }
 
   /** Deletes the path recursively. Returns false on failure.
    *  Use with caution!

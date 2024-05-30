@@ -5,7 +5,7 @@ package jvm
 import scala.language.unsafeNulls
 
 import java.io.{ DataOutputStream, FileOutputStream, IOException, File as JFile }
-import java.nio.channels.ClosedByInterruptException
+//import java.nio.channels.ClosedByInterruptException
 import dotty.tools.io._
 import dotty.tools.dotc.report
 
@@ -113,14 +113,14 @@ trait BytecodeWriters {
              "Precisely this override requires its invoker to hand out a non-null AbstractFile.")
       val outstream = new DataOutputStream(outfile.bufferedOutput)
 
-      try outstream.write(jclassBytes, 0, jclassBytes.length)
-      catch case ex: ClosedByInterruptException =>
-        try
-          outfile.delete() // don't leave an empty or half-written classfile around after an interrupt
-        catch
-          case _: Throwable =>
-        throw ex
-      finally outstream.close()
+//      try outstream.write(jclassBytes, 0, jclassBytes.length)
+//      catch case ex: ClosedByInterruptException =>
+//        try
+//          outfile.delete() // don't leave an empty or half-written classfile around after an interrupt
+//        catch
+//          case _: Throwable =>
+//        throw ex
+//      finally outstream.close()
       report.informProgress("wrote '" + label + "' to " + outfile)
     }
   }

@@ -3,7 +3,7 @@ package dotc
 package core
 
 import java.io.{IOException, File}
-import java.nio.channels.ClosedByInterruptException
+//import java.nio.channels.ClosedByInterruptException
 
 import scala.util.control.NonFatal
 
@@ -354,8 +354,8 @@ abstract class SymbolLoader extends LazyType { self =>
     catch {
       case ex: InterruptedException =>
         throw ex
-      case ex: ClosedByInterruptException =>
-        throw new InterruptedException
+//      case ex: ClosedByInterruptException =>
+//        throw new InterruptedException
       case ex: IOException =>
         signalError(ex)
       case NonFatal(ex: TypeError) =>

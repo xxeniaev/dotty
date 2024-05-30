@@ -24,7 +24,7 @@ import Symbols._
 import Decorators.em
 
 import java.io.DataOutputStream
-import java.nio.channels.ClosedByInterruptException
+//import java.nio.channels.ClosedByInterruptException
 
 import dotty.tools.tasty.{ TastyBuffer, TastyHeaderUnpickler }
 
@@ -276,14 +276,16 @@ class GenBCodePipeline(val int: DottyBackendInterface, val primitives: DottyPrim
           val tasty =
             val outTastyFile = getFileForClassfile(outF, store.name, ".tasty")
             val outstream = new DataOutputStream(outTastyFile.bufferedOutput)
-            try outstream.write(binary())
-            catch case ex: ClosedByInterruptException =>
-              try
-                outTastyFile.delete() // don't leave an empty or half-written tastyfile around after an interrupt
-              catch
-                case _: Throwable =>
-              throw ex
-            finally outstream.close()
+//            try
+              outstream.write(binary())
+//            catch case ex: ClosedByInterruptException =>
+//              try
+//                outTastyFile.delete() // don't leave an empty or half-written tastyfile around after an interrupt
+//              catch
+//                case _: Throwable =>
+//              throw ex
+//            finally
+              outstream.close()
 
             val uuid = new TastyHeaderUnpickler(binary()).readHeader()
             val lo = uuid.getMostSignificantBits

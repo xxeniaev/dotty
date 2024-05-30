@@ -57,8 +57,8 @@ object PlatformFile {
   def createTempFile(prefix: String, suffix: String, directory: PlatformFile): PlatformFile = ???
   def createTempFile(prefix: String, suffix: String): PlatformFile = ???
 
-  val separatorChar: Char = ???
   val separator: String = ???
+  val separatorChar: Char = ???
   val pathSeparator: String = ???
 }
 

@@ -15,9 +15,9 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.util.chaining.given
 
-import java.io.File.separator
 import java.nio.charset.StandardCharsets
-import java.nio.file.{NoSuchFileException}
+import java.nio.file.NoSuchFileException
+import dotty.tools.io.PlatformFile.separator
 import java.util.Optional
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.regex.Pattern

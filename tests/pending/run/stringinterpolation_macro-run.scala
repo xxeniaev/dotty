@@ -102,7 +102,7 @@ println(f"${3L}%e")
 // 't' | 'T' (category: date/time)
 // -------------------------------
 import java.util.Calendar
-import java.util.Locale
+//import java.util.Locale
 val c = Calendar.getInstance(Locale.US)
 c.set(2012, Calendar.MAY, 26)
 println(f"${c}%TD")

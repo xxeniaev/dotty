@@ -145,7 +145,7 @@ object Test {
   */
   def dateArgsTests = {
     import java.text.SimpleDateFormat
-    import java.util.Locale
+//    import java.util.Locale
     import java.util.TimeZone
 
     val sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss")

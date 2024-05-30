@@ -36,7 +36,7 @@ object PlatformFiles {
   def createTempDirectory[A](dir: PlatformPath, prefix: String, attrs: PlatformFileAttribute[A]*): PlatformPath = ???
   def notExists(path: PlatformPath, options: PlatformLinkOption*): Boolean = ???
   def readAttributes(path: PlatformPath, attributes: String, options: PlatformLinkOption*): JMap[String, AnyRef] = ???
-  def readAttributes(path: PlatformPath, options: PlatformLinkOption*): java.nio.file.attribute.BasicFileAttributes = ???
+  def readAttributes(path: PlatformPath, options: PlatformLinkOption*): PlatformBasicFileAttributes = ???
   def readAllLines(path: PlatformPath): List[String] = ???
 }
 

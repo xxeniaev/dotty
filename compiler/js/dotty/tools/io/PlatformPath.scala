@@ -1,6 +1,8 @@
 package dotty.tools.io
 
-class PlatformPath {
+import java.lang.Iterable
+
+class PlatformPath extends Iterable[PlatformPath]{
   def getFileSystem: PlatformFileSystem = ???
   def isAbsolute: Boolean = ???
   def getRoot: PlatformPath = ???

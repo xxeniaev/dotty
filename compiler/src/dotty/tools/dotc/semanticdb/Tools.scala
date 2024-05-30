@@ -5,11 +5,12 @@ import java.nio.charset.StandardCharsets
 import scala.jdk.CollectionConverters._
 import dotty.tools.dotc.util.SourceFile
 import dotty.tools.dotc.semanticdb.Scala3.given
+import dotty.tools.io.PlatformPath
 
 object Tools:
 
   /** Converts a Path to a String that is URI encoded, without forcing absolute paths. */
-  def mkURIstring(path: Path): String =
+  def mkURIstring(path: PlatformPath): String =
     // Calling `.toUri` on a relative path will convert it to absolute. Iteration through its parts instead preserves
     // the resulting URI as relative.
     // To prevent colon `:` from being treated as a scheme separator, prepend a slash `/` to each part to trick the URI
@@ -25,7 +26,7 @@ object Tools:
    */
   def loadTextDocument(
     scalaAbsolutePath: Path,
-    scalaRelativePath: Path,
+    scalaRelativePath: PlatformPath,
     semanticdbAbsolutePath: Path
   ): TextDocument =
     val reluri  = mkURIstring(scalaRelativePath)

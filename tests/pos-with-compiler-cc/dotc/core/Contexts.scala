@@ -40,7 +40,7 @@ import util.Store
 import xsbti.AnalysisCallback
 import plugins._
 import java.util.concurrent.atomic.AtomicInteger
-import java.nio.file.InvalidPathException
+//import java.nio.file.InvalidPathException
 import language.experimental.pureFunctions
 
 object Contexts {
@@ -257,14 +257,14 @@ object Contexts {
       case Some(file) =>
         file
       case None =>
-        try
+//        try
           val file = new PlainFile(Path(name.toString))
           base.files(name) = file
           file
-        catch
-          case ex: InvalidPathException =>
-            report.error(em"invalid file path: ${ex.getMessage}")
-            NoAbstractFile
+//        catch
+//          case ex: InvalidPathException =>
+//            report.error(em"invalid file path: ${ex.getMessage}")
+//            NoAbstractFile
 
     /** AbstractFile with given path, memoized */
     def getFile(name: String): AbstractFile = getFile(name.toTermName)

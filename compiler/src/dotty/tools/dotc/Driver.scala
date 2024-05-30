@@ -203,6 +203,6 @@ class Driver {
     // we may try to load it but fail with another StackOverflowError and lose the original exception,
     // see <https://groups.google.com/forum/#!topic/scala-user/kte6nak-zPM>.
     val _ = NonFatal
-    sys.exit(if (process(args).hasErrors) 1 else 0)
+    process(args).hasErrors
   }
 }

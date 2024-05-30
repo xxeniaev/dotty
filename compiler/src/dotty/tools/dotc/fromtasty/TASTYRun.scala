@@ -7,7 +7,7 @@ import scala.language.unsafeNulls
 import io.{JarArchive, AbstractFile, Path}
 import core.Contexts._
 import core.Decorators.em
-import java.io.File
+import dotty.tools.io.PlatformFile
 
 class TASTYRun(comp: Compiler, ictx: Context) extends Run(comp, ictx) {
   override def compile(files: List[AbstractFile]): Unit = {
@@ -22,9 +22,9 @@ class TASTYRun(comp: Compiler, ictx: Context) extends Run(comp, ictx) {
       file.extension match
         case "jar" =>
           JarArchive.open(Path(file.path), create = false).allFileNames()
-            .map(_.stripPrefix(File.separator)) // change paths from absolute to relative
+            .map(_.stripPrefix(PlatformFile.separator)) // change paths from absolute to relative
             .filter(e => Path.extension(e) == "tasty" && !fromTastyIgnoreList(e))
-            .map(e => e.stripSuffix(".tasty").replace(File.separator, "."))
+            .map(e => e.stripSuffix(".tasty").replace(PlatformFile.separator, "."))
             .toList
         case "tasty" => TastyFileUtil.getClassName(file)
         case _ =>

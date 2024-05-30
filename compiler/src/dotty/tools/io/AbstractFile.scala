@@ -13,7 +13,7 @@ import java.io.{
 }
 import dotty.tools.io.{AbstractFile, PlainFile, PlatformFile, PlatformFiles, PlatformURL, PlatformPath, PlatformPaths, ClassPath, ClassRepresentation, EfficientClassPath, JDK9Reflectors}
 import java.net.URL
-import java.nio.file.{FileAlreadyExistsException, Files, Paths}
+import java.nio.file.FileAlreadyExistsException
 
 /**
  * An abstraction over files for use in the reflection/compiler libraries.
@@ -233,7 +233,7 @@ abstract class AbstractFile extends Iterable[AbstractFile] {
   private def lookup(getFile: (AbstractFile, String, Boolean) => AbstractFile,
                      path0: String,
                      directory: Boolean): AbstractFile = {
-    val separator = java.io.File.separatorChar
+    val separator = PlatformFile.separatorChar
     // trim trailing '/'s
     val path: String = if (path0.last == separator) path0 dropRight 1 else path0
     val length = path.length()

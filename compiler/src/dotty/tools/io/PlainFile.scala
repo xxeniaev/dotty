@@ -10,7 +10,7 @@ import scala.language.unsafeNulls
 import dotty.tools.io.{PlatformPath, PlatformPaths}
 
 import java.io.{InputStream, OutputStream}
-import java.nio.file.{InvalidPathException, Paths}
+import java.nio.file.Paths
 
 /** ''Note:  This library is considered experimental and should not be used unless you know what you are doing.'' */
 class PlainDirectory(givenPath: Directory) extends PlainFile(givenPath) {
@@ -38,20 +38,20 @@ class PlainFile(val givenPath: Path) extends AbstractFile {
         val fileStores = fileSystem.getFileStores.iterator()
         if (fileStores.hasNext) {
           val jarPath = fileStores.next().name
-          try {
-            Some(
-              new PlainFile(
-                new Path(
-                  PlatformPaths.get(
-                    jarPath.stripSuffix(fileSystem.getSeparator)
-                  )
+//          try {
+          Some(
+            new PlainFile(
+              new Path(
+                PlatformPaths.get(
+                  jarPath.stripSuffix(fileSystem.getSeparator)
                 )
               )
             )
-          } catch {
-            case _: InvalidPathException =>
-              None
-          }
+          )
+//          } catch {
+//            case _: InvalidPathException =>
+//              None
+//          }
         } else None
       case "jrt" =>
         if (jpath.getNameCount > 2 && jpath.startsWith("/modules")) {

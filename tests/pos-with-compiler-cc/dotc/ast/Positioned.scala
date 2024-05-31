@@ -35,7 +35,7 @@ abstract class Positioned(implicit @constructorOnly src: SourceFile) extends Src
       ids.nn.put(this: @unchecked, ownId)
       if ownId == debugId then
         println(s"Debug tree (id=$debugId) creation \n${this: @unchecked}\n")
-        Thread.dumpStack()
+//        Thread.dumpStack()
 
   allocateId()
 

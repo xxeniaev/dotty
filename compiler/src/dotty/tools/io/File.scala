@@ -10,19 +10,19 @@ package dotty.tools.io
 
 import scala.language.unsafeNulls
 
-import java.io.{File => JavaIoFile, _}
-import java.nio.file.{Files, Paths}
+import java.io._
+//import java.nio.file.{Files, Paths}
 // import java.nio.file.StandardOpenOption._
 import dotty.tools.io.PlatformOpenOption._
-import dotty.tools.io.{PlatformFiles, PlatformPath, PlatformPaths}
+import dotty.tools.io.{PlatformFiles, PlatformPath, PlatformPaths, PlatformFile}
 
 import scala.io.Codec
 
 /** ''Note:  This library is considered experimental and should not be used unless you know what you are doing.''
   */
 object File {
-  def pathSeparator: String = JavaIoFile.pathSeparator
-  def separator: String = JavaIoFile.separator
+  def pathSeparator: String = PlatformFile.pathSeparator
+  def separator: String = PlatformFile.separator
 
   def apply(path: String)(implicit codec: Codec): File = apply(
     PlatformPaths.get(path)

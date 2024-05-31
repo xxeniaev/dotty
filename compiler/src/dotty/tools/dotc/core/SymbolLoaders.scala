@@ -2,7 +2,7 @@ package dotty.tools
 package dotc
 package core
 
-import java.io.{IOException, File}
+import java.io.IOException
 //import java.nio.channels.ClosedByInterruptException
 
 import scala.util.control.NonFatal
@@ -10,6 +10,7 @@ import scala.util.control.NonFatal
 import dotty.tools.io.{ ClassPath, ClassRepresentation, AbstractFile }
 import dotty.tools.backend.jvm.DottyBackendInterface.symExtensions
 
+import dotty.tools.io.PlatformFile
 import Contexts._, Symbols._, Flags._, SymDenotations._, Types._, Scopes._, Names._
 import NameOps._
 import StdNames._
@@ -135,7 +136,7 @@ object SymbolLoaders {
           if (!ok)
             report.warning(i"""$what ${tree.name} is in the wrong directory.
                            |It was declared to be in package ${path.reverse.mkString(".")}
-                           |But it is found in directory     ${filePath.reverse.mkString(File.separator.nn)}""",
+                           |But it is found in directory     ${filePath.reverse.mkString(PlatformFile.separator.nn)}""",
               tree.srcPos.focus)
           ok
         }

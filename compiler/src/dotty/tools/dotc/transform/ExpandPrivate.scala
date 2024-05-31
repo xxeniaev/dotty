@@ -10,7 +10,8 @@ import SymDenotations._
 
 import Decorators._
 import MegaPhase._
-import java.io.File.separatorChar
+//import java.io.File.separatorChar
+import dotty.tools.io.PlatformFile.separatorChar
 
 import ValueClasses._
 

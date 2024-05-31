@@ -221,7 +221,9 @@ class Path private[io] (val jpath: PlatformPath) {
   }
 
   private def tryCreate(create: => PlatformPath): Boolean =
-    try { create; true } catch { case _: FileAlreadyExistsException => false }
+//    try { 
+      create; true 
+//    } catch { case _: FileAlreadyExistsException => false }
 
   // deletions
   def delete(): Unit =

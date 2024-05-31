@@ -40,11 +40,11 @@ class Pickler extends Phase {
   override def isRunnable(using Context): Boolean =
     super.isRunnable && !ctx.settings.fromTasty.value
 
-  private def output(name: String, msg: String) = {
-    val s = new PrintStream(name)
-    s.print(msg)
-    s.close
-  }
+//  private def output(name: String, msg: String) = {
+//    val s = new PrintStream(name)
+//    s.print(msg)
+//    s.close
+//  }
 
   // Maps that keep a record if -Ytest-pickler is set.
   private val beforePickling = new mutable.HashMap[ClassSymbol, String]
@@ -146,8 +146,8 @@ class Pickler extends Phase {
     def normal(s: String) = new String(s.getBytes(UTF_8), UTF_8)
     val unequal = unpickled.length() != previous.length() || normal(unpickled) != normal(previous)
     if unequal then
-      output("before-pickling.txt", previous)
-      output("after-pickling.txt", unpickled)
+//      output("before-pickling.txt", previous)
+//      output("after-pickling.txt", unpickled)
       //sys.process.Process("diff -u before-pickling.txt after-pickling.txt").!
       report.error(em"""pickling difference for $cls in ${cls.source}, for details:
                     |

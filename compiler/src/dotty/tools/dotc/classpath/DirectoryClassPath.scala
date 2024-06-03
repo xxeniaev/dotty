@@ -188,8 +188,9 @@ object JrtClassPath {
               PlatformFileSystems.getFileSystem(PlatformURI.create("jrt:/"))
             Some(new JrtClassPath(fs))
           } catch {
-            case _: ProviderNotFoundException |
-                _: FileSystemNotFoundException =>
+            case _: ProviderNotFoundException
+//                 | _: FileSystemNotFoundException
+                =>
               None
           }
       }

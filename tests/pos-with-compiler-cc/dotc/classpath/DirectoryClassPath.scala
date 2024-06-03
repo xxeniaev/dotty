@@ -146,12 +146,12 @@ object JrtClassPath {
             case NonFatal(_) => None
           }
         case _ =>
-          try {
+//          try {
             val fs = FileSystems.getFileSystem(URI.create("jrt:/"))
             Some(new JrtClassPath(fs))
-          } catch {
-            case _: ProviderNotFoundException | _: FileSystemNotFoundException => None
-          }
+//          } catch {
+//            case _: ProviderNotFoundException | _: FileSystemNotFoundException => None
+//          }
       }
     }
   }

@@ -2,7 +2,7 @@ package dotty.tools.io
 
 import scala.language.unsafeNulls
 
-import java.nio.file.{FileSystemAlreadyExistsException, FileSystems}
+import java.nio.file.FileSystems
 
 import scala.jdk.CollectionConverters._
 import dotty.tools.io.{PlatformFileSystems, PlatformURI, PlatformFiles}
@@ -34,11 +34,12 @@ object JarArchive {
     val env = Map("create" -> create.toString).asJava
     val uri = PlatformURI.create("jar:" + path.toAbsolute.toURI.toString)
     val fs = {
-      try PlatformFileSystems.newFileSystem(uri, env)
-      catch {
-        case _: FileSystemAlreadyExistsException =>
-          PlatformFileSystems.getFileSystem(uri)
-      }
+//      try
+      PlatformFileSystems.newFileSystem(uri, env)
+//      catch {
+//        case _: FileSystemAlreadyExistsException =>
+//          PlatformFileSystems.getFileSystem(uri)
+//      }
     }
     val root = fs.getRootDirectories.iterator.next()
     new JarArchive(Directory(root))

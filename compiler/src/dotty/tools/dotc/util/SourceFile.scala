@@ -16,7 +16,7 @@ import scala.collection.mutable.ArrayBuffer
 import scala.util.chaining.given
 
 import java.nio.charset.StandardCharsets
-import java.nio.file.NoSuchFileException
+//import java.nio.file.NoSuchFileException
 import dotty.tools.io.PlatformFile.separator
 import java.util.Optional
 import java.util.concurrent.atomic.AtomicInteger
@@ -268,9 +268,10 @@ object SourceFile {
     // Files.exists is slow on Java 8 (https://rules.sonarsource.com/java/tag/performance/RSPEC-3725),
     // so cope with failure; also deal with path prefix "Not a directory".
     val chars =
-      try new String(file.toByteArray, codec.charSet).toCharArray
-      catch
-        case _: NoSuchFileException => Array.empty[Char]
+//      try
+        new String(file.toByteArray, codec.charSet).toCharArray
+//      catch
+//        case _: NoSuchFileException => Array.empty[Char]
 //        case fse: FileSystemException if fse.getMessage.endsWith("Not a directory") => Array.empty[Char]
 
     if isScript(file, chars) then

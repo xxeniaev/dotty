@@ -1,4 +1,4 @@
-package dotty.tools.dotc.interfaces.java.util.jar
+package java.util.jar
 
 class Attributes {}
 

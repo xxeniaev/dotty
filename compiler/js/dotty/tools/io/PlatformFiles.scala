@@ -1,7 +1,6 @@
 package dotty.tools.io
 
 import java.util.List
-import java.util.stream.Stream as JStream
 import java.util.Map as JMap
 import dotty.tools.nio.{PlatformFileAttribute, PlatformFileVisitor}
 import java.io.{InputStream as PlatformInputStream, OutputStream as PlatformOutputStream}
@@ -19,9 +18,9 @@ object PlatformFiles {
   def isDirectory (path: PlatformPath, options: PlatformLinkOption*): Boolean = ???
   def createDirectory[A](dir: PlatformPath, attrs: PlatformFileAttribute[A]*): PlatformPath = ???
   def createDirectories[A](dir: PlatformPath, attrs: PlatformFileAttribute[A]*): PlatformPath = ???
-  def list(dir: PlatformPath): JStream[PlatformPath] = ???
+  def list(dir: PlatformPath): PlatformStream[PlatformPath] = ???
   def newDirectoryStream(dir: PlatformPath): PlatformDirectoryStream[PlatformPath] = ???
-  def walk(start: PlatformPath, options: PlatformFileVisitOption*): JStream[PlatformPath] = ???
+  def walk(start: PlatformPath, options: PlatformFileVisitOption*): PlatformStream[PlatformPath] = ???
   def exists(path: PlatformPath, options: PlatformLinkOption*): Boolean = ???
   def readSymbolicLink(link: PlatformPath): PlatformPath = ???
   def isSymbolicLink(path: PlatformPath): Boolean = ???

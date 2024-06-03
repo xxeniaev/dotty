@@ -13,7 +13,7 @@ import dotty.tools.io.{PlatformFileSystems, PlatformURI, PlatformFiles}
 class JarArchive private (root: Directory) extends PlainDirectory(root) {
   def close(): Unit = jpath.getFileSystem.close()
   def allFileNames(): Iterator[String] =
-    PlatformFiles.walk(jpath).iterator().asScala.map(_.toString)
+    PlatformFiles.walk(jpath).iterator.asScala.map(_.toString)
 }
 
 object JarArchive {

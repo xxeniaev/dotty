@@ -43,7 +43,7 @@ object Reporter {
       def loop(): Unit = reader.read match {
         case 'a' | 'A' =>
           new Throwable().printStackTrace(writer)
-          System.exit(1)
+//          System.exit(1)
         case 's' | 'S' =>
           new Throwable().printStackTrace(writer)
           writer.println()

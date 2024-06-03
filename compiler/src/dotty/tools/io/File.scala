@@ -14,7 +14,13 @@ import java.io._
 //import java.nio.file.{Files, Paths}
 // import java.nio.file.StandardOpenOption._
 import dotty.tools.io.PlatformOpenOption._
-import dotty.tools.io.{PlatformFiles, PlatformPath, PlatformPaths, PlatformFile}
+import dotty.tools.io.{
+  PlatformFiles,
+  PlatformPath,
+  PlatformPaths,
+  PlatformFile,
+  PlatformBufferedOutputStream
+}
 
 import scala.io.Codec
 
@@ -63,8 +69,8 @@ class File(jpath: PlatformPath)(implicit constructorCodec: Codec)
   def outputStream(append: Boolean = false): OutputStream =
     if (append) PlatformFiles.newOutputStream(jpath, CREATE, APPEND)
     else PlatformFiles.newOutputStream(jpath, CREATE, TRUNCATE_EXISTING)
-  def bufferedOutput(append: Boolean = false): BufferedOutputStream =
-    new BufferedOutputStream(outputStream(append))
+  def bufferedOutput(append: Boolean = false): PlatformBufferedOutputStream =
+    PlatformBufferedOutputStream(outputStream(append))
 
   /** Obtains an OutputStreamWriter wrapped around a FileOutputStream.
     *  This should behave like a less broken version of java.io.FileWriter,

@@ -8,10 +8,10 @@ package dotty.tools.io
 import scala.language.unsafeNulls
 
 import java.io.{
-  IOException, InputStream, OutputStream, BufferedOutputStream,
+  IOException, InputStream, OutputStream,
   ByteArrayOutputStream
 }
-import dotty.tools.io.{AbstractFile, PlainFile, PlatformFile, PlatformFiles, PlatformURL, PlatformPath, PlatformPaths, ClassPath, ClassRepresentation, EfficientClassPath, JDK9Reflectors}
+import dotty.tools.io.{AbstractFile, PlainFile, PlatformFile, PlatformFiles, PlatformURL, PlatformPath, PlatformPaths, ClassPath, ClassRepresentation, EfficientClassPath, JDK9Reflectors, PlatformBufferedOutputStream}
 import java.net.URL
 //import java.nio.file.FileAlreadyExistsException
 
@@ -152,7 +152,7 @@ abstract class AbstractFile extends Iterable[AbstractFile] {
   def output: OutputStream
 
   /** Returns a buffered output stream for writing the file - defaults to out */
-  def bufferedOutput: BufferedOutputStream = new BufferedOutputStream(output)
+  def bufferedOutput: PlatformBufferedOutputStream = PlatformBufferedOutputStream(output)
 
   /** size of this file if it is a concrete file. */
   def sizeOption: Option[Int] = None

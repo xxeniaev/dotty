@@ -33,7 +33,7 @@ import compiletime.uninitialized
 import scala.annotation.internal.sharable
 
 import DenotTransformers.DenotTransformer
-import dotty.tools.dotc.profile.Profiler
+//import dotty.tools.dotc.profile.Profiler
 import util.Property.Key
 import util.Store
 //import xsbti.AnalysisCallback
@@ -49,8 +49,8 @@ object Contexts {
   private val (settingsStateLoc,    store4) = store3.newLocation[SettingsState]()
   private val (compilationUnitLoc,  store5) = store4.newLocation[CompilationUnit]()
   private val (runLoc,              store6) = store5.newLocation[Run | Null]()
-  private val (profilerLoc,         store7) = store6.newLocation[Profiler]()
-  private val (notNullInfosLoc,     store8) = store7.newLocation[List[NotNullInfo]]()
+//  private val (profilerLoc,         store7) = store6.newLocation[Profiler]()
+  private val (notNullInfosLoc,     store8) = store6.newLocation[List[NotNullInfo]]()
   private val (importInfoLoc,       store9) = store8.newLocation[ImportInfo | Null]()
   private val (typeAssignerLoc,    store10) = store9.newLocation[TypeAssigner](TypeAssigner)
 
@@ -184,7 +184,7 @@ object Contexts {
     def run: Run | Null = store(runLoc)
 
     /**  The current compiler-run profiler */
-    def profiler: Profiler = store(profilerLoc)
+//    def profiler: Profiler = store(profilerLoc)
 
     /** The paths currently known to be not null */
     def notNullInfos: List[NotNullInfo] = store(notNullInfosLoc)
@@ -659,7 +659,7 @@ object Contexts {
     def setPrinterFn(printer: Context => Printer): this.type = updateStore(printerFnLoc, printer)
     def setSettings(settingsState: SettingsState): this.type = updateStore(settingsStateLoc, settingsState)
     def setRun(run: Run | Null): this.type = updateStore(runLoc, run)
-    def setProfiler(profiler: Profiler): this.type = updateStore(profilerLoc, profiler)
+//    def setProfiler(profiler: Profiler): this.type = updateStore(profilerLoc, profiler)
     def setNotNullInfos(notNullInfos: List[NotNullInfo]): this.type = updateStore(notNullInfosLoc, notNullInfos)
     def setImportInfo(importInfo: ImportInfo): this.type =
       importInfo.mentionsFeature(nme.unsafeNulls) match

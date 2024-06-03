@@ -183,16 +183,16 @@ object JrtClassPath {
             case NonFatal(_) => None
           }
         case _ =>
-          try {
-            val fs =
-              PlatformFileSystems.getFileSystem(PlatformURI.create("jrt:/"))
-            Some(new JrtClassPath(fs))
-          } catch {
-            case _: ProviderNotFoundException
+//          try {
+          val fs =
+            PlatformFileSystems.getFileSystem(PlatformURI.create("jrt:/"))
+          Some(new JrtClassPath(fs))
+//          } catch {
+//            case _: ProviderNotFoundException
 //                 | _: FileSystemNotFoundException
-                =>
-              None
-          }
+//                =>
+//              None
+//          }
       }
     }
   }

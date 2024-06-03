@@ -268,7 +268,7 @@ class Run(comp: Compiler, @constructorOnly ictx0: Context) extends ImplicitRunIn
     }
 
     val runCtx = ctx.fresh
-    runCtx.setProfiler(Profiler())
+//    runCtx.setProfiler(Profiler())
     unfusedPhases.foreach(_.initContext(runCtx))
     runPhases(using runCtx)
     if (!ctx.reporter.hasErrors)

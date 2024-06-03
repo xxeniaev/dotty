@@ -1,29 +1,29 @@
-package dotty.tools.dotc.profile
-
-import scala.annotation.*
-import scala.language.unsafeNulls
-
-import java.io.{FileWriter, PrintWriter}
-import java.lang.management.{
-  ManagementFactory,
-  RuntimeMXBean,
-  MemoryMXBean,
-  ClassLoadingMXBean,
-  CompilationMXBean
-}
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicInteger
-import javax.management.openmbean.CompositeData
-import javax.management.{
-  Notification,
-  NotificationEmitter,
-  NotificationListener
-}
-
-import dotty.tools.dotc.core.Phases.Phase
-import dotty.tools.dotc.core.Contexts._
-import dotty.tools.io.AbstractFile
-
+//package dotty.tools.dotc.profile
+//
+//import scala.annotation.*
+//import scala.language.unsafeNulls
+//
+//import java.io.{FileWriter, PrintWriter}
+//import java.lang.management.{
+//  ManagementFactory,
+//  RuntimeMXBean,
+//  MemoryMXBean,
+//  ClassLoadingMXBean,
+//  CompilationMXBean
+//}
+//import java.util.concurrent.TimeUnit
+//import java.util.concurrent.atomic.AtomicInteger
+//import javax.management.openmbean.CompositeData
+//import javax.management.{
+//  Notification,
+//  NotificationEmitter,
+//  NotificationListener
+//}
+//
+//import dotty.tools.dotc.core.Phases.Phase
+//import dotty.tools.dotc.core.Contexts._
+//import dotty.tools.io.AbstractFile
+//
 //object Profiler {
 //  def apply()(using Context): Profiler =
 //    if (!ctx.settings.YprofileEnabled.value) NoOpProfiler
@@ -36,78 +36,78 @@ import dotty.tools.io.AbstractFile
 //
 //  private[profile] val emptySnap: ProfileSnap = ProfileSnap(0, "", 0, 0, 0, 0, 0, 0)
 //}
-
-case class GcEventData(
-    pool: String,
-    reportTimeNs: Long,
-    gcStartMillis: Long,
-    gcEndMillis: Long,
-    name: String,
-    action: String,
-    cause: String,
-    threads: Long
-)
-
-case class ProfileSnap(
-    threadId: Long,
-    threadName: String,
-    snapTimeNanos: Long,
-    idleTimeNanos: Long,
-    cpuTimeNanos: Long,
-    userTimeNanos: Long,
-    allocatedBytes: Long,
-    heapBytes: Long
-) {
-  def updateHeap(heapBytes: Long): ProfileSnap =
-    copy(heapBytes = heapBytes)
-}
-case class ProfileRange(
-    start: ProfileSnap,
-    end: ProfileSnap,
-    phase: Phase,
-    purpose: String,
-    taskCount: Int,
-    thread: Thread
-) {
-  def allocatedBytes: Long = end.allocatedBytes - start.allocatedBytes
-
-  def userNs: Long = end.userTimeNanos - start.userTimeNanos
-
-  def cpuNs: Long = end.cpuTimeNanos - start.cpuTimeNanos
-
-  def idleNs: Long = end.idleTimeNanos - start.idleTimeNanos
-
-  def runNs: Long = end.snapTimeNanos - start.snapTimeNanos
-
-  private def toMillis(ns: Long) = ns / 1000000.0d
-
-  private def toMegaBytes(bytes: Long) = bytes / 1000000.0d
-
-  def wallClockTimeMillis: Double = toMillis(
-    end.snapTimeNanos - start.snapTimeNanos
-  )
-
-  def idleTimeMillis: Double = toMillis(end.idleTimeNanos - start.idleTimeNanos)
-
-  def cpuTimeMillis: Double = toMillis(end.cpuTimeNanos - start.cpuTimeNanos)
-
-  def userTimeMillis: Double = toMillis(end.userTimeNanos - start.userTimeNanos)
-
-  def allocatedMB: Double = toMegaBytes(
-    end.allocatedBytes - start.allocatedBytes
-  )
-
-  def retainedHeapMB: Double = toMegaBytes(end.heapBytes - start.heapBytes)
-}
-
-sealed trait Profiler {
-
-  def finished(): Unit
-
-  def beforePhase(phase: Phase): ProfileSnap
-
-  def afterPhase(phase: Phase, profileBefore: ProfileSnap): Unit
-}
+//
+//case class GcEventData(
+//    pool: String,
+//    reportTimeNs: Long,
+//    gcStartMillis: Long,
+//    gcEndMillis: Long,
+//    name: String,
+//    action: String,
+//    cause: String,
+//    threads: Long
+//)
+//
+//case class ProfileSnap(
+//    threadId: Long,
+//    threadName: String,
+//    snapTimeNanos: Long,
+//    idleTimeNanos: Long,
+//    cpuTimeNanos: Long,
+//    userTimeNanos: Long,
+//    allocatedBytes: Long,
+//    heapBytes: Long
+//) {
+//  def updateHeap(heapBytes: Long): ProfileSnap =
+//    copy(heapBytes = heapBytes)
+//}
+//case class ProfileRange(
+//    start: ProfileSnap,
+//    end: ProfileSnap,
+//    phase: Phase,
+//    purpose: String,
+//    taskCount: Int,
+//    thread: Thread
+//) {
+//  def allocatedBytes: Long = end.allocatedBytes - start.allocatedBytes
+//
+//  def userNs: Long = end.userTimeNanos - start.userTimeNanos
+//
+//  def cpuNs: Long = end.cpuTimeNanos - start.cpuTimeNanos
+//
+//  def idleNs: Long = end.idleTimeNanos - start.idleTimeNanos
+//
+//  def runNs: Long = end.snapTimeNanos - start.snapTimeNanos
+//
+//  private def toMillis(ns: Long) = ns / 1000000.0d
+//
+//  private def toMegaBytes(bytes: Long) = bytes / 1000000.0d
+//
+//  def wallClockTimeMillis: Double = toMillis(
+//    end.snapTimeNanos - start.snapTimeNanos
+//  )
+//
+//  def idleTimeMillis: Double = toMillis(end.idleTimeNanos - start.idleTimeNanos)
+//
+//  def cpuTimeMillis: Double = toMillis(end.cpuTimeNanos - start.cpuTimeNanos)
+//
+//  def userTimeMillis: Double = toMillis(end.userTimeNanos - start.userTimeNanos)
+//
+//  def allocatedMB: Double = toMegaBytes(
+//    end.allocatedBytes - start.allocatedBytes
+//  )
+//
+//  def retainedHeapMB: Double = toMegaBytes(end.heapBytes - start.heapBytes)
+//}
+//
+//sealed trait Profiler {
+//
+//  def finished(): Unit
+//
+//  def beforePhase(phase: Phase): ProfileSnap
+//
+//  def afterPhase(phase: Phase, profileBefore: ProfileSnap): Unit
+//}
 //private [profile] object NoOpProfiler extends Profiler {
 //
 //  override def beforePhase(phase: Phase): ProfileSnap = Profiler.emptySnap
@@ -127,7 +127,7 @@ sealed trait Profiler {
 //  if (threadMx.isThreadCpuTimeSupported) threadMx.setThreadCpuTimeEnabled(true)
 //  private val idGen = new AtomicInteger()
 //}
-
+//
 //private [profile] class RealProfiler(reporter : ProfileReporter)(using Context) extends Profiler with NotificationListener {
 //  def completeBackground(threadRange: ProfileRange): Unit =
 //    reporter.reportBackground(this, threadRange)
@@ -229,17 +229,17 @@ sealed trait Profiler {
 //    snapThread(0)
 //  }
 //}
-
-case class EventType(name: String)
-object EventType {
-  //main thread with other tasks
-  val MAIN: EventType = EventType("main")
-  //other task ( background thread)
-  val BACKGROUND: EventType = EventType("background")
-  //total for compile
-  val GC: EventType = EventType("GC")
-}
-
+//
+//case class EventType(name: String)
+//object EventType {
+//  //main thread with other tasks
+//  val MAIN: EventType = EventType("main")
+//  //other task ( background thread)
+//  val BACKGROUND: EventType = EventType("background")
+//  //total for compile
+//  val GC: EventType = EventType("GC")
+//}
+//
 //sealed trait ProfileReporter {
 //  def reportBackground(profiler: RealProfiler, threadRange: ProfileRange): Unit
 //  def reportForeground(profiler: RealProfiler, threadRange: ProfileRange): Unit
@@ -268,7 +268,7 @@ object EventType {
 //  override def reportGc(data: GcEventData): Unit =
 //    println(s"Profiler GC reported ${data.gcEndMillis - data.gcStartMillis}ms")
 //}
-
+//
 //class StreamProfileReporter(out:PrintWriter) extends ProfileReporter {
 //  override def header(profiler: RealProfiler): Unit = {
 //    out.println(s"info, ${profiler.id}, version, 2, output, ${profiler.outDir}")

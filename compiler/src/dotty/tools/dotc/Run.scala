@@ -19,7 +19,7 @@ import reporting.{Suppression, Action, Profile, ActiveProfile, NoProfile}
 import reporting.Diagnostic
 import reporting.Diagnostic.Warning
 import rewrites.Rewrites
-import profile.Profiler
+//import profile.Profiler
 import printing.XprintMode
 import typer.ImplicitRunInfo
 import config.Feature
@@ -231,41 +231,41 @@ class Run(comp: Compiler, ictx: Context) extends ImplicitRunInfo with Constraint
       ctx.settings.Yskip.value, ctx.settings.YstopBefore.value, stopAfter, ctx.settings.Ycheck.value)
     ctx.base.usePhases(phases)
 
-    def runPhases(using Context) = {
-      var lastPrintedTree: PrintedTree = NoPrintedTree
-      val profiler = ctx.profiler
-      var phasesWereAdjusted = false
-
-      for (phase <- ctx.base.allPhases)
-        if (phase.isRunnable)
-          Stats.trackTime(s"$phase ms ") {
-            val start = System.currentTimeMillis
-            val profileBefore = profiler.beforePhase(phase)
-            units = phase.runOn(units)
-            profiler.afterPhase(phase, profileBefore)
-            if (ctx.settings.Xprint.value.containsPhase(phase))
-              for (unit <- units)
-                lastPrintedTree =
-                  printTree(lastPrintedTree)(using ctx.fresh.setPhase(phase.next).setCompilationUnit(unit))
-            report.informTime(s"$phase ", start)
-            Stats.record(s"total trees at end of $phase", ast.Trees.ntrees)
-            for (unit <- units)
-              Stats.record(s"retained typed trees at end of $phase", unit.tpdTree.treeSize)
-            ctx.typerState.gc()
-          }
-          if !phasesWereAdjusted then
-            phasesWereAdjusted = true
-            if !Feature.ccEnabledSomewhere then
-              ctx.base.unlinkPhaseAsDenotTransformer(Phases.checkCapturesPhase.prev)
-              ctx.base.unlinkPhaseAsDenotTransformer(Phases.checkCapturesPhase)
-
-      profiler.finished()
-    }
+//    def runPhases(using Context) = {
+//      var lastPrintedTree: PrintedTree = NoPrintedTree
+//      val profiler = ctx.profiler
+//      var phasesWereAdjusted = false
+//
+//      for (phase <- ctx.base.allPhases)
+//        if (phase.isRunnable)
+//          Stats.trackTime(s"$phase ms ") {
+//            val start = System.currentTimeMillis
+//            val profileBefore = profiler.beforePhase(phase)
+//            units = phase.runOn(units)
+//            profiler.afterPhase(phase, profileBefore)
+//            if (ctx.settings.Xprint.value.containsPhase(phase))
+//              for (unit <- units)
+//                lastPrintedTree =
+//                  printTree(lastPrintedTree)(using ctx.fresh.setPhase(phase.next).setCompilationUnit(unit))
+//            report.informTime(s"$phase ", start)
+//            Stats.record(s"total trees at end of $phase", ast.Trees.ntrees)
+//            for (unit <- units)
+//              Stats.record(s"retained typed trees at end of $phase", unit.tpdTree.treeSize)
+//            ctx.typerState.gc()
+//          }
+//          if !phasesWereAdjusted then
+//            phasesWereAdjusted = true
+//            if !Feature.ccEnabledSomewhere then
+//              ctx.base.unlinkPhaseAsDenotTransformer(Phases.checkCapturesPhase.prev)
+//              ctx.base.unlinkPhaseAsDenotTransformer(Phases.checkCapturesPhase)
+//
+//      profiler.finished()
+//    }
 
     val runCtx = ctx.fresh
 //    runCtx.setProfiler(Profiler())
     unfusedPhases.foreach(_.initContext(runCtx))
-    runPhases(using runCtx)
+//    runPhases(using runCtx)
     if (!ctx.reporter.hasErrors)
       Rewrites.writeBack()
     suppressions.runFinished(hasErrors = ctx.reporter.hasErrors)

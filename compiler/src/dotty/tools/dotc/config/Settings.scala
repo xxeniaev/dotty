@@ -61,7 +61,8 @@ object Settings:
     prefix: String = "",
     aliases: List[String] = Nil,
     depends: List[(Setting[?], Any)] = Nil,
-    propertyClass: Option[Class[?]] = None)(private[Settings] val idx: Int) {
+//    propertyClass: Option[Class[?]] = None
+)(private[Settings] val idx: Int) {
 
     private var changed: Boolean = false
 
@@ -134,8 +135,8 @@ object Settings:
       def doSet(argRest: String) = ((summon[ClassTag[T]], args): @unchecked) match {
         case (BooleanTag, _) =>
           setBoolean(argRest, args)
-        case (OptionTag, _) =>
-          update(Some(propertyClass.get.getConstructor().newInstance()), args)
+//        case (OptionTag, _) =>
+//          update(Some(propertyClass.get.getConstructor().newInstance()), args)
         case (ListTag, _) =>
           if (argRest.isEmpty) missingArg
           else
@@ -295,6 +296,6 @@ object Settings:
       publish(Setting(name, descr, default))
 
     def OptionSetting[T: ClassTag](name: String, descr: String, aliases: List[String] = Nil): Setting[Option[T]] =
-      publish(Setting(name, descr, None, propertyClass = Some(summon[ClassTag[T]].runtimeClass), aliases = aliases))
+      publish(Setting(name, descr, None, aliases = aliases))
   }
 end Settings

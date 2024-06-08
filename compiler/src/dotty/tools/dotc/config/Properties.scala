@@ -3,12 +3,11 @@ package dotc
 package config
 
 import scala.language.unsafeNulls
-
 import scala.annotation.internal.sharable
-
 import java.io.IOException
-import java.util.jar.Attributes.{ Name => AttributeName }
+import java.util.jar.Attributes.Name as AttributeName
 import java.nio.charset.StandardCharsets
+import java.time.LocalDate
 
 /** Loads `library.properties` from the jar. */
 object Properties extends PropertiesTrait {
@@ -30,9 +29,14 @@ trait PropertiesTrait {
   /** The loaded properties */
   @sharable protected lazy val scalaProps: java.util.Properties = {
     val props = new java.util.Properties
-    val stream = pickJarBasedOn getResourceAsStream propFilename
-    if (stream ne null)
-      quietlyDispose(props load stream, stream.close)
+//    val stream = pickJarBasedOn getResourceAsStream propFilename
+//    if (stream ne null)
+//      quietlyDispose(props load stream, stream.close)
+
+    props.setProperty("version.number", "9")
+    props.setProperty("maven.version.number", "9")
+    props.setProperty("git.hash", "???")
+    props.setProperty("copyright.string", s"Copyright 2002-???, LAMP/EPFL")
 
     props
   }

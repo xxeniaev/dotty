@@ -468,38 +468,44 @@ class MegaPhase(val miniPhases: Array[MiniPhase]) extends Phase {
   // Initialization code
 
   /** Class#getDeclaredMethods is slow, so we cache its output */
-  private val clsMethodsCache = new java.util.IdentityHashMap[Class[?], Array[java.lang.reflect.Method | Null]]
+  // private val clsMethodsCache = new java.util.IdentityHashMap[Class[?], Array[java.lang.reflect.Method | Null]]
 
   /** Does `phase` contain a redefinition of method `name`?
    *  (which is a method of MiniPhase)
    */
-  private def defines(phase: MiniPhase, name: String) = {
-    def hasRedefinedMethod(cls: Class[?]): Boolean =
-      if (cls.eq(classOf[MiniPhase])) false
-      else {
-        var clsMethods = clsMethodsCache.get(cls)
-        if (clsMethods == null) {
-          clsMethods = cls.getDeclaredMethods
-          clsMethodsCache.put(cls, clsMethods)
-        }
-        clsMethods.nn.exists(_.nn.getName == name) ||
-        hasRedefinedMethod(cls.getSuperclass.nn)
-      }
-    hasRedefinedMethod(phase.getClass)
-  }
+  // private def defines(phase: MiniPhase, name: String) = {
+  //   def hasRedefinedMethod(cls: Class[?]): Boolean =
+  //     if (cls.eq(classOf[MiniPhase])) false
+  //     else {
+  //       var clsMethods = clsMethodsCache.get(cls)
+  //       if (clsMethods == null) {
+  //         clsMethods = cls.getDeclaredMethods
+  //         clsMethodsCache.put(cls, clsMethods)
+  //       }
+  //       clsMethods.nn.exists(_.nn.getName == name) ||
+  //       hasRedefinedMethod(cls.getSuperclass.nn)
+  //     }
+  //   hasRedefinedMethod(phase.getClass)
+  // }
 
   private def newNxArray = new Array[MiniPhase | Null](miniPhases.length + 1)
   private val emptyNxArray = newNxArray
 
   private def init(methName: String): Array[MiniPhase | Null] = {
-    var nx: Array[MiniPhase | Null] = emptyNxArray
+    // var nx: Array[MiniPhase | Null] = emptyNxArray
+    // for (idx <- miniPhases.length - 1 to 0 by -1) {
+    //   val subPhase = miniPhases(idx)
+    //   if (defines(subPhase, methName)) {
+    //     if (nx eq emptyNxArray) nx = newNxArray
+    //     nx(idx) = subPhase
+    //   }
+    //   else if (nx ne emptyNxArray) nx(idx) = nx(idx + 1)
+    // }
+    // nx
+    var nx: Array[MiniPhase | Null] = newNxArray
     for (idx <- miniPhases.length - 1 to 0 by -1) {
       val subPhase = miniPhases(idx)
-      if (defines(subPhase, methName)) {
-        if (nx eq emptyNxArray) nx = newNxArray
-        nx(idx) = subPhase
-      }
-      else if (nx ne emptyNxArray) nx(idx) = nx(idx + 1)
+      nx(idx) = subPhase
     }
     nx
   }

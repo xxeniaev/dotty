@@ -15,7 +15,7 @@ import nme._
 object NameOps {
 
   object compactify {
-    lazy val md5: MessageDigest = MessageDigest.getInstance("MD5").nn
+    // lazy val md5: MessageDigest = MessageDigest.getInstance("MD5").nn
 
     inline val CLASSFILE_NAME_CHAR_LIMIT = 240
 
@@ -31,27 +31,27 @@ object NameOps {
      *
      *  (+6 for ".class"). MaxNameLength can therefore be computed as follows:
      */
-    def apply(s: String): String = {
-      val marker = "$$$$"
+    // def apply(s: String): String = {
+    //   val marker = "$$$$"
 
-      val MaxNameLength = (CLASSFILE_NAME_CHAR_LIMIT - 6).min(
-        2 * (CLASSFILE_NAME_CHAR_LIMIT - 6 - 2 * marker.length - 32)
-      )
+    //   val MaxNameLength = (CLASSFILE_NAME_CHAR_LIMIT - 6).min(
+    //     2 * (CLASSFILE_NAME_CHAR_LIMIT - 6 - 2 * marker.length - 32)
+    //   )
 
-      def toMD5(s: String, edge: Int): String = {
-        val prefix = s.take(edge)
-        val suffix = s.takeRight(edge)
+    //   def toMD5(s: String, edge: Int): String = {
+    //     val prefix = s.take(edge)
+    //     val suffix = s.takeRight(edge)
 
-        val cs = s.toArray
-        val bytes = Codec.toUTF8(CharBuffer.wrap(cs).nn)
-        md5.update(bytes)
-        val md5chars = md5.digest().nn.map(b => (b & 0xFF).toHexString).mkString
+    //     val cs = s.toArray
+    //     val bytes = Codec.toUTF8(CharBuffer.wrap(cs).nn)
+    //     md5.update(bytes)
+    //     val md5chars = md5.digest().nn.map(b => (b & 0xFF).toHexString).mkString
 
-        prefix + marker + md5chars + marker + suffix
-      }
+    //     prefix + marker + md5chars + marker + suffix
+    //   }
 
-      if (s.length <= MaxNameLength) s else toMD5(s, MaxNameLength / 4)
-    }
+    //   if (s.length <= MaxNameLength) s else toMD5(s, MaxNameLength / 4)
+    // }
   }
 
   extension [N <: Name](name: N) {
@@ -321,7 +321,8 @@ object NameOps {
       likeSpacedN(termName(sb.toString))
 
     /** If name length exceeds allowable limit, replace part of it by hash */
-    def compactified(using Context): TermName = termName(compactify(name.toString))
+    //def compactified(using Context): TermName = termName(compactify(name.toString))
+    def compactified(using Context): TermName = name
 
     def unmangleClassName: N = name.toTermName match {
       case name: SimpleName

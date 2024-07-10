@@ -18,7 +18,7 @@ import Variances.Variance
 import annotation.tailrec
 import util.SimpleIdentityMap
 import util.Stats
-import java.util.WeakHashMap
+import java.util.HashMap
 import scala.util.control.NonFatal
 import config.Config
 import reporting._
@@ -2839,7 +2839,7 @@ object SymDenotations {
   private abstract class InheritedCacheImpl(val createdAt: Period) extends InheritedCache {
     protected def sameGroup(p1: Phase, p2: Phase): Boolean
 
-    private var dependent: WeakHashMap[InheritedCache, Unit] | Null = null
+    private var dependent: HashMap[InheritedCache, Unit] | Null = null
     private var checkedPeriod: Period = Nowhere
 
     protected def invalidateDependents() = {
@@ -2852,7 +2852,7 @@ object SymDenotations {
     }
 
     protected def addDependent(dep: InheritedCache) = {
-      if (dependent == null) dependent = new WeakHashMap
+      if (dependent == null) dependent = new HashMap
       dependent.nn.put(dep, ())
     }
 

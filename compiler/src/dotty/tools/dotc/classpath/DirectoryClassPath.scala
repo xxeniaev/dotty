@@ -163,20 +163,21 @@ trait PlatformFileDirectoryLookup[FileEntryType <: ClassRepresentation]
 object JrtClassPath {
   import java.nio.file._, java.net.URI
   def apply(release: Option[String]): Option[ClassPath] = {
-    import scala.util.Properties._
-    if (!isJavaAtLeast("9")) None
-    else {
+    // import scala.util.Properties._
+    // if (!isJavaAtLeast("9")) None
+    // else {
       // Longer term we'd like an official API for this in the JDK
       // Discussion: http://mail.openjdk.java.net/pipermail/compiler-dev/2018-March/thread.html#11738
 
       val currentMajorVersion: Int = JDK9Reflectors
         .runtimeVersionMajor(JDK9Reflectors.runtimeVersion())
         .intValue()
+
       release match {
         case Some(v) if v.toInt < currentMajorVersion =>
           try {
             val ctSym =
-              PlatformPaths.get(javaHome).resolve("lib").resolve("ct.sym")
+              PlatformPaths.get(System.getProperty("java.home")).resolve("lib").resolve("ct.sym")
             if (PlatformFiles.notExists(ctSym)) None
             else Some(new CtSymClassPath(ctSym, v.toInt))
           } catch {
@@ -193,7 +194,7 @@ object JrtClassPath {
 //                =>
 //              None
 //          }
-      }
+      // }
     }
   }
 }
@@ -310,7 +311,8 @@ final class CtSymClassPath(ctSym: PlatformPath, release: Int)
       : scala.collection.Map[String, scala.collection.Seq[PlatformPath]] = {
     val index = collection.mutable
       .AnyRefMap[String, collection.mutable.ListBuffer[PlatformPath]]()
-    val isJava12OrHigher = scala.util.Properties.isJavaAtLeast("12")
+    //val isJava12OrHigher = scala.util.Properties.isJavaAtLeast("12")
+    val isJava12OrHigher = true
     rootsForRelease.foreach(root =>
       PlatformFiles
         .walk(root)

@@ -113,7 +113,8 @@ case class SpecificScalaVersion(major: Int, minor: Int, rev: Int, build: ScalaBu
   /**
    * The version of the compiler running now
    */
-  val current: ScalaVersion = parse(util.Properties.versionNumberString).get
+  //val current: ScalaVersion = parse(util.Properties.versionNumberString).get
+  val current: ScalaVersion = parse("3.2.0").get
 }
 
 /**
@@ -185,4 +186,3 @@ object ScalaBuild {
     }
   }
 }
-

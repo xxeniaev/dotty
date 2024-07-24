@@ -1891,7 +1891,11 @@ sealed class TermRefSet(using Context):
       prefixes0 match
         case prefix: Type => f(TermRef(prefix, sym.uncheckedNN))
         case prefixes: List[Type] => prefixes.foreach(pre => f(TermRef(pre, sym.uncheckedNN)))
-    elems.forEach(handle)
+
+    elems.forEach(new java.util.function.BiConsumer[TermSymbol, Type | List[Type]]{
+      def accept(a: TermSymbol, b: Type | List[Type]): Unit =
+        handle(a, b)
+    })
 
   // used only for debugging
   def showAsList: List[TermRef] = {

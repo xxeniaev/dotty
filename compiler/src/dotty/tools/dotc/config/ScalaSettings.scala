@@ -23,11 +23,11 @@ object ScalaSettings:
     (minTargetVersion to maxTargetVersion).toList.map(_.toString)
 
   def supportedReleaseVersions: List[String] =
-    if scala.util.Properties.isJavaAtLeast("9") then
-      val jdkVersion = JDK9Reflectors.runtimeVersionMajor(JDK9Reflectors.runtimeVersion()).intValue()
-      val maxVersion = Math.min(jdkVersion, maxTargetVersion)
-      (minTargetVersion to maxVersion).toList.map(_.toString)
-    else List(minTargetVersion).map(_.toString)
+    // if scala.util.Properties.isJavaAtLeast("9") then
+    val jdkVersion = JDK9Reflectors.runtimeVersionMajor(JDK9Reflectors.runtimeVersion()).intValue()
+    val maxVersion = Math.min(jdkVersion, maxTargetVersion)
+    (minTargetVersion to maxVersion).toList.map(_.toString)
+    // else List(minTargetVersion).map(_.toString)
 
   def supportedScalaReleaseVersions: List[String] =
     ScalaRelease.values.toList.map(_.show)
@@ -345,4 +345,3 @@ private sealed trait YSettings:
 
   val YforceInlineWhileTyping: Setting[Boolean] = BooleanSetting("-Yforce-inline-while-typing", "Make non-transparent inline methods inline when typing. Emulates the old inlining behavior of 3.0.0-M3.")
 end YSettings
-

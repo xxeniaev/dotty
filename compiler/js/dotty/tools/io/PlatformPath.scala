@@ -28,6 +28,20 @@ class PlatformPath extends Iterable[PlatformPath]{
 }
 
 object PlatformPath {
-  def of(first: String, more: String*): PlatformPath = ???
-  def of(uri: PlatformURI): PlatformPath = ???
+  def of(first: String, more: String*): PlatformPath = PlatformFileSystems.getDefault().getPath(first, more*)
+  def of(uri: PlatformURI): PlatformPath = {
+    val scheme = uri.getScheme
+    if scheme == null then
+      throw new IllegalArgumentException("Missing scheme")
+
+    if scheme.equalsIgnoreCase("file") then
+      return PlatformFileSystems.getDefault().provider.getPath(uri)
+
+    PlatformFileSystemProvider.installedProviders
+      .find(_.getScheme.equalsIgnoreCase(scheme))
+      .map(_.getPath(uri))
+      .getOrElse(PlatformPath())
+
+//    throw new FileSystemNotFoundException(s"""Provider "$scheme" not installed""")
+  }
 }

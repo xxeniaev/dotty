@@ -1,14 +1,17 @@
 package dotty.tools.io
 
-import java.net.URI
-import java.nio.file.{FileSystem, Path}
-import java.util.{Map => JMap}
+import scala.scalajs.js
+import scala.scalajs.js.annotation.JSImport
 
 class PlatformFileSystems {
 }
 
 object PlatformFileSystems {
-  def getDefault(): PlatformFileSystem = ???
+  def getDefault(): PlatformFileSystem = {
+    val USER_DIR: String = "user.dir"
+    val userDir: String = js.Dynamic.global.process.env.USER_DIR.asInstanceOf[String]
+    val INSTANCE: MacOSXFileSystemProvider =
+  }
   def getFileSystem(uri: PlatformURI): PlatformFileSystem = ???
   def newFileSystem(path: PlatformPath, loader: ClassLoader): PlatformFileSystem = ???
   def newFileSystem(uri: PlatformURI, env: JMap[String, ?]): PlatformFileSystem = ???

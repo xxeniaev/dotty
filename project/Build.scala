@@ -949,9 +949,11 @@ object Build {
       target := baseDirectory.value / "target-js",
       (Compile / mainClass) := Some("dotty.tools.dotc.Main"),
       scalaJSUseMainModuleInitializer := true,
-      libraryDependencies +=
+      libraryDependencies ++= Seq(
         ("org.scala-js" %% "scalajs-ir" % scalaJSVersion % "sourcedeps")
           .cross(CrossVersion.for3Use2_13),
+        "org.scala-js" %%% "scalajs-dom" % "2.8.0"
+      ),
       ivyConfigurations += SourceDeps.hide,
       transitiveClassifiers := Seq("sources"),
       (Compile / sourceGenerators) += Def.task {
